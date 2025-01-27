@@ -31,9 +31,9 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
           {/* TODO add linking */}
           <Text style={styles.notice}>
             By continuing, you agree to the&nbsp;
-            <Text style={styles.link}>User Terms and Conditions</Text>&nbsp; and
+            <Text style={styles.link}>User Terms and Conditions</Text>&nbsp;and
             acknowledge the&nbsp;
-            <Text style={styles.link}>Privacy notice</Text>&nbsp; of Self ID
+            <Text style={styles.link}>Privacy notice</Text>&nbsp;of Self ID
             provided by Self Inc.
           </Text>
           <PrimaryButton onPress={() => setSelectedTab('app')}>
