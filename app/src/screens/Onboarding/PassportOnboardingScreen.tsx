@@ -2,16 +2,18 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Image, YStack } from 'tamagui';
 
-import Passport from '../images/passport.png';
-import { PrimaryButton } from '../components/buttons/PrimaryButton';
-import { slate400, slate500, black } from '../utils/colors';
-import { SecondaryButton } from '../components/buttons/SecondaryButton';
-import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
+import Passport from '../../images/passport.png';
+import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { slate400, slate500, black } from '../../utils/colors';
+import { SecondaryButton } from '../../components/buttons/SecondaryButton';
+import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useNavigation } from '@react-navigation/native';
 
 interface PassportOnboardingScreenProps {}
 
-const PassportOnboardingScreen: React.FC<PassportOnboardingScreenProps> = ({}) => {
+const PassportOnboardingScreen: React.FC<
+  PassportOnboardingScreenProps
+> = ({}) => {
   const navigation = useNavigation();
 
   return (
@@ -28,7 +30,7 @@ const PassportOnboardingScreen: React.FC<PassportOnboardingScreenProps> = ({}) =
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
-        <YStack alignItems='center' gap="$2.5">
+        <YStack alignItems="center" gap="$2.5">
           <Text style={styles.title}>Scan your passport</Text>
           <Text style={styles.description}>
             Open your passport to the first page to scan it.
@@ -37,10 +39,7 @@ const PassportOnboardingScreen: React.FC<PassportOnboardingScreenProps> = ({}) =
             Self ID will not capture an image of your passport. Our system is
             only reading the fields.
           </Text>
-          <PrimaryButton onPress={
-            // @ts-ignore TODO
-            () => navigation.navigate('Camera')}
-          >
+          <PrimaryButton onPress={() => navigation.navigate('PassportCamera')}>
             Open Camera
           </PrimaryButton>
           <SecondaryButton onPress={() => navigation.navigate('Home')}>
@@ -73,7 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 18,
-    textAlign: 'center',    
     color: slate400,
   },
 });

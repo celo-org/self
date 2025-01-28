@@ -10,7 +10,8 @@ import {
 } from '@react-navigation/stack';
 import LaunchScreen from './screens/LaunchScreen';
 import StartScreen from './screens/StartScreen';
-import PassportOnboardingScreen from './screens/PassportOnboardingScreen';
+import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
+import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import { NavBar } from './components/NavBar';
 import MockDataScreen from './screens/MockDataScreen';
@@ -54,7 +55,7 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'Home',
+  initialRouteName: 'PassportCamera',
   screenOptions: {
     header: DefaultNavBar,
   },
@@ -75,6 +76,12 @@ const RootStack = createStackNavigator({
     },
     PassportOnboarding: {
       screen: PassportOnboardingScreen,
+      options: {
+        headerShown: false,
+      },
+    },
+    PassportCamera: {
+      screen: PassportCameraScreen,
       options: {
         headerShown: false,
       },
