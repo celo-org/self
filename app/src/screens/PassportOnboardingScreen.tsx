@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { Anchor, Image, YStack } from 'tamagui';
+import { Image, YStack } from 'tamagui';
 
 import Logo from '../images/logo.png';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
@@ -8,9 +8,11 @@ import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { slate50, slate100, slate700, slate500 } from '../utils/colors';
 import { useNavigation } from '@react-navigation/native';
 
-interface LaunchScreenProps {}
+interface PassportOnboardingScreenProps {}
 
-const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
+const PassportOnboardingScreen: React.FC<
+  PassportOnboardingScreenProps
+> = ({}) => {
   const navigation = useNavigation();
 
   return (
@@ -21,36 +23,26 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
       <ExpandableBottomLayout.BottomSection>
         <YStack gap="$2.5">
           <Text style={styles.subheader}>
-            The simplest way to verify identity for safety and trust wherever
-            you are.
+            Open your passport to the first page to scan it.
           </Text>
-          {/* TODO add linking */}
-          <Text style={styles.notice}>
-            By continuing, you agree to the&nbsp;
-            <Anchor style={styles.link} href="https://example.com">
-              User Terms and Conditions
-            </Anchor>
-            &nbsp;and acknowledge the&nbsp;
-            <Anchor style={styles.link} href="https://example.com">
-              Privacy notice
-            </Anchor>
-            &nbsp;of Self ID provided by Self Inc.
-          </Text>
-          <PrimaryButton onPress={() => navigation.navigate('Start')}>
-            Get Started
+          <PrimaryButton
+            onPress={() => navigation.navigate('TODO: open camera')}
+          >
+            Open Camera
           </PrimaryButton>
+          <PrimaryButton onPress={navigation.goBack}>Cancel</PrimaryButton>
         </YStack>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
 };
 
-export default LaunchScreen;
+export default PassportOnboardingScreen;
 
 const styles = StyleSheet.create({
   subheader: {
     color: slate700,
-    fontWeight: '500',
+    // fontWeight: '500',
     fontSize: 20,
     lineHeight: 26,
     textAlign: 'center',
@@ -70,6 +62,5 @@ const styles = StyleSheet.create({
     color: slate500,
     textAlign: 'center',
     lineHeight: 18,
-    fontWeight: '500',
   },
 });
