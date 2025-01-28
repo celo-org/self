@@ -37,7 +37,7 @@ const StartScreen: React.FC = () => {
           Icon={<ArrowRight />}
           text="Use a mock passport"
           onPress={() => {
-            navigation.navigate('TODO: MOCK');
+            navigation.navigate('CreateMock');
           }}
         />
         <CustomButton
