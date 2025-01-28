@@ -15,37 +15,27 @@ interface BottomSectionProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<ExpandableBottomLayoutProps> = ({
-  children,
-}) => {
+const Layout: React.FC<ExpandableBottomLayoutProps> = ({ children }) => {
   return <View style={styles.layout}>{children}</View>;
 };
 
 const TopSection: React.FC<TopSectionProps> = ({ children }) => {
-  return (
-    <>
-      <View style={styles.topSection}>{children}</View>
-    </>
-  );
+  return <View style={styles.topSection}>{children}</View>;
 };
 
 const BottomSection: React.FC<BottomSectionProps> = ({ children }) => {
-  return (
-    <>
-      <View style={styles.bottomSection}>{children}</View>
-    </>
-  );
+  return <View style={styles.bottomSection}>{children}</View>;
 };
 
 /**
  * This component is a layout that has a top and bottom section. Bottom section
  * automatically expands to as much space as it needs while the top section
  * takes up the remaining space.
- * 
+ *
  * Usage:
- * 
+ *
  * import { ExpandableBottomLayout } from '../components/ExpandableBottomLayout';
- * 
+ *
  * <ExpandableBottomLayout.Layout>
  *   <ExpandableBottomLayout.TopSection>
  *     <...top section content...>
@@ -59,7 +49,7 @@ export const ExpandableBottomLayout = {
   Layout,
   TopSection,
   BottomSection,
-}
+};
 
 const styles = StyleSheet.create({
   layout: {
