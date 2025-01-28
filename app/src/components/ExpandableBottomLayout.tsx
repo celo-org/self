@@ -1,10 +1,8 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { YStack } from 'tamagui';
+import { StyleSheet, View } from 'react-native';
 
 import { black, white } from '../utils/colors';
 
-// TODO: they don't differ too much at this point
 interface ExpandableBottomLayoutProps {
   children: React.ReactNode;
 }
@@ -17,40 +15,62 @@ interface BottomSectionProps {
   children: React.ReactNode;
 }
 
-// TODO: maybe using those as ExpandableBottomLayout.Wrapper, ExpandableBottomLayout.TopSection would
-// be a better idea?
-export const ExpandableBottomLayout: React.FC<ExpandableBottomLayoutProps> = ({
+const Layout: React.FC<ExpandableBottomLayoutProps> = ({
   children,
 }) => {
-  return <YStack style={styles.layout}>{children}</YStack>;
+  return <View style={styles.layout}>{children}</View>;
 };
 
-export const TopSection: React.FC<TopSectionProps> = ({ children }) => {
+const TopSection: React.FC<TopSectionProps> = ({ children }) => {
   return (
     <>
-      <YStack style={styles.topSection}>{children}</YStack>
+      <View style={styles.topSection}>{children}</View>
     </>
   );
 };
 
-export const BottomSection: React.FC<BottomSectionProps> = ({ children }) => {
+const BottomSection: React.FC<BottomSectionProps> = ({ children }) => {
   return (
     <>
-      <YStack style={styles.bottomSection}>{children}</YStack>
+      <View style={styles.bottomSection}>{children}</View>
     </>
   );
 };
+
+/**
+ * This component is a layout that has a top and bottom section. Bottom section
+ * automatically expands to as much space as it needs while the top section
+ * takes up the remaining space.
+ * 
+ * Usage:
+ * 
+ * import { ExpandableBottomLayout } from '../components/ExpandableBottomLayout';
+ * 
+ * <ExpandableBottomLayout.Layout>
+ *   <ExpandableBottomLayout.TopSection>
+ *     <...top section content...>
+ *   </ExpandableBottomLayout.TopSection>
+ *   <ExpandableBottomLayout.BottomSection>
+ *     <...bottom section content...>
+ *   </ExpandableBottomLayout.BottomSection>
+ * </ExpandableBottomLayout.Layout>
+ */
+export const ExpandableBottomLayout = {
+  Layout,
+  TopSection,
+  BottomSection,
+}
 
 const styles = StyleSheet.create({
   layout: {
     height: '100%',
+    flexDirection: 'column',
   },
   topSection: {
     alignSelf: 'stretch',
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    // TODO: don't know if it's the best idea to hardcode the colors here
     backgroundColor: black,
   },
   bottomSection: {
