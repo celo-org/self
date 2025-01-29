@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Image, View, XStack, YStack } from 'tamagui';
 
@@ -10,15 +10,28 @@ import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useNavigation } from '@react-navigation/native';
 import { startCameraScan } from '../../utils/cameraScanner';
+import useUserStore from '../../stores/userStore';
 
-interface PassportCameraScreenProps {}
+interface PassportNFCScanScreen {}
 
-const PassportCameraScreen: React.FC<PassportCameraScreenProps> = ({}) => {
+const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   const navigation = useNavigation();
+  const store = useUserStore();
 
-  useLayoutEffect(() => {
-    // startCameraScan();
-  });
+  useEffect(() => {
+    const cancelCamera = startCameraScan((error, result) => {
+      if (error) {
+        // handle error
+        console.error(error);
+      } else {
+        const { passportNumber, dateOfBirth, dateOfExpiry } = result!;
+        store.update({ passportNumber, dateOfBirth, dateOfExpiry });
+        navigation.navigate('PassportNFCScan');
+      }
+    });
+
+    return cancelCamera;
+  }, []);
 
   return (
     <ExpandableBottomLayout.Layout>

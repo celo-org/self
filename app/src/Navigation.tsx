@@ -20,6 +20,7 @@ import { Button, View } from 'tamagui';
 import { Clock9, Settings } from '@tamagui/lucide-icons';
 import HomeScreen from './screens/HomeScreen';
 import { black, white } from './utils/colors';
+import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 
 const DefaultNavBar = (props: StackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
@@ -55,7 +56,7 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'PassportCamera',
+  initialRouteName: 'Launch',
   screenOptions: {
     header: DefaultNavBar,
   },
@@ -84,6 +85,17 @@ const RootStack = createStackNavigator({
       screen: PassportCameraScreen,
       options: {
         headerShown: false,
+      },
+    },
+    PassportNFCScan: {
+      screen: PassportNFCScanScreen,
+      options: {
+        headerShown: false,
+      },
+      initialParams: {
+        passportNumber: '',
+        dateOfBirth: '',
+        dateOfExpiry: '',
       },
     },
     CreateMock: {
