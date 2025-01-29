@@ -12,10 +12,10 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import { H2, Image, Sheet, Spinner, View, XStack, YStack } from 'tamagui';
+import { Image, View } from 'tamagui';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
-import { slate400, slate500, black } from '../../utils/colors';
+import { black } from '../../utils/colors';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +23,10 @@ import useUserStore from '../../stores/userStore';
 import NfcManager from 'react-native-nfc-manager';
 import { scan } from '../../utils/nfcScannerNew';
 import NFC_IMAGE from '../../images/nfc.png';
+import Title from '../../components/typography/Title';
+import Description from '../../components/typography/Description';
+import TextsContainer from '../../components/TextsContainer';
+import ButtonsContainer from '../../components/ButtonsContainer';
 
 interface PassportNFCScanScreenProps {}
 
@@ -109,41 +113,44 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <View height={400} bg={black}></View>
+        {/* TODO a placeholder for animation */}
+        <View height={400} bg={black} />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
-        <YStack alignItems="center" gap="$2.5">
-          {isNfcSheetOpen ? (
-            <>
-              <YStack alignItems="center" gap="$5" pb="$2.5">
-                <Text style={styles.title}>Ready to scan</Text>
-                <Text style={styles.description}>{scanningMessage}</Text>
-              </YStack>
+        {isNfcSheetOpen ? (
+          <>
+            <TextsContainer>
+              <Title text="Ready to scan" />
+              <Description text={scanningMessage} />
+            </TextsContainer>
 
-              <Image
-                h="$8"
-                w="$8"
-                alignSelf="center"
-                borderRadius={1000}
-                source={{
-                  uri: NFC_IMAGE,
-                }}
-              />
-              <Text>
-                Hold your device near the NFC tag and stop moving when it
-                vibrates.
-              </Text>
-            </>
-          ) : (
-            <>
-              <YStack alignItems="center" gap="$5" pb="$2.5">
-                <Text style={styles.title}>Verify your passport</Text>
-                <Text style={styles.description}>
-                  {isNfcEnabled
+            <Image
+              h="$8"
+              w="$8"
+              alignSelf="center"
+              borderRadius={1000}
+              source={{
+                uri: NFC_IMAGE,
+              }}
+            />
+            <Text>
+              Hold your device near the NFC tag and stop moving when it
+              vibrates.
+            </Text>
+          </>
+        ) : (
+          <>
+            <TextsContainer>
+              <Title text="Verify your passport" />
+              <Description
+                text={
+                  isNfcEnabled
                     ? 'Open your passport to the last page to access the NFC chip. Place your phone against the page'
-                    : dialogMessage}
-                </Text>
-              </YStack>
+                    : dialogMessage
+                }
+              />
+            </TextsContainer>
+            <ButtonsContainer>
               <PrimaryButton onPress={onPress} disabled={!isNfcSupported}>
                 {isNfcEnabled || !isNfcSupported
                   ? 'Start Scan'
@@ -152,36 +159,12 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               <SecondaryButton onPress={() => navigation.navigate('Home')}>
                 Cancel
               </SecondaryButton>
-            </>
-          )}
-        </YStack>
+            </ButtonsContainer>
+          </>
+        )}
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
 };
 
 export default PassportNFCScanScreen;
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 28,
-    fontWeight: '400',
-    lineHeight: 35,
-    color: black,
-  },
-  subheader: {
-    textAlignVertical: 'center',
-    color: slate500,
-    fontWeight: '500',
-    fontSize: 18,
-    lineHeight: 23,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 18,
-    color: slate400,
-    textAlign: 'center',
-  },
-});

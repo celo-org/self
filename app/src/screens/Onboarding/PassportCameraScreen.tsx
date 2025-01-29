@@ -36,7 +36,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <View height={400} bg={black}></View>
+        <View height={400} bg={black} />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5">
