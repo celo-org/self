@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Anchor, Image, YStack } from 'tamagui';
 
-import Logo from '../images/logo.png';
+import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { slate50, slate100, slate700, slate500 } from '../utils/colors';
@@ -16,7 +16,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <Image src={Logo} />
+        <Logo />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack gap="$2.5">

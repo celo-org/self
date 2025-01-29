@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Image, YStack } from 'tamagui';
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'tamagui';
 
 import Passport from '../../images/passport.png';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
@@ -30,7 +30,7 @@ const PassportOnboardingScreen: React.FC<
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
-        <YStack alignItems="center" gap="$2.5">
+        <View style={styles.textsContainer}>
           <Text style={styles.title}>Scan your passport</Text>
           <Text style={styles.description}>
             Open your passport to the first page to scan it.
@@ -39,13 +39,15 @@ const PassportOnboardingScreen: React.FC<
             Self ID will not capture an image of your passport. Our system is
             only reading the fields.
           </Text>
+        </View>
+        <View style={styles.buttonsContainer}>
           <PrimaryButton onPress={() => navigation.navigate('PassportCamera')}>
             Open Camera
           </PrimaryButton>
           <SecondaryButton onPress={() => navigation.navigate('Home')}>
             Cancel
           </SecondaryButton>
-        </YStack>
+        </View>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
@@ -54,6 +56,21 @@ const PassportOnboardingScreen: React.FC<
 export default PassportOnboardingScreen;
 
 const styles = StyleSheet.create({
+  textsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 10,
+  },
+  buttonsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
   title: {
     fontSize: 28,
     fontWeight: '400',
@@ -72,6 +89,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 18,
+    textAlign: 'center',
     color: slate400,
+    marginTop: 10,
   },
 });
