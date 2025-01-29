@@ -1,8 +1,6 @@
 import * as amplitude from '@amplitude/analytics-react-native';
 import { NativeModules, Platform } from 'react-native';
 
-import useNavigationStore from '../stores/navigationStore';
-import useUserStore from '../stores/userStore';
 import { extractMRZInfo, formatDateToYYMMDD } from './utils';
 
 type Callback = (

@@ -20,7 +20,6 @@ import getCountryISO2 from 'country-iso-3-to-2';
 import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/genMockPassportData';
 import CustomButton from '../components/CustomButton';
-import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import {
   bgWhite,

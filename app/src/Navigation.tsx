@@ -111,7 +111,7 @@ const RootStack = createStackNavigator({
       options: {
         title: 'TODO: NextScreen',
       },
-    }, // TODO: rename ? maybe summary
+    },
     Home: {
       screen: HomeScreen,
       options: {
@@ -123,6 +123,9 @@ const RootStack = createStackNavigator({
       screen: SettingsScreen,
       options: {
         title: 'Settings',
+      },
+      config: {
+        screens: {},
       },
     },
   },

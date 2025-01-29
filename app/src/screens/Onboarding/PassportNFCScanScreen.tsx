@@ -1,15 +1,9 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Linking,
   NativeEventEmitter,
   NativeModules,
   Platform,
-  StyleSheet,
   Text,
 } from 'react-native';
 import { Image, View } from 'tamagui';
@@ -85,7 +79,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
     }
   }, [isNfcSupported, isNfcEnabled, passportNumber, dateOfBirth, dateOfExpiry]);
 
-  const cancelScanIfRunning = useCallback(async () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _cancelScanIfRunning = useCallback(async () => {
     // // TODO: cancel if scanning
     // setIsNfcSheetOpen(false);
   }, [isNfcSheetOpen]);
