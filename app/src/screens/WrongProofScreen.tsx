@@ -6,7 +6,7 @@ import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import Description from '../components/typography/Description';
 import { typography } from '../components/typography/styles';
 import LargeTitle from '../components/typography/LargeTitle';
-import {styles} from '../screens/ValidProofScreen';
+import { styles } from '../screens/ValidProofScreen';
 import { useNavigation } from '@react-navigation/native';
 
 const WrongProofScreen: React.FC = () => {
@@ -59,23 +59,29 @@ const WrongProofScreen: React.FC = () => {
   console.log('Failed conditions:', JSON.stringify(failedConditions));
 
   return (
-      <ExpandableBottomLayout.Layout>
-       <ExpandableBottomLayout.TopSection>
-         <></>
-         {/* TODO Animation */}
-     </ExpandableBottomLayout.TopSection>
-     <ExpandableBottomLayout.BottomSection>
-       <View style={styles.content}>
-         <LargeTitle>Proof Failed</LargeTitle>
-         <Description>Unable to prove your identity to <Text style={typography.strong}>.SWOOSH</Text></Description>
-       </View >
-       <PrimaryButton
-         onPress={() => {
-          navigation.navigate('ValidProofScreen');
-         }}
-       > OK </PrimaryButton>
-       </ExpandableBottomLayout.BottomSection>
-   </ExpandableBottomLayout.Layout>
+    <ExpandableBottomLayout.Layout>
+      <ExpandableBottomLayout.TopSection>
+        <></>
+        {/* TODO Animation */}
+      </ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.BottomSection>
+        <View style={styles.content}>
+          <LargeTitle>Proof Failed</LargeTitle>
+          <Description>
+            Unable to prove your identity to{' '}
+            <Text style={typography.strong}>.SWOOSH</Text>
+          </Description>
+        </View>
+        <PrimaryButton
+          onPress={() => {
+            navigation.navigate('ValidProofScreen');
+          }}
+        >
+          {' '}
+          OK{' '}
+        </PrimaryButton>
+      </ExpandableBottomLayout.BottomSection>
+    </ExpandableBottomLayout.Layout>
   );
 };
 

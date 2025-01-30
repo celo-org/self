@@ -8,25 +8,31 @@ import LargeTitle from '../components/typography/LargeTitle';
 import { useNavigation } from '@react-navigation/native';
 
 const SuccessScreen: React.FC = () => {
-    const navigation = useNavigation();
-  
+  const navigation = useNavigation();
+
   return (
-       <ExpandableBottomLayout.Layout>
-        <ExpandableBottomLayout.TopSection>
-          <></>
-          {/* TODO Animation */}
+    <ExpandableBottomLayout.Layout>
+      <ExpandableBottomLayout.TopSection>
+        <></>
+        {/* TODO Animation */}
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <View style={styles.content}>
           <LargeTitle>Identity Verified</LargeTitle>
-          <Description>You've successfully proved your identity to <Text style={typography.strong}>.SWOOSH</Text></Description>
-        </View >
+          <Description>
+            You've successfully proved your identity to{' '}
+            <Text style={typography.strong}>.SWOOSH</Text>
+          </Description>
+        </View>
         <PrimaryButton
           onPress={() => {
             navigation.navigate('WrongProofScreen');
           }}
-        > OK </PrimaryButton>
-        </ExpandableBottomLayout.BottomSection>
+        >
+          {' '}
+          OK{' '}
+        </PrimaryButton>
+      </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
 };
@@ -44,5 +50,5 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     gap: 10,
-  }
+  },
 });
