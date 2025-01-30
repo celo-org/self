@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Anchor, Image, YStack } from 'tamagui';
+import { StyleSheet } from 'react-native';
+import { Anchor, Image, Text, YStack } from 'tamagui';
 
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
