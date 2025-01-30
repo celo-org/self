@@ -17,12 +17,14 @@ import { NavBar } from './components/NavBar';
 import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
 import { Button, View } from 'tamagui';
-import { Clock9, Settings } from '@tamagui/lucide-icons';
 import HomeScreen from './screens/HomeScreen';
-import { black, white } from './utils/colors';
+import { black, neutral400, white } from './utils/colors';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
 import WrongProofScreen from './screens/WrongProofScreen';
+import ActivityIcon from './images/icons/activity.svg';
+import SettingsIcon from './images/icons/settings.svg';
+import { Title } from './components/typography/Title';
 
 const DefaultNavBar = (props: StackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
@@ -40,16 +42,28 @@ const DefaultNavBar = (props: StackHeaderProps) => {
 
 const HomeNavBar = (props: StackHeaderProps) => {
   return (
-    <NavBar.Container bg={black}>
+    <NavBar.Container bg={black} style={{ padding: 16 }} alignItems="center">
       <NavBar.LeftAction
         component={
-          <Button unstyled icon={<Clock9 size="$4" color={white} />} />
+          <Button
+            size="$3"
+            unstyled
+            icon={<ActivityIcon fill={neutral400} />}
+          />
         }
       />
-      <NavBar.Title color={white}>{props.options.title}</NavBar.Title>
+      <NavBar.Title>
+        <Title size="large" color={white}>
+          {props.options.title}
+        </Title>
+      </NavBar.Title>
       <NavBar.RightAction
         component={
-          <Button unstyled icon={<Settings size="$4" color={white} />} />
+          <Button
+            size="$3"
+            unstyled
+            icon={<SettingsIcon fill={neutral400} />}
+          />
         }
         onPress={() => props.navigation.navigate('Settings')}
       />
