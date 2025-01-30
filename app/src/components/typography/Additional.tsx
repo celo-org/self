@@ -4,8 +4,12 @@ import { slate400 } from '../../utils/colors';
 
 interface AdditionalProps extends TextProps {}
 
-const Additional = ({ children, style, ...props  }: AdditionalProps) => {
-  return <Text {...props } style={[styles.additional, style]}>{children}</Text>;
+const Additional = ({ children, style, ...props }: AdditionalProps) => {
+  return (
+    <Text {...props} style={[styles.additional, style]}>
+      {children}
+    </Text>
+  );
 };
 
 export default Additional;

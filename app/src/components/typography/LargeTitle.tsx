@@ -7,7 +7,11 @@ interface TitleProps extends TextProps {}
  * Used for Prominent Top Page Titles
  */
 const LargeTitle = ({ children, style, ...props }: TitleProps) => {
-  return <Text {...props} style={[styles.title, style]}>{children}</Text>;
+  return (
+    <Text {...props} style={[styles.title, style]}>
+      {children}
+    </Text>
+  );
 };
 
 export default LargeTitle;

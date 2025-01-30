@@ -5,7 +5,11 @@ import { black } from '../../utils/colors';
 interface TitleProps extends TextProps {}
 
 const Title = ({ children, style, ...props }: TitleProps) => {
-  return <Text {...props} style={[styles.title, style]}>{children}</Text>;
+  return (
+    <Text {...props} style={[styles.title, style]}>
+      {children}
+    </Text>
+  );
 };
 
 export default Title;

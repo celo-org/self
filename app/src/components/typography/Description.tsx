@@ -5,7 +5,11 @@ import { slate500 } from '../../utils/colors';
 interface DescriptionProps extends TextProps {}
 
 const Description = ({ children, style, ...props }: DescriptionProps) => {
-  return <Text {...props}  style={[styles.description, style]}>{children}</Text>;
+  return (
+    <Text {...props} style={[styles.description, style]}>
+      {children}
+    </Text>
+  );
 };
 
 export default Description;
