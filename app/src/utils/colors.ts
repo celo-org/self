@@ -19,6 +19,7 @@ export const teal500 = '#5EEAD4';
 export const neutral400 = '#A3A3A3';
 export const neutral700 = '#404040';
 
+export const yellow500 = '#FDE047';
 // TODO: maybe it's not going to be reused, so we can keep it the component
 export const gold = '#F2E3C8';
 

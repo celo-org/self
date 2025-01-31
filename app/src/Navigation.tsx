@@ -18,6 +18,7 @@ import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
 import { Button, View } from 'tamagui';
 import HomeScreen from './screens/HomeScreen';
+import DisclaimerScreen from './screens/DisclaimerScreen';
 import { black, neutral400, white } from './utils/colors';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
@@ -133,6 +134,13 @@ const RootStack = createStackNavigator({
       options: {
         title: 'Self ID',
         header: HomeNavBar,
+      },
+    },
+    Disclaimer: {
+      screen: DisclaimerScreen,
+      options: {
+        title: 'Disclaimer',
+        headerShown: false,
       },
     },
     ValidProofScreen: {
