@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { Image, styled, View, YStack } from 'tamagui';
+import { Button, Image, styled, View, YStack } from 'tamagui';
 
 import MAP from '../images/map.png';
-import ScanIcon from '../images/icons/qr-scan.svg';
+import ScanIcon from '../images/icons/qr_scan.svg';
 
-import { black, gold, neutral700 } from '../utils/colors';
+import { black, amber500, neutral700 } from '../utils/colors';
 import { Caption } from '../components/typography/Caption';
 
-const ScanButton = styled(View, {
+const ScanButton = styled(Button, {
   borderRadius: 20,
   width: 90,
   height: 90,
   borderColor: neutral700,
   borderWidth: 1,
-  backgroundColor: '#1D1D1D', // TODO: if this is an unnamed (possibly one time used) color, do we just keep it here?
+  backgroundColor: '#1D1D1D',
   alignItems: 'center',
   justifyContent: 'center',
 });
@@ -25,15 +25,15 @@ const HomeScreen: React.FC = () => {
       <YStack f={1} mt="$6" mb="$10" gap="$0" ai="center" jc="space-between">
         <View ai="center" gap="$4">
           <Image src={MAP} />
-          <Caption color={gold} opacity={0.3} textTransform="uppercase">
+          <Caption color={amber500} opacity={0.3} textTransform="uppercase">
             Only visible to you
           </Caption>
         </View>
         <View ai="center" gap="$3.5">
           <ScanButton>
-            <ScanIcon fill={gold} />
+            <ScanIcon color={amber500} />
           </ScanButton>
-          <Caption color={gold} textTransform="uppercase">
+          <Caption color={amber500} textTransform="uppercase">
             Prove your SELF ID
           </Caption>
         </View>

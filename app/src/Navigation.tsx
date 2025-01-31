@@ -49,9 +49,10 @@ const HomeNavBar = (props: StackHeaderProps) => {
           <Button
             size="$3"
             unstyled
-            icon={<ActivityIcon fill={neutral400} />}
+            icon={<ActivityIcon width={'35'} height={'100%'} color={neutral400} />}
           />
         }
+        onPress={() => props.navigation.navigate('Activity')}
       />
       <NavBar.Title>
         <Title size="large" color={white}>
@@ -61,9 +62,9 @@ const HomeNavBar = (props: StackHeaderProps) => {
       <NavBar.RightAction
         component={
           <Button
-            size="$3"
+            size={'$3'}
             unstyled
-            icon={<SettingsIcon fill={neutral400} />}
+            icon={<SettingsIcon width={'35'} height={'100%'} color={neutral400} />}
           />
         }
         onPress={() => props.navigation.navigate('Settings')}
