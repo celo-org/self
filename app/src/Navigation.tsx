@@ -9,27 +9,25 @@ import {
   StackHeaderProps,
   createStackNavigator,
 } from '@react-navigation/stack';
-import { Clock9, Settings } from '@tamagui/lucide-icons';
 import { Button, View } from 'tamagui';
 
 import { NavBar } from './components/NavBar';
+import { Title } from './components/typography/Title';
+import ActivityIcon from './images/icons/activity.svg';
+import SettingsIcon from './images/icons/settings.svg';
+import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
 import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
-import { Button, View } from 'tamagui';
-import HomeScreen from './screens/HomeScreen';
-import DisclaimerScreen from './screens/DisclaimerScreen';
-import { black, neutral400, white } from './utils/colors';
+import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import StartScreen from './screens/StartScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
 import WrongProofScreen from './screens/WrongProofScreen';
-import ActivityIcon from './images/icons/activity.svg';
-import SettingsIcon from './images/icons/settings.svg';
-import { Title } from './components/typography/Title';
+import { black, neutral400, white } from './utils/colors';
 
 const DefaultNavBar = (props: StackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;

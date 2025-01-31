@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import Description from '../components/typography/Description';
-import { typography } from '../components/typography/styles';
-import { useNavigation } from '@react-navigation/native';
 import { Title } from '../components/typography/Title';
+import { typography } from '../components/typography/styles';
+import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 
 const SuccessScreen: React.FC = () => {
   const navigation = useNavigation();

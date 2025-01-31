@@ -7,13 +7,9 @@ import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
-import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { useNavigation } from '@react-navigation/native';
-import { Title } from '../../components/typography/Title';
-import Description from '../../components/typography/Description';
 import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
-import Title from '../../components/typography/Title';
+import { Title } from '../../components/typography/Title';
 import Passport from '../../images/passport.png';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 
