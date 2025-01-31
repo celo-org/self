@@ -49,7 +49,9 @@ const HomeNavBar = (props: StackHeaderProps) => {
           <Button
             size="$3"
             unstyled
-            icon={<ActivityIcon width={'35'} height={'100%'} color={neutral400} />}
+            icon={
+              <ActivityIcon width={'35'} height={'100%'} color={neutral400} />
+            }
           />
         }
         onPress={() => props.navigation.navigate('Activity')}
@@ -64,7 +66,9 @@ const HomeNavBar = (props: StackHeaderProps) => {
           <Button
             size={'$3'}
             unstyled
-            icon={<SettingsIcon width={'35'} height={'100%'} color={neutral400} />}
+            icon={
+              <SettingsIcon width={'35'} height={'100%'} color={neutral400} />
+            }
           />
         }
         onPress={() => props.navigation.navigate('Settings')}
