@@ -3,7 +3,7 @@ import { Image, Text, YStack } from 'tamagui';
 import { StyleSheet } from 'react-native';
 
 import Warning from '../images/icons/warning.svg';
-import { amber50, amber500, slate700 } from '../utils/colors';
+import { amber50, amber500, slate700, yellow500 } from '../utils/colors';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { useNavigation } from '@react-navigation/native';
@@ -22,7 +22,12 @@ const DisclaimerScreen: React.FC = () => {
           }}
         />
         <YStack gap="$2.5">
-          <Warning height={63} width={69} style={{ margin: 'auto' }} />
+          <Warning
+            height={63}
+            width={69}
+            color={yellow500}
+            style={{ margin: 'auto' }}
+          />
           <Text style={styles.header}>Be Cautious</Text>
           <Text style={styles.subheader}>Protecting your privacy</Text>
         </YStack>
