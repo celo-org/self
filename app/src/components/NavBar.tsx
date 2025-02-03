@@ -29,7 +29,7 @@ interface RightActionProps extends ViewProps {
 }
 interface NavBarTitleProps extends TextProps {
   children?: React.ReactNode;
-  size?: 'large' | undefined
+  size?: 'large' | undefined;
 }
 
 export const LeftAction: React.FC<LeftActionProps> = ({
