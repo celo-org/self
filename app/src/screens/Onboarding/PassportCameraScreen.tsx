@@ -40,13 +40,15 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     [store, navigation],
   );
 
+  const onIOSMount = useCallback(() => {
+    if (Platform.OS === 'ios') {
+      const cancelCamera = startCameraScan(onPassportRead);
+      return cancelCamera;
+    }
+  }, [onPassportRead]);
+
   useFocusEffect(() => {
-    useCallback(() => {
-      if (Platform.OS === 'ios') {
-        const cancelCamera = startCameraScan(onPassportRead);
-        return cancelCamera;
-      }
-    }, [onPassportRead]);
+    return onIOSMount();
   });
 
   return (

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
@@ -13,7 +13,7 @@ import QRScan from '../../images/icons/qr_code.svg';
 import QRUpload from '../../images/icons/qr_upload.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { black, slate400, slate500, slate800 } from '../../utils/colors';
+import { black, slate500, slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
 interface QRCodeViewFinderScreenProps {}
