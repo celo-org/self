@@ -1,25 +1,25 @@
 import React from 'react';
 
+import { useNavigation } from '@react-navigation/native';
 import { ArrowRight } from '@tamagui/lucide-icons';
 import { Fieldset, Image, Text, YStack, useWindowDimensions } from 'tamagui';
 
 import { attributeToPosition } from '../../../common/src/constants/constants';
 import CustomButton from '../components/CustomButton';
 import USER_PROFILE from '../images/user_profile.png';
-import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
 import { formatAttribute, getFirstName, maskString } from '../utils/utils';
 
 const NextScreen: React.FC = () => {
   const { height } = useWindowDimensions();
+  const navigation = useNavigation();
   const handleNext = () => {
     setRegistered(true);
-    setSelectedTab('app');
+    navigation.navigate('Home');
   };
-  const { hideData, setSelectedTab } = useNavigationStore();
-
   const { passportData, setRegistered } = useUserStore();
+  const dataHidden = false;
 
   const disclosureOptions: any = {
     gender: 'optional',
@@ -28,10 +28,14 @@ const NextScreen: React.FC = () => {
     date_of_birth: 'optional',
   };
 
+  if (!passportData) {
+    return null;
+  }
+
   return (
-    <YStack f={1}>
+    <YStack f={1} px="$4">
       <YStack alignSelf="center" my="$3">
-        {hideData ? (
+        {dataHidden ? (
           <Image
             w={height > 750 ? 150 : 100}
             h={height > 750 ? 190 : 80}
@@ -64,9 +68,9 @@ const NextScreen: React.FC = () => {
             textDecorationColor: bgGreen,
           }}
         >
-          {hideData
-            ? maskString(getFirstName(passportData?.mrz ?? ''))
-            : getFirstName(passportData?.mrz ?? '')}
+          {dataHidden
+            ? maskString(getFirstName(passportData.mrz))
+            : getFirstName(passportData.mrz)}
         </Text>
       </Text>
 
@@ -118,7 +122,7 @@ const NextScreen: React.FC = () => {
                 {keyFormatted}:
               </Text>
               <Text color={textBlack} fontSize="$6">
-                {hideData
+                {dataHidden
                   ? maskString(mrzAttributeFormatted)
                   : mrzAttributeFormatted}
               </Text>

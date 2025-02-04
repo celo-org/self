@@ -2,19 +2,18 @@ import React, { useEffect } from 'react';
 import 'react-native-get-random-values';
 
 import { SEGMENT_KEY } from '@env';
-import '@ethersproject/shims';
 import {
   EventPlugin,
   PluginType,
   SegmentEvent,
   createClient,
 } from '@segment/analytics-react-native';
-import { useToastController } from '@tamagui/toast';
+import '@ethersproject/shims';
 import { Buffer } from 'buffer';
 import { YStack } from 'tamagui';
 
-import MainScreen from './src/screens/MainScreen';
-import useNavigationStore from './src/stores/navigationStore';
+// Adjust the import path as needed
+import AppNavigation from './src/Navigation';
 import useUserStore from './src/stores/userStore';
 import { bgWhite } from './src/utils/colors';
 import { setupUniversalLinkListener } from './src/utils/qrCode';
@@ -73,21 +72,22 @@ export const createSegmentClient = () => {
 export let segmentClient: ReturnType<typeof createClient> | null = null;
 
 function App(): React.JSX.Element {
-  const toast = useToastController();
-  const { setToast, setSelectedTab } = useNavigationStore();
+  // const toast = useToastController();
+  // const setToast = useNavigationStore(state => state.setToast);
   const initUserStore = useUserStore(state => state.initUserStore);
+  // const setSelectedTab = useNavigationStore(state => state.setSelectedTab);
 
   useEffect(() => {
     initUserStore();
   }, [initUserStore]);
 
-  useEffect(() => {
-    setToast(toast);
-  }, [toast, setToast]);
+  // useEffect(() => {
+  //   setToast(toast);
+  // }, [toast, setToast]);
 
-  useEffect(() => {
-    setSelectedTab('splash');
-  }, [setSelectedTab]);
+  // useEffect(() => {
+  //   setSelectedTab('splash');
+  // }, [setSelectedTab]);
 
   useEffect(() => {
     const cleanup = setupUniversalLinkListener();
@@ -101,9 +101,7 @@ function App(): React.JSX.Element {
 
   return (
     <YStack f={1} bc={bgWhite} h="100%" w="100%">
-      <YStack h="100%" w="100%">
-        <MainScreen />
-      </YStack>
+      <AppNavigation />
     </YStack>
   );
 }

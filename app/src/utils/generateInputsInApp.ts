@@ -15,11 +15,11 @@ import {
   OpenPassportApp,
 } from '../../../common/src/utils/appType';
 import {
-  generateCircuitInputsProve,
+  generateCircuitInputsRegister,
   generateCircuitInputsVCandDisclose,
-} from '../../../common/src/utils/generateInputs';
-import { fetchTreeFromUrl } from '../../../common/src/utils/pubkeyTree';
-import { revealBitmapFromAttributes } from '../../../common/src/utils/revealBitmap';
+} from '../../../common/src/utils/circuits/generateInputs';
+import { fetchTreeFromUrl } from '../../../common/src/utils/trees';
+import { revealBitmapFromAttributes } from '../../../common/src/utils/circuits/formatOutputs';
 import { PassportData } from '../../../common/src/utils/types';
 import useUserStore from '../stores/userStore';
 

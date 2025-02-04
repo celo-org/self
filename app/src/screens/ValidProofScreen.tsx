@@ -1,39 +1,56 @@
 import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { QrCode } from '@tamagui/lucide-icons';
-import { Text, XStack, YStack } from 'tamagui';
+import { useNavigation } from '@react-navigation/native';
 
-import CustomButton from '../components/CustomButton';
-import { bgGreen, textBlack } from '../utils/colors';
-import { scanQRCode } from '../utils/qrCode';
+import { PrimaryButton } from '../components/buttons/PrimaryButton';
+import Description from '../components/typography/Description';
+import { Title } from '../components/typography/Title';
+import { typography } from '../components/typography/styles';
+import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 
 const SuccessScreen: React.FC = () => {
-  return (
-    <YStack f={1}>
-      <YStack f={1} mt="$8">
-        <Text ml="$1" fontSize="$10" color={textBlack}>
-          <Text
-            style={{
-              textDecorationLine: 'underline',
-              textDecorationColor: bgGreen,
-            }}
-          >
-            Success
-          </Text>
-          , the proof has been verified
-        </Text>
-        <XStack f={1} />
-      </YStack>
+  const navigation = useNavigation();
 
-      <CustomButton
-        Icon={<QrCode size={18} color={textBlack} />}
-        text="Scan another QR code"
-        onPress={() => {
-          scanQRCode();
-        }}
-      />
-    </YStack>
+  return (
+    <ExpandableBottomLayout.Layout>
+      <ExpandableBottomLayout.TopSection>
+        <></>
+        {/* TODO Animation */}
+      </ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.BottomSection>
+        <View style={styles.content}>
+          <Title size="large">Identity Verified</Title>
+          <Description>
+            You've successfully proved your identity to{' '}
+            <Text style={typography.strong}>.SWOOSH</Text>
+          </Description>
+        </View>
+        <PrimaryButton
+          onPress={() => {
+            navigation.navigate('WrongProofScreen');
+          }}
+        >
+          {' '}
+          OK{' '}
+        </PrimaryButton>
+      </ExpandableBottomLayout.BottomSection>
+    </ExpandableBottomLayout.Layout>
   );
 };
 
 export default SuccessScreen;
+
+export const styles = StyleSheet.create({
+  content: {
+    paddingTop: 40,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 10,
+  },
+});

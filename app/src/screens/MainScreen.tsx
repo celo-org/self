@@ -76,10 +76,11 @@ import { CircuitName, fetchZkeyAndDat } from '../utils/zkeyDownload';
 // import screens
 import AppScreen from './AppScreen';
 import CameraScreen from './CameraScreen';
+import LaunchScreen from './LaunchScreen';
 import MockDataScreen from './MockDataScreen';
 import NextScreen from './NextScreen';
 import NfcScreen from './NfcScreen';
-import ProveScreen from './ProveScreen';
+import ProveScreen from './ProveFlow/ProveScreen';
 import SplashScreen from './SplashScreen';
 import StartScreen from './StartScreen';
 import UserInfo from './UserInfo';
@@ -230,29 +231,29 @@ const MainScreen: React.FC = () => {
   // }, [modalProofStep]);
 
   const decrementStep = () => {
-    if (selectedTab === 'scan') {
-      setSelectedTab('start');
-    } else if (selectedTab === 'nfc') {
-      setSelectedTab('scan');
-    } else if (selectedTab === 'mock') {
-      setSelectedTab('start');
-    } else if (selectedTab === 'next') {
-      if (passportData?.mockUser) {
-        setSelectedTab('mock');
-      } else {
-        setSelectedTab('nfc');
-      }
-    } else if (selectedTab === 'app') {
-      setSelectedTab('next');
-    } else if (selectedTab === 'prove') {
-      setSelectedTab('app');
-    } else if (selectedTab === 'wrong') {
-      setSelectedTab('app');
-    } else if (selectedTab === 'valid') {
-      setSelectedTab('app');
-    } else if (selectedTab === 'userInfo') {
-      setSelectedTab('app');
-    }
+    // if (selectedTab === 'scan') {
+    //   setSelectedTab('start');
+    // } else if (selectedTab === 'nfc') {
+    //   setSelectedTab('scan');
+    // } else if (selectedTab === 'mock') {
+    //   setSelectedTab('start');
+    // } else if (selectedTab === 'next') {
+    //   if (passportData?.mockUser) {
+    //     setSelectedTab('mock');
+    //   } else {
+    //     setSelectedTab('nfc');
+    //   }
+    // } else if (selectedTab === 'app') {
+    //   setSelectedTab('next');
+    // } else if (selectedTab === 'prove') {
+    //   setSelectedTab('app');
+    // } else if (selectedTab === 'wrong') {
+    //   setSelectedTab('app');
+    // } else if (selectedTab === 'valid') {
+    //   setSelectedTab('app');
+    // } else if (selectedTab === 'userInfo') {
+    //   setSelectedTab('app');
+    // }
   };
 
   useEffect(() => {
@@ -1100,6 +1101,9 @@ const MainScreen: React.FC = () => {
           <Tabs.Content value="next" f={1}>
             <NextScreen />
           </Tabs.Content>
+          <Tabs.Content value="launch" f={1}>
+            <LaunchScreen />
+          </Tabs.Content>
           <Tabs.Content value="app" f={1}>
             <AppScreen
               setSheetAppListOpen={setSheetAppListOpen}
@@ -1107,7 +1111,7 @@ const MainScreen: React.FC = () => {
             />
           </Tabs.Content>
           <Tabs.Content value="prove" f={1}>
-            <ProveScreen setSheetRegisterIsOpen={setSheetRegisterIsOpen} />
+            <ProveScreen />
           </Tabs.Content>
           <Tabs.Content value="valid" f={1}>
             <ValidProofScreen />

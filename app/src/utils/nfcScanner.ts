@@ -4,7 +4,7 @@ import PassportReader from 'react-native-passport-reader';
 // @ts-ignore
 import { Buffer } from 'buffer';
 
-import { parsePassportData } from '../../../common/src/utils/parsePassportData';
+import { parsePassportData } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
@@ -220,6 +220,7 @@ const handleResponseIOS = async (
       ? 'data:image/jpeg;base64,' + parsed?.passportPhoto
       : '',
     mockUser: false,
+    parsed: false,
   };
 
   try {
@@ -286,6 +287,7 @@ const handleResponseAndroid = async (
     encryptedDigest: JSON.parse(encryptedDigest),
     photoBase64: photo?.base64 ?? '',
     mockUser: false,
+    parsed: false,
   };
 
   console.log(
@@ -338,7 +340,7 @@ const handleResponseAndroid = async (
 async function parsePassportDataAsync(passportData: PassportData) {
   const { trackEvent } = useNavigationStore.getState();
   const parsedPassportData = parsePassportData(passportData);
-  await useUserStore.getState().setPassportMetadata(parsedPassportData);
+  useUserStore.getState().setPassportMetadata(parsedPassportData);
   await useUserStore.getState().registerPassportData(passportData);
   trackEvent('Passport Parsed', {
     success: true,
@@ -358,7 +360,7 @@ async function parsePassportDataAsync(passportData: PassportData) {
     country_code: parsedPassportData.countryCode,
     csca_found: parsedPassportData.cscaFound,
     csca_hash_function: parsedPassportData.cscaHashFunction,
-    csca_signature: parsedPassportData.cscaSignature,
+    csca_signature_algorithm: parsedPassportData.cscaSignatureAlgorithm,
     csca_salt_length: parsedPassportData.cscaSaltLength,
     csca_curve_or_exponent: parsedPassportData.cscaCurveOrExponent,
     csca_signature_algorithm_bits:

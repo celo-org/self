@@ -2,7 +2,7 @@ import * as Keychain from 'react-native-keychain';
 
 import { ethers } from 'ethers';
 
-import { PassportMetadata } from '../../../common/src/utils/parsePassportData';
+import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 
 export async function loadSecretOrCreateIt() {

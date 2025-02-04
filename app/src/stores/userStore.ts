@@ -4,7 +4,7 @@ import { DEFAULT_DOB, DEFAULT_DOE, DEFAULT_PNUMBER } from '@env';
 import { create } from 'zustand';
 
 import { generateDscSecret } from '../../../common/src/utils/csca';
-import { PassportMetadata } from '../../../common/src/utils/parsePassportData';
+import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData, Proof } from '../../../common/src/utils/types';
 import {
   loadPassportData,

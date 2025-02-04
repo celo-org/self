@@ -1227,6 +1227,8 @@ PODS:
     - React-Core
   - react-native-nfc-manager (3.16.1):
     - React-Core
+  - react-native-safe-area-context (5.1.0):
+    - React-Core
   - react-native-tracking-transparency (0.1.2):
     - React
   - React-nativeconfig (0.75.4)
@@ -1472,10 +1474,31 @@ PODS:
     - React-logger (= 0.75.4)
     - React-perflogger (= 0.75.4)
     - React-utils (= 0.75.4)
-  - RNCAsyncStorage (2.1.0):
+  - RNCAsyncStorage (1.24.0):
     - React-Core
   - RNFS (2.20.0):
     - React-Core
+  - RNGestureHandler (2.22.1):
+    - DoubleConversion
+    - glog
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNKeychain (8.2.0):
     - React-Core
   - RNSVG (13.4.0):
@@ -1543,6 +1566,7 @@ DEPENDENCIES:
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-nfc-manager (from `../node_modules/react-native-nfc-manager`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-tracking-transparency (from `../node_modules/react-native-tracking-transparency`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1571,6 +1595,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNZipArchive (from `../node_modules/react-native-zip-archive`)
@@ -1671,6 +1696,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-nfc-manager:
     :path: "../node_modules/react-native-nfc-manager"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-tracking-transparency:
     :path: "../node_modules/react-native-tracking-transparency"
   React-nativeconfig:
@@ -1727,6 +1754,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNSVG:
@@ -1795,6 +1824,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-nfc-manager: 5213321cf6c18d879c8092c0bf56806b771ec5ac
+  react-native-safe-area-context: 04803a01f39f31cc6605a5531280b477b48f8a88
   react-native-tracking-transparency: 25ff1ff866e338c137c818bdec20526bb05ffcc1
   React-nativeconfig: 31072ab0146e643594f6959c7f970a04b6c9ddd0
   React-NativeModulesApple: 5df767d9a2197ac25f4d8dd2d4ae1af3624022e2
@@ -1821,8 +1851,9 @@ SPEC CHECKSUMS:
   React-utils: 768a7eb396b7df37aa19389201652eac613490cd
   ReactCodegen: c53f8a0fa088739ee9929820feec1508043c7e6c
   ReactCommon: 03d2d48fcd1329fe3bc4e428a78a0181b68068c2
-  RNCAsyncStorage: cc6479c4acd84cc7004946946c8afe30b018184d
+  RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  RNGestureHandler: e705387b01bba53f4643bdff381ee08c7b9679a1
   RNKeychain: bfe3d12bf4620fe488771c414530bf16e88f3678
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   RNZipArchive: 6d736ee4e286dbbd9d81206b7a4da355596ca04a
@@ -1832,8 +1863,8 @@ SPEC CHECKSUMS:
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SwiftQRScanner: e85a25f9b843e9231dab89a96e441472fe54a724
   SwiftyTesseract: 1f3d96668ae92dc2208d9842c8a59bea9fad2cbb
-  Yoga: a9ef4f5c2cd79ad812110525ef61048be6a582a4
+  Yoga: b05994d1933f507b0a28ceaa4fdb968dc18da178
 
 PODFILE CHECKSUM: a5761927116120f511f409f5249a18a8c626545c
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
