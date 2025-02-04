@@ -25,11 +25,11 @@ import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScr
 import ProveScreen from './screens/ProveFlow/ProveScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import SettingsScreen from './screens/SettingsScreen';
+import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
 import WrongProofScreen from './screens/WrongProofScreen';
 import { black, neutral400, white } from './utils/colors';
-import SplashScreen from './screens/SplashScreen';
 
 const DefaultNavBar = (props: StackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;

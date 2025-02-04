@@ -5,10 +5,10 @@ import pako from 'pako';
 
 import { Mode, OpenPassportApp } from '../../../common/src/utils/appType';
 import { getCircuitNameOld } from '../../../common/src/utils/certificate_parsing/parseCertificateSimple';
+import { parsePassportData } from '../../../common/src/utils/parsePassportData';
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { downloadZkey } from './zkeyDownload';
-import { parsePassportData } from '../../../common/src/utils/parsePassportData';
 
 export default async function handleQRCodeScan(result: string) {
   try {
