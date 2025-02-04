@@ -22,6 +22,7 @@ import NextScreen from './screens/NextScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
+import ProveScreen from './screens/ProveScreen';
 import QRCodeViewFinderScreen from './screens/QRCode/ViewFinder';
 import SettingsScreen from './screens/SettingsScreen';
 import StartScreen from './screens/StartScreen';
@@ -172,8 +173,21 @@ const RootStack = createStackNavigator({
         headerShown: false,
       },
     },
+    ProveScreen: {
+      screen: ProveScreen,
+      options: {
+        title: 'Request Proof',
+        headerStyle: {
+          backgroundColor: black,
+        },
+        headerTintColor: white,
+      },
+    },
     ValidProofScreen: {
       screen: ValidProofScreen,
+      options: {
+        headerShown: false,
+      },
     },
     WrongProofScreen: {
       screen: WrongProofScreen,

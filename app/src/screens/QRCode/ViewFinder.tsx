@@ -49,7 +49,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
         setDoneScanningQR(true);
         const encodedData = parseUrlParams(uri!);
         await handleQRCodeScan(encodedData.get('data')!);
-        navigation.navigate('ValidProofScreen');
+        navigation.navigate('ProveScreen');
       }
     },
     [store, navigation, doneScanningQR],

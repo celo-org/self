@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
+import { useNavigation } from '@react-navigation/native';
 import { CheckCircle } from '@tamagui/lucide-icons';
 import io, { Socket } from 'socket.io-client';
-import { Progress, Spinner, Text, XStack, YStack } from 'tamagui';
+import { Text, YStack } from 'tamagui';
 
 import {
   DEVELOPMENT_MODE,
   max_cert_bytes,
 } from '../../../common/src/constants/constants';
 import {
-  DisclosureOptions,
+  ArgumentsProveOffChain,
   OpenPassportApp,
 } from '../../../common/src/utils/appType';
 import {
@@ -23,46 +24,43 @@ import {
 } from '../../../common/src/utils/csca';
 import { buildAttestation } from '../../../common/src/utils/openPassportAttestation';
 import { parsePassportData } from '../../../common/src/utils/parsePassportData';
-import CustomButton from '../components/CustomButton';
+import Disclosures from '../components/Disclosures';
+import { PrimaryButton } from '../components/buttons/PrimaryButton';
+import { BodyText } from '../components/typography/BodyText';
+import { Caption } from '../components/typography/styles';
+import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
-import {
-  bgGreen,
-  greenColorLight,
-  separatorColor,
-  textBlack,
-} from '../utils/colors';
+import { black, slate300, white } from '../utils/colors';
 import { generateCircuitInputsInApp } from '../utils/generateInputsInApp';
 import { generateProof } from '../utils/prover';
 import { CircuitName } from '../utils/zkeyDownload';
 
-interface ProveScreenProps {
-  setSheetRegisterIsOpen: (value: boolean) => void;
-}
-
-const ProveScreen: React.FC<ProveScreenProps> = ({
-  setSheetRegisterIsOpen,
-}) => {
+const ProveScreen: React.FC = () => {
+  const { navigate } = useNavigation();
   const [generatingProof, setGeneratingProof] = useState(false);
   const selectedApp = useNavigationStore(
-    state => state.selectedApp,
+    state => state.selectedApp || { args: {} },
   ) as OpenPassportApp;
   const disclosureOptions =
     selectedApp.mode === 'register'
       ? {}
-      : (selectedApp.args as any).disclosureOptions || {};
-  const { toast, setSelectedTab, isZkeyDownloading, zkeyDownloadedPercentage } =
+      : (selectedApp.args as ArgumentsProveOffChain).disclosureOptions || {};
+  const { toast, isZkeyDownloading, zkeyDownloadedPercentage } =
     useNavigationStore();
 
-  const { setProofVerificationResult, registered, passportData } =
-    useUserStore();
+  useEffect(() => {
+    console.debug('zkeyDownloadedPercentage', zkeyDownloadedPercentage);
+  }, [zkeyDownloadedPercentage]);
+
+  const { setProofVerificationResult, passportData } = useUserStore();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
   if (!passportData) {
     return (
-      <Text mt="$10" fontSize="$9" color={textBlack} textAlign="center">
+      <Text mt="$10" fontSize="$9" color={black} textAlign="center">
         No passport data
       </Text>
     );
@@ -91,6 +89,10 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
     });
   };
 
+  function goToErrorScreen() {
+    navigate('WrongProofScreen');
+  }
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     let newSocket: Socket | null = null;
@@ -118,6 +120,7 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
             type: 'error',
           },
         });
+        goToErrorScreen();
       });
 
       newSocket.on('proof_verification_result', result => {
@@ -131,7 +134,7 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
             },
           });
           setTimeout(() => {
-            setSelectedTab('valid');
+            navigate('ValidProofScreen');
           }, 700);
         } else {
           toast.show('❌', {
@@ -141,7 +144,7 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
             },
           });
           setTimeout(() => {
-            setSelectedTab('wrong');
+            goToErrorScreen();
           }, 700);
         }
       });
@@ -246,6 +249,7 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
         },
       });
       console.error('Error in handleProve:', error);
+      goToErrorScreen();
       if (socket) {
         socket.emit('proof_generation_failed', {
           sessionId: selectedApp.sessionId,
@@ -257,166 +261,40 @@ const ProveScreen: React.FC<ProveScreenProps> = ({
     }
   };
 
-  const disclosureFieldsToText = (
-    key: keyof DisclosureOptions,
-    option: any,
-  ) => {
-    if (key === 'ofac') {
-      return option === true ? 'My name is not present in the OFAC list.' : '';
-    } else if (option.enabled) {
-      switch (key) {
-        case 'minimumAge':
-          return `I am older than ${option.value} years old.`;
-        case 'nationality':
-          return option.value === 'Any'
-            ? 'The issuer country of my passport.'
-            : `I have a valid passport from ${option.value}.`;
-        case 'excludedCountries':
-          return option.value.length > 0
-            ? `I am not part of the following countries: ${option.value.join(
-                ', ',
-              )}.`
-            : '';
-        default:
-          return '';
-      }
-    }
-    return '';
-  };
-
-  const hasEnabledDisclosureOptions = Object.values(disclosureOptions).some(
-    (option: any) => option.enabled,
-  );
-
   return (
-    <YStack f={1} pt="$8">
-      {hasEnabledDisclosureOptions ? (
-        <YStack mt="$4">
-          <Text fontSize="$9">
-            <Text
-              fow="bold"
-              style={{
-                textDecorationLine: 'underline',
-                textDecorationColor: bgGreen,
-              }}
-            >
-              {selectedApp.appName}
-            </Text>{' '}
-            is requesting you to prove the following information.
-          </Text>
-          <Text
-            mt="$3"
-            fontSize="$8"
-            color={textBlack}
-            style={{ opacity: 0.9 }}
-          >
-            No{' '}
-            <Text
-              style={{
-                textDecorationLine: 'underline',
-                textDecorationColor: bgGreen,
-              }}
-            >
-              other
-            </Text>{' '}
-            information than the one selected below will be shared with{' '}
-            {selectedApp.appName}.
-          </Text>
+    <ExpandableBottomLayout.Layout>
+      <ExpandableBottomLayout.TopSection>
+        <YStack alignItems="center">
+          <Text>Check</Text>
+          <BodyText fontSize={24} color={slate300} textAlign="center">
+            <Text color={white}>{selectedApp.appName}</Text> is requesting that
+            you prove the following information:
+          </BodyText>
         </YStack>
-      ) : (
-        <Text fontSize="$9">
-          <Text
-            fow="bold"
-            style={{
-              textDecorationLine: 'underline',
-              textDecorationColor: bgGreen,
-            }}
-          >
-            {selectedApp.appName}
-          </Text>{' '}
-          is requesting you to prove you own a valid passport.
-        </Text>
-      )}
-
-      <YStack mt="$6">
-        {Object.entries(disclosureOptions).map(
-          ([key, option]: [string, any]) => {
-            const text = disclosureFieldsToText(
-              key as keyof DisclosureOptions,
-              option,
-            );
-            return text ? (
-              <XStack key={key} gap="$3" mb="$3" ml="$3">
-                <CheckCircle size={16} mt="$1.5" />
-                <Text fontSize="$7" color={textBlack} w="85%">
-                  {text}
-                </Text>
-              </XStack>
-            ) : null;
-          },
-        )}
-      </YStack>
-
-      <XStack f={1} />
-
-      {isZkeyDownloading[circuitName as CircuitName] && (
-        <YStack alignItems="center" gap="$2" mb="$3" mx="$8">
-          <Text style={{ fontStyle: 'italic' }}>downloading files...</Text>
-          <Progress
-            key={circuitName}
-            size="$1"
-            value={zkeyDownloadedPercentage}
-          >
-            <Progress.Indicator
-              animation="bouncy"
-              backgroundColor={greenColorLight}
-            />
-          </Progress>
-        </YStack>
-      )}
-
-      <CustomButton
-        Icon={
-          isZkeyDownloading[circuitName as CircuitName] ? (
-            <Spinner />
-          ) : isConnecting ? (
-            <Spinner />
-          ) : generatingProof ? (
-            <Spinner />
-          ) : (
-            <CheckCircle />
-          )
-        }
-        isDisabled={
-          isZkeyDownloading[circuitName as CircuitName] ||
-          isConnecting ||
-          generatingProof
-        }
-        text={
-          isZkeyDownloading[circuitName as CircuitName]
-            ? 'Downloading files...'
-            : isConnecting
-            ? 'Connecting...'
-            : generatingProof
-            ? 'Generating Proof...'
-            : 'Verify'
-        }
-        onPress={registered ? handleProve : () => setSheetRegisterIsOpen(true)}
-        bgColor={isConnecting || generatingProof ? separatorColor : bgGreen}
-        disabledOnPress={() =>
-          toast.show('⏳', {
-            message: isZkeyDownloading[circuitName as CircuitName]
-              ? '⏳ Downloading files...'
-              : isConnecting
-              ? 'Connecting to server...'
-              : 'Proof is generating',
-            customData: {
-              type: 'info',
-            },
-          })
-        }
-      />
-    </YStack>
+      </ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.BottomSection>
+        <Disclosures disclosures={disclosureOptions} />
+        <Caption
+          textAlign="center"
+          marginBottom={20}
+          marginTop={10}
+          borderRadius={4}
+        >
+          Self ID will confirm that these details are accurate and none of your
+          confidential info will be revealed to {selectedApp.appName}
+        </Caption>
+        <PrimaryButton
+          onPress={handleProve}
+          disabled={
+            generatingProof ||
+            isConnecting ||
+            isZkeyDownloading[circuitName as CircuitName]
+          }
+        >
+          Verify with Passcode
+        </PrimaryButton>
+      </ExpandableBottomLayout.BottomSection>
+    </ExpandableBottomLayout.Layout>
   );
 };
 
