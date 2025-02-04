@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import {
   useFocusEffect,
@@ -10,15 +10,18 @@ import { View, XStack, YStack } from 'tamagui';
 
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import {
-  CameraView,
-  CameraViewProps,
-} from '../../components/native/CameraView';
+  PassportCamera,
+  PassportCameraProps,
+} from '../../components/native/PassportCamera';
+import Additional from '../../components/typography/Additional';
+import Description from '../../components/typography/Description';
+import { Title } from '../../components/typography/Title';
 import Bulb from '../../images/icons/passport_camera_bulb.svg';
 import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { startCameraScan } from '../../utils/cameraScanner';
-import { black, slate400, slate500 } from '../../utils/colors';
+import { slate800 } from '../../utils/colors';
 
 interface PassportNFCScanScreen {}
 
@@ -26,7 +29,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const store = useUserStore();
-  const onPassportRead = useCallback<CameraViewProps['onPassportRead']>(
+  const onPassportRead = useCallback<PassportCameraProps['onPassportRead']>(
     (error, result) => {
       if (error) {
         // TODO: handle error better
@@ -54,46 +57,42 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <CameraView onPassportRead={onPassportRead} isMounted={isFocused} />
+        <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5">
-          <YStack alignItems="center" gap="$5" pb="$2.5">
-            <Text style={styles.title}>Scan your passport</Text>
-            <XStack gap="$6" alignSelf="flex-start">
-              <View>
-                <Scan height={40} width={40} />
+          <YStack alignItems="center" gap="$6" pb="$2.5">
+            <Title>Scan your passport</Title>
+            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
+              <View pt="$2">
+                <Scan height={40} width={40} color={slate800} />
               </View>
-              <View
-                alignItems="flex-start"
-                justifyContent="flex-start"
-                maxWidth="70%"
-              >
-                <Text style={styles.subheader}>
+              <View maxWidth="75%">
+                <Description style={styles.subheader}>
                   Open to the photograph page
-                </Text>
-                <Text style={styles.description}>
+                </Description>
+                <Additional style={styles.description}>
                   Position all four corners of the first passport page clearly
                   in the frame.
-                </Text>
+                </Additional>
               </View>
             </XStack>
-            <XStack gap="$6" alignSelf="flex-start">
-              <View>
-                <Bulb height={40} width={40} />
+            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
+              <View pt="$2">
+                <Bulb height={40} width={40} color={slate800} />
               </View>
               <View
                 alignItems="flex-start"
                 justifyContent="flex-start"
-                maxWidth="70%"
+                maxWidth="75%"
               >
-                <Text style={styles.subheader}>
-                  Avoid dim lighting or glare{' '}
-                </Text>
-                <Text style={styles.description}>
+                <Description style={styles.subheader}>
+                  Avoid dim lighting or glare
+                </Description>
+                <Additional style={styles.description}>
                   Ensure that the text and photo are clearly readable and well
                   lit.
-                </Text>
+                </Additional>
               </View>
             </XStack>
           </YStack>
@@ -112,24 +111,12 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
 export default PassportCameraScreen;
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 28,
-    fontWeight: '400',
-    lineHeight: 35,
-    color: black,
-  },
   subheader: {
-    textAlignVertical: 'center',
-    color: slate500,
-    fontWeight: '500',
-    fontSize: 18,
-    lineHeight: 23,
-    textAlign: 'center',
+    color: slate800,
+    textAlign: 'left',
+    textAlignVertical: 'top',
   },
   description: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 18,
-    color: slate400,
+    textAlign: 'left',
   },
 });

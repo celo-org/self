@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { View, XStack, YStack } from 'tamagui';
@@ -9,11 +9,14 @@ import {
   QRCodeScannerView,
   QRCodeScannerViewProps,
 } from '../../components/native/QRCodeScanner';
+import Additional from '../../components/typography/Additional';
+import Description from '../../components/typography/Description';
+import { Title } from '../../components/typography/Title';
 import QRScan from '../../images/icons/qr_code.svg';
 import QRUpload from '../../images/icons/qr_upload.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { black, slate500, slate800 } from '../../utils/colors';
+import { slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
 interface QRCodeViewFinderScreenProps {}
@@ -65,38 +68,38 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5">
-          <YStack alignItems="center" gap="$5" pb="$2.5">
-            <Text style={styles.title}>Verify your Self ID</Text>
-            <XStack gap="$6" alignSelf="flex-start">
-              <View>
+          <YStack alignItems="center" gap="$6" pb="$2.5">
+            <Title>Verify your Self ID</Title>
+            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
+              <View pt="$2">
                 <QRScan height={40} width={40} color={slate800} />
               </View>
-              <View
-                alignItems="flex-start"
-                justifyContent="flex-start"
-                maxWidth="70%"
-              >
-                <Text style={styles.subheader}>Scan a partner's QR code </Text>
-                <Text style={styles.description}>
+              <View maxWidth="75%">
+                <Description style={styles.subheader}>
+                  Scan a partner's QR code
+                </Description>
+                <Additional style={styles.description}>
                   Look for a QR code from a Self ID partner and position it in
                   the camera frame above.
-                </Text>
+                </Additional>
               </View>
             </XStack>
-            <XStack gap="$6" alignSelf="flex-start">
-              <View>
+            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
+              <View pt="$2">
                 <QRUpload height={40} width={40} color={slate800} />
               </View>
               <View
                 alignItems="flex-start"
                 justifyContent="flex-start"
-                maxWidth="70%"
+                maxWidth="75%"
               >
-                <Text style={styles.subheader}>Upload from photo roll</Text>
-                <Text style={styles.description}>
+                <Description style={styles.subheader}>
+                  Upload from photo roll
+                </Description>
+                <Additional style={styles.description}>
                   You can also upload an image of a Self ID QR code from your
                   camera roll instead.
-                </Text>
+                </Additional>
               </View>
             </XStack>
           </YStack>
@@ -113,24 +116,12 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
 export default QRCodeViewFinderScreen;
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 28,
-    fontWeight: '400',
-    lineHeight: 35,
-    color: black,
-  },
   subheader: {
-    textAlignVertical: 'center',
     color: slate800,
-    fontWeight: '500',
-    fontSize: 18,
-    lineHeight: 23,
-    textAlign: 'center',
+    textAlign: 'left',
+    textAlignVertical: 'top',
   },
   description: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 18,
-    color: slate500,
+    textAlign: 'left',
   },
 });

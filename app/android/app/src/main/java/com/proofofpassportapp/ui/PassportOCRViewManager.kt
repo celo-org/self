@@ -6,19 +6,16 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactPropGroup
 import com.facebook.react.uimanager.events.RCTEventEmitter
-import example.jllarraz.com.passportreader.common.IntentData
 import org.jmrtd.lds.icao.MRZInfo
 
 
-class CameraViewManager(
+class PassportOCRViewManager(
     open val reactContext: ReactApplicationContext
 ) : ViewGroupManager<FrameLayout>(), CameraMLKitFragment.CameraMLKitCallback {
     private var propWidth: Int? = null
@@ -121,7 +118,7 @@ class CameraViewManager(
     }
 
     companion object {
-        private const val REACT_CLASS = "CameraViewManager"
+        private const val REACT_CLASS = "PassportOCRViewManager"
         private const val COMMAND_CREATE = 1
         private const val COMMAND_DESTROY = 2
         private const val SUCCESS_EVENT = "onPassportReadResult"

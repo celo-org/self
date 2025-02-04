@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { CheckCircle } from '@tamagui/lucide-icons';
 import io, { Socket } from 'socket.io-client';
 import { Text, YStack } from 'tamagui';
 
