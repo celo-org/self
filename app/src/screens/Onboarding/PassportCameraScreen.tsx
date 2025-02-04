@@ -1,18 +1,24 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import { View, XStack, YStack } from 'tamagui';
 
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
+import {
+  CameraView,
+  CameraViewProps,
+} from '../../components/native/CameraView';
 import Bulb from '../../images/icons/passport_camera_bulb.svg';
 import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import useUserStore from '../../stores/userStore';
 import { startCameraScan } from '../../utils/cameraScanner';
 import { black, slate400, slate500 } from '../../utils/colors';
-
-import useUserStore from '../../stores/userStore';
-import { CameraView, CameraViewProps } from '../../components/CameraView';
 
 interface PassportNFCScanScreen {}
 
@@ -33,6 +39,15 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     },
     [store, navigation],
   );
+
+  useFocusEffect(() => {
+    useCallback(() => {
+      if (Platform.OS === 'ios') {
+        const cancelCamera = startCameraScan(onPassportRead);
+        return cancelCamera;
+      }
+    }, [onPassportRead]);
+  });
 
   return (
     <ExpandableBottomLayout.Layout>

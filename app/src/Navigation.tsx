@@ -22,6 +22,7 @@ import NextScreen from './screens/NextScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
+import QRCodeViewFinderScreen from './screens/QRCode/ViewFinder';
 import SettingsScreen from './screens/SettingsScreen';
 import StartScreen from './screens/StartScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
@@ -162,6 +163,12 @@ const RootStack = createStackNavigator({
       screen: DisclaimerScreen,
       options: {
         title: 'Disclaimer',
+        headerShown: false,
+      },
+    },
+    QRCodeViewFinder: {
+      screen: QRCodeViewFinderScreen,
+      options: {
         headerShown: false,
       },
     },

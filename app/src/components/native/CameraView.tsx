@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { NativeSyntheticEvent, requireNativeComponent } from 'react-native';
+import { PixelRatio, UIManager, findNodeHandle } from 'react-native';
+
+import { extractMRZInfo } from '../../utils/utils';
 
 interface RCTCameraViewProps {
   ref: ReturnType<typeof useRef>;
@@ -20,9 +23,6 @@ interface RCTCameraViewProps {
 const RCT_COMPONENT_NAME = 'CameraViewManager';
 const CameraViewManager: React.ComponentType<RCTCameraViewProps> =
   requireNativeComponent(RCT_COMPONENT_NAME);
-
-import { PixelRatio, UIManager, findNodeHandle } from 'react-native';
-import { extractMRZInfo } from '../utils/utils';
 
 export interface CameraViewProps {
   isMounted: boolean;
