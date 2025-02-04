@@ -1,21 +1,23 @@
+import React, { useEffect } from 'react';
+import 'react-native-get-random-values';
+
+import { SEGMENT_KEY } from '@env';
+import '@ethersproject/shims';
+import {
+  EventPlugin,
+  PluginType,
+  SegmentEvent,
+  createClient,
+} from '@segment/analytics-react-native';
+import { useToastController } from '@tamagui/toast';
+import { Buffer } from 'buffer';
+import { YStack } from 'tamagui';
+
 import MainScreen from './src/screens/MainScreen';
 import useNavigationStore from './src/stores/navigationStore';
 import useUserStore from './src/stores/userStore';
 import { bgWhite } from './src/utils/colors';
 import { setupUniversalLinkListener } from './src/utils/qrCode';
-import { SEGMENT_KEY } from '@env';
-import '@ethersproject/shims';
-import {
-  createClient,
-  EventPlugin,
-  PluginType,
-  SegmentEvent,
-} from '@segment/analytics-react-native';
-import { useToastController } from '@tamagui/toast';
-import { Buffer } from 'buffer';
-import React, { useEffect } from 'react';
-import 'react-native-get-random-values';
-import { YStack } from 'tamagui';
 
 global.Buffer = Buffer;
 

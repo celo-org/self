@@ -1,3 +1,52 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Linking,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import DatePicker from 'react-native-date-picker';
+import Dialog from 'react-native-dialog';
+
+import {
+  ArrowRight,
+  CalendarSearch,
+  CheckCircle2,
+  ChevronLeft,
+  Eraser,
+  HelpCircle,
+  Info,
+  IterationCw,
+  Share,
+  ShieldCheck,
+  X,
+} from '@tamagui/lucide-icons';
+// import images
+import { ToastViewport } from '@tamagui/toast';
+// import constants
+import { flag } from 'country-emoji';
+import getCountryISO2 from 'country-iso-3-to-2';
+import {
+  Button,
+  Fieldset,
+  H2,
+  H4,
+  Image,
+  Input,
+  Label,
+  Separator,
+  Sheet,
+  Switch,
+  Tabs,
+  Text,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui';
+
 import { countryCodes } from '../../../common/src/constants/constants';
 // import components
 import CustomButton from '../components/CustomButton';
@@ -36,53 +85,6 @@ import StartScreen from './StartScreen';
 import UserInfo from './UserInfo';
 import ValidProofScreen from './ValidProofScreen';
 import WrongProofScreen from './WrongProofScreen';
-import {
-  ArrowRight,
-  CalendarSearch,
-  CheckCircle2,
-  ChevronLeft,
-  Eraser,
-  HelpCircle,
-  Info,
-  IterationCw,
-  Share,
-  ShieldCheck,
-  X,
-} from '@tamagui/lucide-icons';
-// import images
-import { ToastViewport } from '@tamagui/toast';
-// import constants
-import { flag } from 'country-emoji';
-import getCountryISO2 from 'country-iso-3-to-2';
-import React, { useEffect, useState } from 'react';
-import {
-  Linking,
-  NativeEventEmitter,
-  NativeModules,
-  Platform,
-  Pressable,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import Dialog from 'react-native-dialog';
-import {
-  Button,
-  Fieldset,
-  H2,
-  H4,
-  Image,
-  Input,
-  Label,
-  Separator,
-  Sheet,
-  Switch,
-  Tabs,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui';
 
 const emitter =
   Platform.OS === 'android'

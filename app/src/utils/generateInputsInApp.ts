@@ -1,9 +1,12 @@
+import { SMT } from '@openpassport/zk-kit-smt';
+import { poseidon2 } from 'poseidon-lite';
+
 import namejson from '../../../common/ofacdata/outputs/nameSMT.json';
 import {
-  circuitToSelectorMode,
   DEFAULT_MAJORITY,
-  getCountryCode,
   PASSPORT_ATTESTATION_ID,
+  circuitToSelectorMode,
+  getCountryCode,
 } from '../../../common/src/constants/constants';
 import {
   ArgumentsDisclose,
@@ -12,15 +15,13 @@ import {
   OpenPassportApp,
 } from '../../../common/src/utils/appType';
 import {
-  generateCircuitInputsVCandDisclose,
   generateCircuitInputsProve,
+  generateCircuitInputsVCandDisclose,
 } from '../../../common/src/utils/generateInputs';
 import { fetchTreeFromUrl } from '../../../common/src/utils/pubkeyTree';
 import { revealBitmapFromAttributes } from '../../../common/src/utils/revealBitmap';
 import { PassportData } from '../../../common/src/utils/types';
 import useUserStore from '../stores/userStore';
-import { SMT } from '@openpassport/zk-kit-smt';
-import { poseidon2 } from 'poseidon-lite';
 
 export const generateCircuitInputsInApp = async (
   passportData: PassportData,

@@ -1,3 +1,8 @@
+import React from 'react';
+
+import { ArrowRight } from '@tamagui/lucide-icons';
+import { Fieldset, Image, Text, YStack, useWindowDimensions } from 'tamagui';
+
 import { attributeToPosition } from '../../../common/src/constants/constants';
 import CustomButton from '../components/CustomButton';
 import USER_PROFILE from '../images/user_profile.png';
@@ -5,9 +10,6 @@ import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
 import { formatAttribute, getFirstName, maskString } from '../utils/utils';
-import { ArrowRight } from '@tamagui/lucide-icons';
-import React from 'react';
-import { Fieldset, Image, Text, useWindowDimensions, YStack } from 'tamagui';
 
 const NextScreen: React.FC = () => {
   const { height } = useWindowDimensions();

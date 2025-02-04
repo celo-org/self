@@ -1,8 +1,10 @@
-import useNavigationStore from '../stores/navigationStore';
-import NetInfo from '@react-native-community/netinfo';
-import axios from 'axios';
 import RNFS from 'react-native-fs';
 import { unzip } from 'react-native-zip-archive';
+
+import NetInfo from '@react-native-community/netinfo';
+import axios from 'axios';
+
+import useNavigationStore from '../stores/navigationStore';
 
 const zkeyZipUrls = {
   prove_rsa_65537_sha256:

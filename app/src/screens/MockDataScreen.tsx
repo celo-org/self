@@ -1,14 +1,8 @@
-import { countryCodes } from '../../../common/src/constants/constants';
-import { genMockPassportData } from '../../../common/src/utils/genMockPassportData';
-import { parsePassportData } from '../../../common/src/utils/parsePassportData';
-import CustomButton from '../components/CustomButton';
-import useNavigationStore from '../stores/navigationStore';
-import useUserStore from '../stores/userStore';
-import { borderColor, textBlack } from '../utils/colors';
+import React, { useCallback, useState } from 'react';
+
 import { ChevronDown, Cpu, Minus, Plus } from '@tamagui/lucide-icons';
 import { flag } from 'country-emoji';
 import getCountryISO2 from 'country-iso-3-to-2';
-import React, { useCallback, useState } from 'react';
 import {
   Button,
   Fieldset,
@@ -18,6 +12,14 @@ import {
   XStack,
   YStack,
 } from 'tamagui';
+
+import { countryCodes } from '../../../common/src/constants/constants';
+import { genMockPassportData } from '../../../common/src/utils/genMockPassportData';
+import { parsePassportData } from '../../../common/src/utils/parsePassportData';
+import CustomButton from '../components/CustomButton';
+import useNavigationStore from '../stores/navigationStore';
+import useUserStore from '../stores/userStore';
+import { borderColor, textBlack } from '../utils/colors';
 
 interface MockDataScreenProps {
   onCountryPress: () => void;

@@ -1,3 +1,8 @@
+import { resetGenericPassword } from 'react-native-keychain';
+
+import { DEFAULT_DOB, DEFAULT_DOE, DEFAULT_PNUMBER } from '@env';
+import { create } from 'zustand';
+
 import { generateDscSecret } from '../../../common/src/utils/csca';
 import { PassportMetadata } from '../../../common/src/utils/parsePassportData';
 import { PassportData, Proof } from '../../../common/src/utils/types';
@@ -8,9 +13,6 @@ import {
   storePassportData,
   storePassportMetadata,
 } from '../utils/keychain';
-import { DEFAULT_DOB, DEFAULT_DOE, DEFAULT_PNUMBER } from '@env';
-import { resetGenericPassword } from 'react-native-keychain';
-import { create } from 'zustand';
 
 interface UserState {
   passportNumber: string;

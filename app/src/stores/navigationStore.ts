@@ -1,11 +1,12 @@
+import { useToastController } from '@tamagui/toast';
+import { create } from 'zustand';
+
 import { OpenPassportApp } from '../../../common/src/utils/appType';
 import { segmentClient } from '../../App';
 import {
   IsZkeyDownloading,
   ShowWarningModalProps,
 } from '../utils/zkeyDownload';
-import { useToastController } from '@tamagui/toast';
-import { create } from 'zustand';
 
 interface NavigationState {
   isZkeyDownloading: IsZkeyDownloading;
