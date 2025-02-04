@@ -8,11 +8,13 @@ import { getCircuitNameOld } from '../../../common/src/utils/certificate_parsing
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { downloadZkey } from './zkeyDownload';
+import { parsePassportData } from '../../../common/src/utils/parsePassportData';
 
 export default async function handleQRCodeScan(result: string) {
   try {
-    const { passportData, passportMetadata } = useUserStore.getState();
-    if (passportData && passportMetadata) {
+    const { passportData } = useUserStore.getState();
+    const { setSelectedApp } = useNavigationStore.getState();
+    if (passportData) {
       const decodedResult = atob(result);
       const uint8Array = new Uint8Array(
         decodedResult.split('').map(char => char.charCodeAt(0)),
@@ -20,6 +22,7 @@ export default async function handleQRCodeScan(result: string) {
       const decompressedData = pako.inflate(uint8Array);
       const unpackedData = msgpack.decode(decompressedData);
       const openPassportApp: OpenPassportApp = unpackedData;
+      const passportMetadata = parsePassportData(passportData);
 
       const circuitName =
         openPassportApp.mode === 'vc_and_disclose'
@@ -30,7 +33,7 @@ export default async function handleQRCodeScan(result: string) {
               passportMetadata.signedAttrHashFunction,
             );
       await downloadZkey(circuitName as any);
-
+      setSelectedApp(openPassportApp);
       console.log('✅', {
         message: 'QR code scanned',
         customData: {

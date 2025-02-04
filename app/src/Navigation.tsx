@@ -22,13 +22,14 @@ import NextScreen from './screens/NextScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
-import ProveScreen from './screens/ProveScreen';
-import QRCodeViewFinderScreen from './screens/QRCode/ViewFinder';
+import ProveScreen from './screens/ProveFlow/ProveScreen';
+import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import SettingsScreen from './screens/SettingsScreen';
 import StartScreen from './screens/StartScreen';
 import ValidProofScreen from './screens/ValidProofScreen';
 import WrongProofScreen from './screens/WrongProofScreen';
 import { black, neutral400, white } from './utils/colors';
+import SplashScreen from './screens/SplashScreen';
 
 const DefaultNavBar = (props: StackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
@@ -97,20 +98,24 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'Launch',
+  initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
   screens: {
+    Splash: {
+      screen: SplashScreen,
+      options: {
+        headerShown: false,
+      },
+    },
     Launch: {
-      if: () => true, // TODO: useIsNewUser
       screen: LaunchScreen,
       options: {
         headerShown: false,
       },
     },
     Start: {
-      if: () => true, // TODO: useIsNewUser
       screen: StartScreen,
       options: {
         headerShown: false,

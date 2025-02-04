@@ -80,7 +80,7 @@ import LaunchScreen from './LaunchScreen';
 import MockDataScreen from './MockDataScreen';
 import NextScreen from './NextScreen';
 import NfcScreen from './NfcScreen';
-import ProveScreen from './ProveScreen';
+import ProveScreen from './ProveFlow/ProveScreen';
 import SplashScreen from './SplashScreen';
 import StartScreen from './StartScreen';
 import UserInfo from './UserInfo';

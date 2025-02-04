@@ -7,33 +7,33 @@ import { Text, YStack } from 'tamagui';
 import {
   DEVELOPMENT_MODE,
   max_cert_bytes,
-} from '../../../common/src/constants/constants';
+} from '../../../../common/src/constants/constants';
 import {
   ArgumentsProveOffChain,
   OpenPassportApp,
-} from '../../../common/src/utils/appType';
+} from '../../../../common/src/utils/appType';
 import {
   getCircuitNameOld,
   parseCertificateSimple,
-} from '../../../common/src/utils/certificate_parsing/parseCertificateSimple';
+} from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 import {
   generateCircuitInputsDSC,
   getCSCAFromSKI,
   sendCSCARequest,
-} from '../../../common/src/utils/csca';
-import { buildAttestation } from '../../../common/src/utils/openPassportAttestation';
-import { parsePassportData } from '../../../common/src/utils/parsePassportData';
-import Disclosures from '../components/Disclosures';
-import { PrimaryButton } from '../components/buttons/PrimaryButton';
-import { BodyText } from '../components/typography/BodyText';
-import { Caption } from '../components/typography/styles';
-import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
-import useNavigationStore from '../stores/navigationStore';
-import useUserStore from '../stores/userStore';
-import { black, slate300, white } from '../utils/colors';
-import { generateCircuitInputsInApp } from '../utils/generateInputsInApp';
-import { generateProof } from '../utils/prover';
-import { CircuitName } from '../utils/zkeyDownload';
+} from '../../../../common/src/utils/csca';
+import { buildAttestation } from '../../../../common/src/utils/openPassportAttestation';
+import { parsePassportData } from '../../../../common/src/utils/parsePassportData';
+import Disclosures from '../../components/Disclosures';
+import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { BodyText } from '../../components/typography/BodyText';
+import { Caption } from '../../components/typography/styles';
+import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import useNavigationStore from '../../stores/navigationStore';
+import useUserStore from '../../stores/userStore';
+import { black, slate300, white } from '../../utils/colors';
+import { generateCircuitInputsInApp } from '../../utils/generateInputsInApp';
+import { generateProof } from '../../utils/prover';
+import { CircuitName } from '../../utils/zkeyDownload';
 
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
@@ -45,12 +45,7 @@ const ProveScreen: React.FC = () => {
     selectedApp.mode === 'register'
       ? {}
       : (selectedApp.args as ArgumentsProveOffChain).disclosureOptions || {};
-  const { toast, isZkeyDownloading, zkeyDownloadedPercentage } =
-    useNavigationStore();
-
-  useEffect(() => {
-    console.debug('zkeyDownloadedPercentage', zkeyDownloadedPercentage);
-  }, [zkeyDownloadedPercentage]);
+  const { isZkeyDownloading } = useNavigationStore();
 
   const { setProofVerificationResult, passportData } = useUserStore();
 
@@ -113,7 +108,7 @@ const ProveScreen: React.FC = () => {
 
       newSocket.on('connect_error', error => {
         console.error('Connection error:', error);
-        toast.show('Error', {
+        console.log('Error', {
           message: 'Failed to connect to WebSocket server',
           customData: {
             type: 'error',
@@ -126,7 +121,7 @@ const ProveScreen: React.FC = () => {
         setProofVerificationResult(JSON.parse(result));
         console.log('result', result);
         if (JSON.parse(result).valid) {
-          toast.show('✅', {
+          console.log('✅', {
             message: 'Identity verified',
             customData: {
               type: 'success',
@@ -136,7 +131,7 @@ const ProveScreen: React.FC = () => {
             navigate('ValidProofScreen');
           }, 700);
         } else {
-          toast.show('❌', {
+          console.log('❌', {
             message: 'Verification failed',
             customData: {
               type: 'info',
@@ -151,7 +146,7 @@ const ProveScreen: React.FC = () => {
       setSocket(newSocket);
     } catch (error) {
       console.error('Error setting up WebSocket:', error);
-      toast.show('❌', {
+      console.log('❌', {
         message: 'Failed to set up connection',
         customData: {
           type: 'error',
@@ -164,7 +159,7 @@ const ProveScreen: React.FC = () => {
         newSocket.disconnect();
       }
     };
-  }, [selectedApp.userId, toast]);
+  }, [selectedApp.userId]);
 
   const handleProve = async () => {
     try {
@@ -241,7 +236,7 @@ const ProveScreen: React.FC = () => {
         proof: attestation,
       });
     } catch (error) {
-      toast.show('Error', {
+      console.log('Error', {
         message: String(error),
         customData: {
           type: 'error',
