@@ -23,8 +23,8 @@ const SuccessScreen: React.FC = () => {
           autoPlay
           loop
           style={{
-            width: '115%',
-            height: '115%',
+            width: '125%',
+            height: '125%',
           }}
         />
       </ExpandableBottomLayout.TopSection>

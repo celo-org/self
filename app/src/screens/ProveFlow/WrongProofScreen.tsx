@@ -11,6 +11,7 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useNavigationStore from '../../stores/navigationStore';
 import useUserStore from '../../stores/userStore';
 import { styles } from './ValidProofScreen';
+import LottieView from 'lottie-react-native';
 
 const WrongProofScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -66,8 +67,15 @@ const WrongProofScreen: React.FC = () => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <></>
-        {/* TODO Animation */}
+        <LottieView
+          source={require('../../assets/lottie/proof_failed.json')}
+          autoPlay
+          loop
+          style={{
+            width: '125%',
+            height: '125%',
+          }}
+          />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <View style={styles.content}>
