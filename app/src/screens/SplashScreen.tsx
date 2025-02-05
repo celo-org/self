@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { Image, Spinner } from 'tamagui';
+import LottieView from 'lottie-react-native';
 
-import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import useUserStore from '../stores/userStore';
-import { amber500 } from '../utils/colors';
 
 interface SplashScreenProps {}
 
@@ -27,15 +25,15 @@ const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <Image
-          source={require('../images/texture.png')}
+        <LottieView
+          source={require('../assets/lottie/launch_view.json')}
+          autoPlay
+          loop
           style={{
-            opacity: 0.1,
-            position: 'absolute',
+            width: '110%',
+            height: '110%',
           }}
         />
-        <Logo />
-        <Spinner width={80} height={80} color={amber500} />
       </ExpandableBottomLayout.TopSection>
     </ExpandableBottomLayout.Layout>
   );
