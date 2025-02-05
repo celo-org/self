@@ -18,9 +18,9 @@ const DisclaimerScreen: React.FC = () => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../assets/animations/warning.json')}
           autoPlay
-          loop
+          loop={false}
+          source={require('../assets/animations/warning.json')}
           style={{
             position: 'absolute',
             width: '125%',

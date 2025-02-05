@@ -68,9 +68,9 @@ const WrongProofScreen: React.FC = () => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../../assets/animations/proof_failed.json')}
           autoPlay
-          loop
+          loop={false}
+          source={require('../../assets/animations/proof_failed.json')}
           style={{
             width: '125%',
             height: '125%',

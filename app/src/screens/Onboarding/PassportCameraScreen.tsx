@@ -59,9 +59,9 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../../assets/animations/passport_scan.json')}
           autoPlay
           loop
+          source={require('../../assets/animations/passport_scan.json')}
           style={{
             position: 'absolute',
             width: '115%',

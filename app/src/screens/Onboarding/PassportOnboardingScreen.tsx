@@ -25,8 +25,8 @@ const PassportOnboardingScreen: React.FC<
       <ExpandableBottomLayout.TopSection>
         <LottieView
           autoPlay
-          source={require('../../assets/animations/passport_onboarding.json')}
           loop={false}
+          source={require('../../assets/animations/passport_onboarding.json')}
           style={{
             backgroundColor: slate100,
             width: '115%',

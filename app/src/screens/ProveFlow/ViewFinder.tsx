@@ -65,9 +65,9 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
         {!doneScanningQR && (
           <>
             <LottieView
-              source={require('../../assets/animations/qr_scan.json')}
               autoPlay
               loop
+              source={require('../../assets/animations/qr_scan.json')}
               style={{
                 position: 'absolute',
                 width: '115%',
