@@ -84,8 +84,8 @@ import ProveScreen from './ProveFlow/ProveScreen';
 import SplashScreen from './SplashScreen';
 import StartScreen from './StartScreen';
 import UserInfo from './UserInfo';
-import ValidProofScreen from './ValidProofScreen';
-import WrongProofScreen from './WrongProofScreen';
+import ValidProofScreen from './ProveFlow/ValidProofScreen';
+import WrongProofScreen from './ProveFlow/WrongProofScreen';
 
 const emitter =
   Platform.OS === 'android'
