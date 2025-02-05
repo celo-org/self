@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 
 import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
@@ -10,7 +11,6 @@ import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import LottieView from 'lottie-react-native';
 
 interface PassportOnboardingScreenProps {}
 
@@ -23,7 +23,7 @@ const PassportOnboardingScreen: React.FC<
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../../assets/lottie/scan_passport.json')}
+          source={require('../../assets/lottie/passport_onboarding.json')}
           autoPlay
           loop
           style={{
