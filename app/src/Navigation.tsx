@@ -98,17 +98,14 @@ const HomeNavBar = (props: StackHeaderProps) => {
   );
 };
 
+
 const RootStack = createStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
-  // eslint-disable-next-line no-lone-blocks
-  layout: ({ children }) => {
-    {
-      return <SafeAreaProvider>{children}</SafeAreaProvider>;
-    }
-  },
+
+  layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
     Splash: {
       screen: SplashScreen,
