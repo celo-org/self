@@ -14,10 +14,10 @@ import {
   getCircuitNameOld,
   parseCertificateSimple,
 } from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
-import {
-  getCSCAFromSKI,
-  sendCSCARequest,
-} from '../../../../common/src/utils/csca';
+// import {
+//   getCSCAFromSKI,
+//   sendCSCARequest,
+// } from '../../../../common/src/utils/csca';
 import {
   generateCircuitInputsDSC,
 } from '../../../../common/src/utils/circuits/generateInputs';
@@ -188,34 +188,34 @@ const ProveScreen: React.FC = () => {
       switch (selectedApp.mode) {
         case 'prove_onchain':
         case 'register':
-          const cscaInputs = generateCircuitInputsDSC(
-            dscSecret as string,
-            passportData.dsc,
-            MAX_CERT_BYTES,
-            selectedApp.devMode,
-          );
-          [dscProof, proof] = await Promise.all([
-            sendCSCARequest(cscaInputs),
-            generateProof(circuitName, inputs),
-          ]);
-          const cscaPem = getCSCAFromSKI(
-            authorityKeyIdentifier,
-            DEVELOPMENT_MODE,
-          );
-          const { signatureAlgorithm: signatureAlgorithmDsc } =
-            parseCertificateSimple(cscaPem);
-          attestation = buildAttestation({
-            mode: selectedApp.mode,
-            proof: proof.proof,
-            publicSignals: proof.publicSignals,
-            signatureAlgorithm: signatureAlgorithm,
-            hashFunction: parsedPassportData.signedAttrHashFunction,
-            userIdType: selectedApp.userIdType,
-            dscProof: (dscProof as any).proof,
-            dscPublicSignals: (dscProof as any).pub_signals,
-            signatureAlgorithmDsc: signatureAlgorithmDsc,
-            hashFunctionDsc: parsedPassportData.signedAttrHashFunction,
-          });
+          // const cscaInputs = generateCircuitInputsDSC(
+          //   dscSecret as string,
+          //   passportData.dsc,
+          //   MAX_CERT_BYTES,
+          //   selectedApp.devMode,
+          // );
+          // [dscProof, proof] = await Promise.all([
+          //   sendCSCARequest(cscaInputs),
+          //   generateProof(circuitName, inputs),
+          // ]);
+          // const cscaPem = getCSCAFromSKI(
+          //   authorityKeyIdentifier,
+          //   DEVELOPMENT_MODE,
+          // );
+          // const { signatureAlgorithm: signatureAlgorithmDsc } =
+          //   parseCertificateSimple(cscaPem);
+          // attestation = buildAttestation({
+          //   mode: selectedApp.mode,
+          //   proof: proof.proof,
+          //   publicSignals: proof.publicSignals,
+          //   signatureAlgorithm: signatureAlgorithm,
+          //   hashFunction: parsedPassportData.signedAttrHashFunction,
+          //   userIdType: selectedApp.userIdType,
+          //   dscProof: (dscProof as any).proof,
+          //   dscPublicSignals: (dscProof as any).pub_signals,
+          //   signatureAlgorithmDsc: signatureAlgorithmDsc,
+          //   hashFunctionDsc: parsedPassportData.signedAttrHashFunction,
+          // });
           break;
         default:
           proof = await generateProof(circuitName, inputs);

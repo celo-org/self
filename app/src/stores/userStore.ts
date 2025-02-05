@@ -3,7 +3,7 @@ import { resetGenericPassword } from 'react-native-keychain';
 import { DEFAULT_DOB, DEFAULT_DOE, DEFAULT_PNUMBER } from '@env';
 import { create } from 'zustand';
 
-import { generateDscSecret } from '../../../common/src/utils/csca';
+// import { generateDscSecret } from '../../../common/src/utils/csca';
 import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData, Proof } from '../../../common/src/utils/types';
 import {
@@ -81,8 +81,8 @@ const useUserStore = create<UserState>((set, get) => ({
   initUserStore: async () => {
     const secret = await loadSecretOrCreateIt();
     set({ secret });
-    const dscSecret = await generateDscSecret();
-    set({ dscSecret });
+    // const dscSecret = await generateDscSecret();
+    // set({ dscSecret });
 
     const passportDataString = await loadPassportData();
     const passportMetadataString = await loadPassportMetadata();
