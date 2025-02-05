@@ -10973,20 +10973,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lottie-react-native@npm:^7.2.2":
-  version: 7.2.2
-  resolution: "lottie-react-native@npm:7.2.2"
+"lottie-react-native@npm:^6.5.1":
+  version: 6.7.2
+  resolution: "lottie-react-native@npm:6.7.2"
   peerDependencies:
-    "@lottiefiles/dotlottie-react": ^0.6.5
+    "@dotlottie/react-player": ^1.6.1
+    "@lottiefiles/react-lottie-player": ^3.5.3
     react: "*"
     react-native: ">=0.46"
     react-native-windows: ">=0.63.x"
   peerDependenciesMeta:
-    "@lottiefiles/dotlottie-react":
+    "@dotlottie/react-player":
+      optional: true
+    "@lottiefiles/react-lottie-player":
       optional: true
     react-native-windows:
       optional: true
-  checksum: 10c0/d0ee7c6ed639ad1b5cfe04dd3b704f3f968806c59a6361986fbb22ebd1b332d9cb13ee7d78ed49848f8d416d468ae2fdc9077815280023dac0b66e841b5ce840
+  checksum: 10c0/a98ffa572b1f47edabec7e652926358bfe72b6ebce85ad91a52046859e097320f86b201c8848aec644673e8975b28ef8445abf42fac52812a38f9273f9bb4a5b
   languageName: node
   linkType: hard
 
@@ -12253,7 +12256,7 @@ __metadata:
     expo-modules-core: "npm:^1.11.12"
     jest: "npm:^29.6.3"
     js-sha256: "npm:^0.9.0"
-    lottie-react-native: "npm:^7.2.2"
+    lottie-react-native: "npm:^6.5.1"
     metro-react-native-babel-preset: "npm:0.76.7"
     msgpack-lite: "npm:^0.1.26"
     node-forge: "npm:^1.3.1"
