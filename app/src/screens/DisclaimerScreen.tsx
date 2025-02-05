@@ -6,10 +6,9 @@ import LottieView from 'lottie-react-native';
 import { Text, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
-import Warning from '../images/icons/warning.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
-import { amber50, amber500, slate700, yellow500 } from '../utils/colors';
+import { slate700, white } from '../utils/colors';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -28,15 +27,8 @@ const DisclaimerScreen: React.FC = () => {
             height: '125%',
           }}
         />
-        <YStack gap="$2.5">
-          <Warning
-            height={63}
-            width={69}
-            color={yellow500}
-            style={{ margin: 'auto' }}
-          />
-          <Text style={styles.header}>Be Cautious</Text>
-          <Text style={styles.subheader}>Protecting your privacy</Text>
+        <YStack f={1} jc="flex-end" pb="$4">
+          <Text style={styles.subheader}>Caution</Text>
         </YStack>
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -67,15 +59,8 @@ const DisclaimerScreen: React.FC = () => {
 export default DisclaimerScreen;
 
 const styles = StyleSheet.create({
-  header: {
-    color: amber50,
-    fontFamily: 'Advercase-Regular',
-    fontSize: 48,
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
   subheader: {
-    color: amber500,
+    color: white,
     fontFamily: 'DINOT-Medium',
     fontSize: 15,
     fontWeight: '500',
