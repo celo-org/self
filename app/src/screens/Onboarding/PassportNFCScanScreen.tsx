@@ -22,6 +22,7 @@ import NFC_IMAGE from '../../images/nfc.png';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { scan } from '../../utils/nfcScannerNew';
+import { slate100 } from '../../utils/colors';
 
 interface PassportNFCScanScreenProps {}
 
@@ -111,8 +112,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           autoPlay
           loop
           style={{
-            width: '110%',
-            height: '110%',
+            backgroundColor: slate100,
+            width: '115%',
+            height: '115%',
           }}
         />
       </ExpandableBottomLayout.TopSection>

@@ -11,6 +11,7 @@ import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { slate100 } from '../../utils/colors';
 
 interface PassportOnboardingScreenProps {}
 
@@ -27,8 +28,9 @@ const PassportOnboardingScreen: React.FC<
           autoPlay
           loop
           style={{
-            width: '110%',
-            height: '110%',
+            backgroundColor: slate100,
+            width: '115%',
+            height: '115%',
           }}
         />
       </ExpandableBottomLayout.TopSection>
