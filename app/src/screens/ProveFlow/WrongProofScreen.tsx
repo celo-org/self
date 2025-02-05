@@ -8,14 +8,14 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { typography } from '../../components/typography/styles';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { styles } from './ValidProofScreen';
-import useUserStore from '../../stores/userStore';
 import useNavigationStore from '../../stores/navigationStore';
+import useUserStore from '../../stores/userStore';
+import { styles } from './ValidProofScreen';
 
 const WrongProofScreen: React.FC = () => {
   const navigation = useNavigation();
   const { proofVerificationResult } = useUserStore();
-  const {selectedApp} = useNavigationStore()
+  const { selectedApp } = useNavigationStore();
   const appName = selectedApp?.appName;
 
   const formatFieldName = (field: string) => {

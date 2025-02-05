@@ -12,8 +12,8 @@ import useNavigationStore from '../../stores/navigationStore';
 
 const SuccessScreen: React.FC = () => {
   const navigation = useNavigation();
-  const {selectedApp} = useNavigationStore()
-  const appName = selectedApp?.appName
+  const { selectedApp } = useNavigationStore();
+  const appName = selectedApp?.appName;
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
