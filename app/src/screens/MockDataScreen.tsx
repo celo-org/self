@@ -30,9 +30,9 @@ import {
   textBlack,
 } from '../utils/colors';
 
-interface MockDataScreenProps {}
+interface MockDataScreenProps { }
 
-const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
+const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
   const navigation = useNavigation();
   const [age, setAge] = useState(24);
   const [expiryYears, setExpiryYears] = useState(5);
@@ -82,10 +82,10 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
         const hashAlgo = selectedAlgorithm === 'rsa sha1' ? 'sha1' : 'sha256';
         if (isInOfacList) {
           mockPassportData = genMockPassportData(
-            hashAlgo,
-            hashAlgo,
+            'sha1',
+            'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
-              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),
@@ -99,7 +99,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
             hashAlgo,
             hashAlgo,
             signatureAlgorithmToStrictSignatureAlgorithm[
-              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),

@@ -10,7 +10,9 @@ import USER_PROFILE from '../images/user_profile.png';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
 import { formatAttribute, getFirstName, maskString } from '../utils/utils';
-
+import { firePayload } from '../utils/tee';
+import { generateCircuitInputsRegister } from '../../../common/src/utils/circuits/generateInputs';
+import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 const NextScreen: React.FC = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -30,6 +32,14 @@ const NextScreen: React.FC = () => {
 
   if (!passportData) {
     return null;
+  }
+  function generateInputs() {
+    if (!passportData) {
+      return null;
+    }
+    const parsedPassportData = initPassportDataParsing(passportData);
+    const inputs = generateCircuitInputsRegister('0', parsedPassportData);
+    return inputs;
   }
 
   return (
@@ -134,6 +144,11 @@ const NextScreen: React.FC = () => {
       <YStack f={1} />
 
       <YStack f={1} />
+      <CustomButton
+        onPress={async () => await firePayload(generateInputs())}
+        text="Next"
+        Icon={<ArrowRight color={textBlack} />}
+      />
 
       <CustomButton
         onPress={handleNext}
