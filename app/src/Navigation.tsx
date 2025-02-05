@@ -10,7 +10,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import { Button, ViewStyle } from 'tamagui';
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavBar } from './components/NavBar';
 import ActivityIcon from './images/icons/activity.svg';
 import SettingsIcon from './images/icons/settings.svg';
@@ -102,6 +102,14 @@ const RootStack = createStackNavigator({
   screenOptions: {
     header: DefaultNavBar,
   },
+  // eslint-disable-next-line no-lone-blocks
+  layout: ({children}) => {{
+    return (
+      <SafeAreaProvider>
+        {children}
+      </SafeAreaProvider>
+    );
+  }},
   screens: {
     Splash: {
       screen: SplashScreen,
