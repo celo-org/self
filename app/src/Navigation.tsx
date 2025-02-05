@@ -98,7 +98,6 @@ const HomeNavBar = (props: StackHeaderProps) => {
   );
 };
 
-
 const RootStack = createStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
