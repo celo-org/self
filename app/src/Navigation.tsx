@@ -100,7 +100,7 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'ShowRecoveryPhrase',
+  initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
