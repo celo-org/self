@@ -108,7 +108,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../../assets/lottie/passport_verify.json')}
+          source={require('../../assets/animations/passport_verify.json')}
           autoPlay
           loop
           style={{

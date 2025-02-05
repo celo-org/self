@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import { Image, Text, YStack } from 'tamagui';
+import LottieView from 'lottie-react-native';
+import { Text, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import Warning from '../images/icons/warning.svg';
@@ -17,11 +18,14 @@ const DisclaimerScreen: React.FC = () => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <Image
-          source={require('../images/texture.png')}
+        <LottieView
+          source={require('../assets/animations/warning.json')}
+          autoPlay
+          loop
           style={{
-            opacity: 0.1,
             position: 'absolute',
+            width: '125%',
+            height: '125%',
           }}
         />
         <YStack gap="$2.5">

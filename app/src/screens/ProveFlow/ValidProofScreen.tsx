@@ -19,7 +19,7 @@ const SuccessScreen: React.FC = () => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../../assets/lottie/proof_success.json')}
+          source={require('../../assets/animations/proof_success.json')}
           autoPlay
           loop
           style={{
