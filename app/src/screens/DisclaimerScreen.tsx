@@ -7,8 +7,8 @@ import { Image, Text, YStack } from 'tamagui';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import Warning from '../images/icons/warning.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
-import { amber50, amber500, slate700, yellow500 } from '../utils/colors';
 import { useSettingStore } from '../stores/settingStore';
+import { amber50, amber500, slate700, yellow500 } from '../utils/colors';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -49,7 +49,7 @@ const DisclaimerScreen: React.FC = () => {
             style={{ marginVertical: 30 }}
             onPress={() => {
               dismissPrivacyNote();
-              navigation.navigate('Home')
+              navigation.navigate('Home');
             }}
           >
             Dismiss

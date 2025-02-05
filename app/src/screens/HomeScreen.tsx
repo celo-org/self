@@ -1,15 +1,17 @@
 import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNavigation } from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
-import { useSettingStore } from '../stores/settingStore';
+
+import { BodyText } from '../components/typography/BodyText';
 import { Caption } from '../components/typography/Caption';
 import ScanIcon from '../images/icons/qr_scan.svg';
-import SelfIdCard from '../images/self-id-card.svg';
 import WarnIcon from '../images/icons/warning.svg';
+import SelfIdCard from '../images/self-id-card.svg';
+import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { BodyText } from '../components/typography/BodyText';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 const ScanButton = styled(Button, {
   borderRadius: 20,
   width: 90,
@@ -24,16 +26,22 @@ const ScanButton = styled(Button, {
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
   return (
-      <SafeAreaView style={{backgroundColor: black, flex: 1}}>
-      <YStack bg={black} gap={20} jc="space-between" height={'100%'} padding={20}>
-        <YStack ai="center" gap={20}  justifyContent="flex-start">
-          <SelfIdCard  width="100%"/>
+    <SafeAreaView style={{ backgroundColor: black, flex: 1 }}>
+      <YStack
+        bg={black}
+        gap={20}
+        jc="space-between"
+        height={'100%'}
+        padding={20}
+      >
+        <YStack ai="center" gap={20} justifyContent="flex-start">
+          <SelfIdCard width="100%" />
           <Caption color={amber500} opacity={0.3} textTransform="uppercase">
             Only visible to you
           </Caption>
-          <PrivacyNote/>
+          <PrivacyNote />
         </YStack>
-        <YStack ai="center" gap={20} justifyContent="center"  paddingBottom={20}>
+        <YStack ai="center" gap={20} justifyContent="center" paddingBottom={20}>
           <ScanButton onPress={() => navigation.navigate('QRCodeViewFinder')}>
             <ScanIcon color={amber500} />
           </ScanButton>
@@ -42,25 +50,26 @@ const HomeScreen: React.FC = () => {
           </Caption>
         </YStack>
       </YStack>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 };
-
 
 function PrivacyNote() {
   const { hasPrivacyNoteBeenDismissed } = useSettingStore();
   const navigation = useNavigation();
-  
-  if(hasPrivacyNoteBeenDismissed) {
+
+  if (hasPrivacyNoteBeenDismissed) {
     return null;
   }
-  
-  return <Card  onPressIn={() => navigation.navigate('Disclaimer')}>
+
+  return (
+    <Card onPressIn={() => navigation.navigate('Disclaimer')}>
       <WarnIcon color={white} width={24} height={33} />
       <BodyText color={white} textAlign="center" fontSize={18}>
         A note on protecting your privacy
       </BodyText>
-  </Card>;
+    </Card>
+  );
 }
 
 export default HomeScreen;
@@ -69,9 +78,9 @@ const Card = styled(YStack, {
   width: '100%',
 
   flexGrow: 0,
-  backgroundColor:slate800,
-  borderRadius:4,
-  gap:12,
+  backgroundColor: slate800,
+  borderRadius: 4,
+  gap: 12,
   alignItems: 'center',
-  padding:20,
+  padding: 20,
 });
