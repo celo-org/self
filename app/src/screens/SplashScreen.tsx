@@ -26,7 +26,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
-          source={require('../assets/animations/splash_screen.json')}
+          source={require('../assets/animations/splash.json')}
           autoPlay
           loop
           style={{
