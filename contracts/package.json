@@ -25,7 +25,7 @@
     "test:coverage": "npx hardhat coverage",
     "test:coverage:local": "TEST_ENV=local npx hardhat coverage",
     "deploy_all": "npx hardhat ignition deploy ignition/modules/Deploy_All.ts --network optimism --verify",
-    "compile": "npx hardhat clean && npx hardhat compile",
+    "compile": "npx hardhat clean && npx hardhat compile && ./scripts/shell/copy_artifacts.sh",
     "publish": "npm publish --access public"
   },
   "files": [
