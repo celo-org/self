@@ -21,8 +21,8 @@ import { Title } from '../../components/typography/Title';
 import NFC_IMAGE from '../../images/nfc.png';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { scan } from '../../utils/nfcScannerNew';
 import { slate100 } from '../../utils/colors';
+import { scan } from '../../utils/nfcScannerNew';
 
 interface PassportNFCScanScreenProps {}
 

@@ -30,8 +30,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
           autoPlay
           loop
           style={{
-            width: '110%',
-            height: '110%',
+            width: '115%',
+            height: '115%',
           }}
         />
       </ExpandableBottomLayout.TopSection>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import Description from '../../components/typography/Description';
@@ -17,8 +18,15 @@ const SuccessScreen: React.FC = () => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <></>
-        {/* TODO Animation */}
+        <LottieView
+          source={require('../../assets/lottie/proof_success.json')}
+          autoPlay
+          loop
+          style={{
+            width: '115%',
+            height: '115%',
+          }}
+        />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <View style={styles.content}>
