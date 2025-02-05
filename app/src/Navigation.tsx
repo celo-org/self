@@ -31,11 +31,13 @@ import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
 import AccountRecoveryScreen from './screens/Settings/AccountRecoveryScreen';
+import AccountVerifiedSuccessScreen from './screens/Settings/AccountVerifiedSuccessScreen';
+import RecoverWithPhraseScreen from './screens/Settings/RecoverWithPhraseScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
-import { black, neutral400, white } from './utils/colors';
+import { black, neutral400, slate300, white } from './utils/colors';
 
 const DefaultNavBar = (props: NativeStackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
@@ -53,23 +55,21 @@ const DefaultNavBar = (props: NativeStackHeaderProps) => {
       }
     >
       <NavBar.LeftAction
-        component={canGoBack() ? 'back' : undefined}
+        component={
+          options.headerBackTitle || (canGoBack() ? 'back' : undefined)
+        }
         onPress={goBack}
-        color={options.headerTintColor}
+        {...options.headerTitleStyle}
       />
-      <NavBar.Title color={options.headerTintColor}>
+      <NavBar.Title {...options.headerTitleStyle}>
         {props.options.title}
       </NavBar.Title>
     </NavBar.Container>
   );
 };
 
-<<<<<<< HEAD
-const HomeNavBar = (props: StackHeaderProps) => {
-  const insets = useSafeAreaInsets();
-=======
 const HomeNavBar = (props: NativeStackHeaderProps) => {
->>>>>>> 22b8ac3e (perf: stack->native-stack navigation)
+  const insets = useSafeAreaInsets();
   return (
     <NavBar.Container
       backgroundColor={black}
@@ -109,7 +109,7 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
   );
 };
 
-const RootStack = {
+const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
@@ -234,10 +234,28 @@ const RootStack = {
         headerShown: false,
       },
     },
+    RecoverWithPhrase: {
+      screen: RecoverWithPhraseScreen,
+      options: {
+        headerTintColor: black,
+        title: 'Enter Recovery Phrase',
+        headerStyle: {
+          backgroundColor: black,
+        },
+        headerTitleStyle: {
+          color: slate300,
+        },
+        headerBackTitle: 'close',
+      },
+    },
+    AccountVerifiedSuccess: {
+      screen: AccountVerifiedSuccessScreen,
+      options: {
+        headerShown: false,
+      },
+    },
   },
-} as const;
-
-const AppNavigation = createNativeStackNavigator(RootStack);
+});
 
 export type RootStackParamList = StaticParamList<typeof AppNavigation>;
 

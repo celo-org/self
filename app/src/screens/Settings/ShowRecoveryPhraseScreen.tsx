@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { findBestLanguageTag } from 'react-native-localize';
 
+import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
 import { YStack } from 'tamagui';
 
@@ -20,7 +21,13 @@ interface ShowRecoveryPhraseScreenProps {}
 const ShowRecoveryPhraseScreen: React.FC<
   ShowRecoveryPhraseScreenProps
 > = ({}) => {
+  const navigation = useNavigation();
   const [mnemonic, setMnemonic] = useState<string[]>();
+  const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
+
+  const onRevealWords = useCallback(() => {
+    setUserHasSeenMnemonic(true);
+  }, []);
 
   const loadPassword = useCallback(async () => {
     const privKey = await loadSecretOrCreateIt();
@@ -42,9 +49,9 @@ const ShowRecoveryPhraseScreen: React.FC<
   }, []);
 
   const onCloudBackupPress = useHapticNavigation('TODO: cloud backup');
-  const onSkipPress = useHapticNavigation('TODO: skip backup', 'confirm');
+  const onSkipPress = useHapticNavigation('AccountVerifiedSuccess');
 
-  return (
+  return (src/Navigation.tsx
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.BottomSection>
         <YStack
@@ -59,7 +66,7 @@ const ShowRecoveryPhraseScreen: React.FC<
             This phrase is the only way to recover your account. Keep it secret,
             keep it safe.
           </Description>
-          <Mnemonic words={mnemonic} revealWords={false} />
+          <Mnemonic words={mnemonic} onRevealWords={onRevealWords} />
           <YStack gap="$2.5" width="100%" pt="$6" alignItems="center">
             <Caption color={slate400}>
               You can reveal your recovery phrase in settings.
@@ -68,7 +75,7 @@ const ShowRecoveryPhraseScreen: React.FC<
               Enable iCloud Back up
             </PrimaryButton>
             <SecondaryButton onPress={onSkipPress}>
-              Skip making a back up
+              {userHasSeenMnemonic ? 'Continue' : 'Skip making a back up'}
             </SecondaryButton>
           </YStack>
         </YStack>
