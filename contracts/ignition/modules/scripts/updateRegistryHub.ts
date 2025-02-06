@@ -3,7 +3,7 @@ import hre from "hardhat";
 import fs from "fs";
 import path from "path";
 
-module.exports = buildModule("UpdateRegistryOfacRoot", (m) => {
+module.exports = buildModule("UpdateRegistryHub", (m) => {
 
   const networkName = hre.network.config.chainId;
 
