@@ -3,13 +3,17 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/app.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/swagger": "^1.2.0",
+    "dotenv": "^16.4.7",
+    "elysia": "latest",
+    "logixlysia": "^4.1.1",
+    "swagger": "^0.7.5"
   },
   "devDependencies": {
     "bun-types": "latest"
   },
-  "module": "src/index.js"
+  "module": "index.ts"
 }
