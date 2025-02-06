@@ -58,6 +58,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
+        <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
         <LottieView
           autoPlay
           loop
@@ -68,7 +69,6 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
             height: '115%',
           }}
         />
-        <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5">

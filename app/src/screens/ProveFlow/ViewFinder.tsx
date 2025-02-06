@@ -64,6 +64,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
       <ExpandableBottomLayout.TopSection>
         {!doneScanningQR && (
           <>
+            <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
             <LottieView
               autoPlay
               loop
@@ -74,7 +75,6 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                 height: '115%',
               }}
             />
-            <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
           </>
         )}
         {null}
