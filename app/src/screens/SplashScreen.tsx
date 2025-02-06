@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -12,27 +12,26 @@ const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
   const navigation = useNavigation();
   const { userLoaded, passportData } = useUserStore();
 
-  useEffect(() => {
-    if (userLoaded) {
-      if (passportData) {
-        navigation.navigate('Home');
-      } else {
-        navigation.navigate('Launch');
-      }
+  const redirect = useCallback(() => {
+    if (passportData) {
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('Launch');
     }
-  }, [userLoaded]);
+  }, [passportData, userLoaded]);
 
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
         <LottieView
           autoPlay
-          loop
+          loop={false}
           source={require('../assets/animations/splash.json')}
           style={{
             width: '115%',
             height: '115%',
           }}
+          onAnimationFinish={redirect}
         />
       </ExpandableBottomLayout.TopSection>
     </ExpandableBottomLayout.Layout>
