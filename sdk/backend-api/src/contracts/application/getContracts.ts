@@ -17,15 +17,17 @@ export function getContractInstance(contractName: ContractName, chain: any, priv
     let contractBase: ContractBase;
     switch (contractName) {
         case "registry":
-            contractBase = {
+           contractBase = {
                 abi: getAbi("IdentityRegistryImplV1"),
                 address: getAddresses(chain.id)["DeployRegistryModule#IdentityRegistry"],
             };
+            break;
         case "hub":
             contractBase = {
                 abi: getAbi("IdentityVerificationHubImplV1"),
                 address: getAddresses(chain.id)["DeployHub#IdentityVerificationHub"],
             };
+            break;
         default:
             throw new Error(`Contract ${contractName} not found`);
     }
@@ -38,13 +40,13 @@ export function getContractInstance(contractName: ContractName, chain: any, priv
 }
 
 export function getAddresses(chainId: number) {
-    const addressFile = path.join(__dirname, "../../../addresses", `chain-${chainId}_deployed_addresses.json`);
+    const addressFile = path.join(__dirname, "../../addresses", `chain-${chainId}_deployed_addresses.json`);
     const addresses = JSON.parse(fs.readFileSync(addressFile, "utf8"));
     return addresses;
 }
 
 export function getAbi(contractName: string) {
-    const abiFile = path.join(__dirname, "../../../abi", `${contractName}.json`);
-    const abi = JSON.parse(fs.readFileSync(abiFile, "utf8"));
+    const abiFilePath = path.join(__dirname, "../../abi", `${contractName}.json`);
+    const abi = JSON.parse(fs.readFileSync(abiFilePath, "utf8")).abi;
     return abi;
 }

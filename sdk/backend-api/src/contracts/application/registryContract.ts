@@ -27,17 +27,17 @@ export class RegistryContract {
     }
 
     public async getIdentityCommitmentMerkleRoot() {
-        const root = await this.registry.getIdentityCommitmentMerkleRoot();
+        const root = await this.registry.read.getIdentityCommitmentMerkleRoot();
         return root;
     }
 
     public async getCscaRoot() {
-        const root = await this.registry.getCscaRoot();
+        const root = await this.registry.read.getCscaRoot();
         return root;
     }
 
     public async getOfacRoot() {
-        const root = await this.registry.getOfacRoot();
+        const root = await this.registry.read.getOfacRoot();
         return root;
     }
 }

@@ -6,11 +6,24 @@ import { getChain } from '../../contracts/application/chains';
 export const ContractsController = new Elysia()
     .get(
         'identity-commitment-root',
-        () => {
-            return {
-                status: 'success',
-                data: ['identity commitment root'],
-            };
+        async () => {
+            try {
+                const registryContract = new RegistryContract(
+                    getChain(process.env.NETWORK as string),
+                    process.env.PRIVATE_KEY as `0x${string}`,
+                    process.env.RPC_URL as string
+                );
+                const identityCommitmentRoot = await registryContract.getIdentityCommitmentMerkleRoot();
+                return {
+                    status: 'success',
+                    data: [identityCommitmentRoot],
+                };
+            } catch (error) {
+                return {
+                    status: 'error',
+                    message: error instanceof Error ? error.message : 'Unknown error',
+                };
+            }
         },
         {
           response: {
@@ -34,7 +47,6 @@ export const ContractsController = new Elysia()
         'verify-vc-and-disclose-proof',
         async (request) => {
             try {
-
                 const registryContract = new RegistryContract(
                     getChain(process.env.NETWORK as string),
                     process.env.PRIVATE_KEY as `0x${string}`,
@@ -44,7 +56,7 @@ export const ContractsController = new Elysia()
                 const identityCommitmentRoot = await registryContract.getIdentityCommitmentMerkleRoot();
                 const ofacRoot = await registryContract.getOfacRoot();
 
-                const { proof, publicSignals } = await request.json();
+                const { proof, publicSignals } = request.body;
 
                 const proofVerifier = new ProofVerifier(
                     process.env.OFAC_ENABLED === "true",
@@ -71,6 +83,10 @@ export const ContractsController = new Elysia()
             }
         },
         {
+          body: t.Object({
+            proof: t.Any(),
+            publicSignals: t.Any(),
+          }),
           response: {
             200: t.Object({
               status: t.String(),
