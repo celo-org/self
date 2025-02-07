@@ -82,7 +82,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5" paddingBottom={20}>
           <YStack alignItems="center" gap="$6" pb="$2.5">
-            <Title>Verify your Self ID</Title>
+            <Title>Verify your ID</Title>
             <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
               <View pt="$2">
                 <QRScan height={40} width={40} color={slate800} />
@@ -92,7 +92,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                   Scan a partner's QR code
                 </Description>
                 <Additional style={styles.description}>
-                  Look for a QR code from a Self ID partner and position it in
+                  Look for a QR code from a Self partner and position it in
                   the camera frame above.
                 </Additional>
               </View>
@@ -110,7 +110,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                   Upload from photo roll
                 </Description>
                 <Additional style={styles.description}>
-                  You can also upload an image of a Self ID QR code from your
+                  You can also upload an image of a Self QR code from your
                   camera roll instead.
                 </Additional>
               </View>
