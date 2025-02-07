@@ -43,6 +43,75 @@ export const ContractsController = new Elysia()
           },
         },
     )
+    .get(
+        'dsc-key-commitment-root',
+        async () => {
+            const registryContract = new RegistryContract(
+                getChain(process.env.NETWORK as string),
+                process.env.PRIVATE_KEY as `0x${string}`,
+                process.env.RPC_URL as string
+            );
+            const dscKeyCommitmentRoot = await registryContract.getDscKeyCommitmentMerkleRoot();
+            return {
+                status: 'success',
+                data: [dscKeyCommitmentRoot.toString()],
+            };
+        },
+        {
+          response: {
+            200: t.Object({
+              status: t.String(),
+              data: t.Array(t.String()),
+            }),
+            500: t.Object({
+              status: t.String(),
+              message: t.String(),
+            }),
+          },
+          detail: {
+            tags: ['Contracts'],
+            summary: 'Get DSC key commitment root in registry contract',
+            description: 'Retrieve the DSC key commitment root in registry contract',
+          },
+        },
+    )
+    .post(
+        'dev-add-dsc-key-commitment',
+        async (request) => {
+            const { dscCommitment } = request.body;
+            const registryContract = new RegistryContract(
+                getChain(process.env.NETWORK as string),
+                process.env.PRIVATE_KEY as `0x${string}`,
+                process.env.RPC_URL as string
+            );
+            const tx = await registryContract.devAddDscKeyCommitment(BigInt(dscCommitment));
+
+            return {
+                status: "success",
+                data: [tx.hash],
+            };
+        },
+        {
+          body: t.Object({
+            dscCommitment: t.String(),
+          }),
+          response: {
+            200: t.Object({
+              status: t.String(),
+              data: t.Array(t.String()),
+            }),
+            500: t.Object({
+              status: t.String(),
+              message: t.String(),
+            }),
+          },
+          detail: {
+            tags: ['Contracts'],
+            summary: 'Add DSC key commitment to registry contract as a dev role',
+            description: 'Add DSC key commitment to registry contract as a dev role',
+          },
+        },
+    )
     .post(
         'dev-add-identity-commitment',
         async (request) => {

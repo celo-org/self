@@ -26,8 +26,21 @@ export class RegistryContract {
         return tx;
     }
 
+    public async devAddDscKeyCommitment(
+        dscCommitment: bigint
+    ) {
+        const tx = await this.registry.write.devAddDscKeyCommitment([dscCommitment]);
+        await tx.wait();
+        return tx;
+    }
+
     public async getIdentityCommitmentMerkleRoot() {
         const root = await this.registry.read.getIdentityCommitmentMerkleRoot();
+        return root;
+    }
+
+    public async getDscKeyCommitmentMerkleRoot() {
+        const root = await this.registry.read.getDscKeyCommitmentMerkleRoot();
         return root;
     }
 

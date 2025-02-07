@@ -1,4 +1,5 @@
 import {createPublicClient, createWalletClient, http} from "viem";
+import {privateKeyToAccount} from "viem/accounts";
 
 export function getPublicClient(chain: any, rpcUrl: string) {
     return createPublicClient({
@@ -8,9 +9,10 @@ export function getPublicClient(chain: any, rpcUrl: string) {
 }
 
 export function getWalletClient(chain: any, privateKey: `0x${string}`, rpcUrl: string) {
+    const account = privateKeyToAccount(privateKey);
     return createWalletClient({
         chain: chain,
         transport: http(rpcUrl),
-        account: privateKey,
+        account: account,
     });
 }
