@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -6,19 +6,17 @@ import LottieView from 'lottie-react-native';
 import useUserStore from '../stores/userStore';
 import { black } from '../utils/colors';
 
-interface SplashScreenProps {}
+interface SplashScreenProps { }
 
-const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({ }) => {
   const navigation = useNavigation();
   const { userLoaded, passportData } = useUserStore();
 
-  useEffect(() => {
-    if (userLoaded) {
-      if (passportData && passportData.dg2Hash) {
-        navigation.navigate('Launch');
-      } else {
-        navigation.navigate('Launch');
-      }
+  const redirect = useCallback(() => {
+    if (passportData) {
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('Launch');
     }
   }, [passportData, userLoaded]);
 
