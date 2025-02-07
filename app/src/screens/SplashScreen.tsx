@@ -6,9 +6,9 @@ import LottieView from 'lottie-react-native';
 import useUserStore from '../stores/userStore';
 import { black } from '../utils/colors';
 
-interface SplashScreenProps { }
+interface SplashScreenProps {}
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
   const navigation = useNavigation();
   const { userLoaded, passportData } = useUserStore();
 
