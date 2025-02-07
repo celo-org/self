@@ -10,9 +10,9 @@ import USER_PROFILE from '../images/user_profile.png';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
 import { formatAttribute, getFirstName, maskString } from '../utils/utils';
-import { firePayload } from '../utils/tee';
-import { generateCircuitInputsRegister } from '../../../common/src/utils/circuits/generateInputs';
+import { firePayload } from '../utils/proving/tee';
 import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
+import { generateTeeInputsRegister } from '../utils/generateInputsInApp';
 const NextScreen: React.FC = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -30,16 +30,17 @@ const NextScreen: React.FC = () => {
     date_of_birth: 'optional',
   };
 
-  if (!passportData) {
-    return null;
-  }
-  function generateInputs() {
+
+  async function firePayloadRegister() {
     if (!passportData) {
       return null;
     }
     const parsedPassportData = initPassportDataParsing(passportData);
-    const inputs = generateCircuitInputsRegister('0', parsedPassportData);
-    return inputs;
+    const { inputs, circuitName } = generateTeeInputsRegister('0', parsedPassportData);
+    console.log('****$$$$', inputs);
+    console.log('circuitName', circuitName);
+    const result = await firePayload(inputs, circuitName);
+    console.log("RESULT OF THE REGISTER", result);
   }
 
   return (
@@ -79,8 +80,8 @@ const NextScreen: React.FC = () => {
           }}
         >
           {dataHidden
-            ? maskString(getFirstName(passportData.mrz))
-            : getFirstName(passportData.mrz)}
+            ? maskString(getFirstName(passportData?.mrz ?? ''))
+            : getFirstName(passportData?.mrz ?? '')}
         </Text>
       </Text>
 
@@ -145,7 +146,7 @@ const NextScreen: React.FC = () => {
 
       <YStack f={1} />
       <CustomButton
-        onPress={async () => await firePayload(generateInputs())}
+        onPress={async () => await firePayloadRegister()}
         text="TEE PROVING"
         Icon={<Cpu color={textBlack} />}
       />

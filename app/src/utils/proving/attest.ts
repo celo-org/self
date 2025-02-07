@@ -1,22 +1,14 @@
 import { Buffer } from 'buffer';
 import { decode } from '@stablelib/cbor';
-//@ts-ignore
-import * as asn1 from "asn1.js";
-import { aws_root_cert_pem } from "./aws_root_pem";
+import { AWS_ROOT_PEM } from "./awsRootPem";
 import { X509Certificate } from "@peculiar/x509";
-import { AsnParser } from '@peculiar/asn1-schema';
-import { ec as EC } from 'elliptic';
-
-//@ts-ignore
-import FastCrypto from 'react-native-fast-crypto';
-import * as asn1js from 'asn1js';
-import { Certificate } from 'pkijs';
-import { getParamsECDSA } from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 import { parseCertificateSimple } from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
-import { initElliptic } from '../../../../common/src/utils/certificate_parsing/elliptic';
 import { getCurveForElliptic } from '../../../../common/src/utils/certificate_parsing/curves';
 import { PublicKeyDetailsECDSA } from '../../../../common/src/utils/certificate_parsing/dataStructure';
 import cose from './cose';
+//@ts-ignore
+import * as asn1 from "asn1.js";
+
 
 // The required fields for a valid attestation
 export const requiredFields = [
@@ -146,18 +138,7 @@ const toDER = function toDER(rBuf: Buffer, sBuf: Buffer): Buffer {
     return Buffer.from(res);
 };
 
-export const verifyAttestion = async (attestation: Array<number>) => {
-    // const jsonRpcBody = {
-    //   jsonrpc: "2.0",
-    //   method: "openpassport_attestation",
-    //   id: 1,
-    //   params: {},
-    // };
-
-    // const res = await axios.post(
-    //   "http://ad3c378249c1242619c12616bbbc4036-28818039163c2199.elb.eu-west-1.amazonaws.com:8888/",
-    //   jsonRpcBody
-    // );
+export const verifyAttestation = async (attestation: Array<number>) => {
 
     const coseSign1 = await decode(Buffer.from(attestation));
 
@@ -232,16 +213,14 @@ export const verifyAttestion = async (attestation: Array<number>) => {
 
     const cert = derToPem(attestationDoc.certificate);
 
-    if (!verifyCertChain(aws_root_cert_pem, [...certChain, cert])) {
+    if (!verifyCertChain(AWS_ROOT_PEM, [...certChain, cert])) {
         throw new Error("Invalid certificate chain");
     }
 
     const parsed = parseCertificateSimple(cert);
     const publicKeyDetails = parsed.publicKeyDetails as PublicKeyDetailsECDSA;
 
-    const curveForElliptic = getCurveForElliptic(publicKeyDetails.curve);
-    console.log('Curve for elliptic:', curveForElliptic);
-    const ec = new EC(curveForElliptic);
+    const curve = getCurveForElliptic(publicKeyDetails.curve);
 
     const x = publicKeyDetails.x;
     const y = publicKeyDetails.y;
@@ -250,19 +229,13 @@ export const verifyAttestion = async (attestation: Array<number>) => {
         key: {
             x,
             y,
+            curve,
         },
     };
-
-    console.log('Verifying signature');
     await cose.sign.verify(Buffer.from(attestation), verifier, {
         defaultType: 18,
     });
-    console.log('Signature verified');
-
-    return {
-        userData: attestationDoc.user_data,
-        pubkey: attestationDoc.public_key,
-    };
+    return true;
 };
 
 export function getPublicKey(attestation: Array<number>) {
@@ -293,38 +266,6 @@ export function derToPem(der: Buffer): string {
             '\n-----END CERTIFICATE-----';
     } catch (error) {
         console.error('DER to PEM conversion error:', error);
-        throw error;
-    }
-}
-
-function getCertificateFromPem(pemContent: string): Certificate {
-    try {
-        console.log('Starting certificate parsing');
-
-        // Remove PEM headers and newlines
-        const base64 = pemContent.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g, '');
-
-        // Convert base64 to binary
-        const binary = Buffer.from(base64, 'base64');
-        console.log('Binary buffer length:', binary.length);
-        console.log('First 20 bytes:', Array.from(binary.slice(0, 20)));
-
-        // Create ArrayBuffer from binary
-        const arrayBuffer = new ArrayBuffer(binary.length);
-        const view = new Uint8Array(arrayBuffer);
-        for (let i = 0; i < binary.length; i++) {
-            view[i] = binary[i];
-        }
-
-        // Parse ASN.1
-        const asn1 = asn1js.fromBER(arrayBuffer);
-        if (asn1.offset === -1) {
-            throw new Error(`ASN.1 parsing error: ${asn1.result.error}`);
-        }
-
-        return new Certificate({ schema: asn1.result });
-    } catch (error) {
-        console.error('Certificate parsing error:', error);
         throw error;
     }
 }
