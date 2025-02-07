@@ -7,7 +7,7 @@ import { Caption } from '../components/typography/Caption';
 import useHapticNavigation from '../hooks/useHapticNavigation';
 import ScanIcon from '../images/icons/qr_scan.svg';
 import WarnIcon from '../images/icons/warning.svg';
-import SelfIdCard from '../images/self-id-card.svg';
+import SelfCard from '../images/self-card.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 
@@ -45,7 +45,7 @@ const HomeScreen: React.FC = () => {
           <ScanIcon color={amber500} />
         </ScanButton>
         <Caption color={amber500} textTransform="uppercase">
-          Prove your SELF ID
+          Prove your SELF
         </Caption>
       </YStack>
     </YStack>
