@@ -8,7 +8,7 @@ type ContractBase = {
     address: string;
 }
 
-type ContractName = "register" | "hub";
+type ContractName = "registry" | "hub";
 
 export function getContractInstance(contractName: ContractName, chain: any, privateKey: `0x${string}`, rpcUrl: string) {
     const walletClient = getWalletClient(chain, privateKey, rpcUrl);
@@ -16,7 +16,7 @@ export function getContractInstance(contractName: ContractName, chain: any, priv
 
     let contractBase: ContractBase;
     switch (contractName) {
-        case "register":
+        case "registry":
             contractBase = {
                 abi: getAbi("IdentityRegistryImplV1"),
                 address: getAddresses(chain.id)["DeployRegistryModule#IdentityRegistry"],

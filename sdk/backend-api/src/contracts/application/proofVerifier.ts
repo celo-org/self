@@ -102,7 +102,6 @@ export class ProofVerifier {
         if (!isValid) {
             throw new Error("Invalid VC and Disclose proof");
         }
-        return true;
     }
 }
 
