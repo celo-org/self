@@ -10,9 +10,9 @@ import {
   createStaticNavigation,
 } from '@react-navigation/native';
 import {
-  StackHeaderProps,
-  createStackNavigator,
-} from '@react-navigation/stack';
+  NativeStackHeaderProps,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import { Button, ViewStyle } from 'tamagui';
 
 import { NavBar } from './components/NavBar';
@@ -37,7 +37,7 @@ import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import { black, neutral400, white } from './utils/colors';
 
-const DefaultNavBar = (props: StackHeaderProps) => {
+const DefaultNavBar = (props: NativeStackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
   const { options } = props;
   const headerStyle = (options.headerStyle || {}) as ViewStyle;
@@ -64,8 +64,12 @@ const DefaultNavBar = (props: StackHeaderProps) => {
   );
 };
 
+<<<<<<< HEAD
 const HomeNavBar = (props: StackHeaderProps) => {
   const insets = useSafeAreaInsets();
+=======
+const HomeNavBar = (props: NativeStackHeaderProps) => {
+>>>>>>> 22b8ac3e (perf: stack->native-stack navigation)
   return (
     <NavBar.Container
       backgroundColor={black}
@@ -105,12 +109,11 @@ const HomeNavBar = (props: StackHeaderProps) => {
   );
 };
 
-const RootStack = createStackNavigator({
+const RootStack = {
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
-
   layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
     Splash: {
@@ -232,11 +235,11 @@ const RootStack = createStackNavigator({
       },
     },
   },
-});
+} as const;
 
-const AppNavigation = createStaticNavigation(RootStack);
+const AppNavigation = createNativeStackNavigator(RootStack);
 
-export type RootStackParamList = StaticParamList<typeof RootStack>;
+export type RootStackParamList = StaticParamList<typeof AppNavigation>;
 
 declare global {
   namespace ReactNavigation {
@@ -244,4 +247,4 @@ declare global {
   }
 }
 
-export default AppNavigation;
+export default createStaticNavigation(AppNavigation);
