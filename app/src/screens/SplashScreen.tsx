@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import useUserStore from '../stores/userStore';
+import { black } from '../utils/colors';
 
 interface SplashScreenProps {}
 
@@ -25,8 +26,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({}) => {
       loop={false}
       source={require('../assets/animations/splash.json')}
       style={{
-        marginLeft: -2.5,
-        marginTop: -2.5,
+        backgroundColor: black,
+        marginLeft: -5,
+        marginTop: -5,
         width: '105%',
         height: '105%',
       }}
