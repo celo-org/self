@@ -1,4 +1,5 @@
 import Elysia, { t } from 'elysia';
+import { ProofVerifier } from '../../contracts/application/proofVerifier';
 
 export const ContractsController = new Elysia()
     .get(
@@ -29,11 +30,33 @@ export const ContractsController = new Elysia()
     )
     .post(
         'verify-vc-and-disclose-proof',
-        () => {
-            return {
-                status: 'success',
-                data: ['verify vc and disclose proof'],
-            };
+        async (request) => {
+            try {
+                const { proof, publicSignals } = await request.json();
+
+                const proofVerifier = new ProofVerifier(
+                    true,
+                    true,
+                    true,
+                    process.env.OFAC_ROOT || "sample-ofac-root",
+                    process.env.OLDER_THAN || "18",
+                    (process.env.EXCLUDED_COUNTRIES || "USA,IRN,CHN").split(','),
+                    process.env.IDENTITY_COMMITMENT_ROOT || "sample-commitment-root",
+                    {}
+                );
+
+                await proofVerifier.verifyVcAndDiscloseProof(proof, publicSignals);
+
+                return {
+                    status: "success",
+                    data: ["Valid VC and disclose proof"],
+                };
+            } catch (error) {
+                return {
+                    status: "error",
+                    message: error instanceof Error ? error.message : "Unknown error",
+                };
+            }
         },
         {
           response: {
@@ -52,4 +75,4 @@ export const ContractsController = new Elysia()
             description: 'Verify a VC and disclose a proof',
           },
         },
-    )
+    );

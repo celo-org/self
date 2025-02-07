@@ -1,8 +1,12 @@
 import { CIRCUIT_CONSTANTS } from "../../../../../contracts/test/utils/constants";
-import { Formatter } from "../../../../../contracts/test/utils/formatter";
+import { 
+    Formatter, 
+    CircuitAttributeHandler 
+} from "../../../../../contracts/test/utils/formatter";
 import { 
     PublicSignals,
-    Groth16Proof,    groth16
+    Groth16Proof,    
+    groth16
 } from "snarkjs";
 
 export class ProofVerifier {
@@ -75,14 +79,21 @@ export class ProofVerifier {
 
         // extract the oler than value
         if (this.olderThanEnabled) {
-            if (revealedDataPacked[1] < this.olderThan) {
+            const bytes = Formatter.fieldElementsToBytes(revealedDataPacked);
+            if (!CircuitAttributeHandler.compareOlderThan(bytes, Number(this.olderThan))) {
                 throw new Error("Invalid older than");
             }
         }
 
         // extract the excluded countries value
         if (this.excludedCountriesEnabled) {
-            if (revealedDataPacked[0] !== this.excludedCountries.length) {
+            const forbiddenCountries = Formatter.extractForbiddenCountriesFromPacked(revealedDataPacked[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_FORBIDDEN_COUNTRIES_LIST_PACKED_INDEX]);
+            for (let i = 0; i < this.excludedCountries.length; i++) {
+                for (let j = 0; j < forbiddenCountries.length; j++) {
+                    if (forbiddenCountries[j] === this.excludedCountries[i]) {
+                        break;
+                    }
+                }
                 throw new Error("Invalid excluded countries");
             }
         }
@@ -91,6 +102,7 @@ export class ProofVerifier {
         if (!isValid) {
             throw new Error("Invalid VC and Disclose proof");
         }
+        return true;
     }
 }
 
