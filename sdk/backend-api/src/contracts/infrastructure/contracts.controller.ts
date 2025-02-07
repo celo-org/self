@@ -16,7 +16,7 @@ export const ContractsController = new Elysia()
                 const identityCommitmentRoot = await registryContract.getIdentityCommitmentMerkleRoot();
                 return {
                     status: 'success',
-                    data: [identityCommitmentRoot],
+                    data: [identityCommitmentRoot.toString()],
                 };
             } catch (error) {
                 return {
@@ -40,6 +40,45 @@ export const ContractsController = new Elysia()
             tags: ['Contracts'],
             summary: 'Get identity commitment root in registry contract',
             description: 'Retrieve the identity commitment root in registry contract',
+          },
+        },
+    )
+    .post(
+        'dev-add-identity-commitment',
+        async (request) => {
+            const { attestationId, nullifier, commitment } = request.body;
+            const registryContract = new RegistryContract(
+                getChain(process.env.NETWORK as string),
+                process.env.PRIVATE_KEY as `0x${string}`,
+                process.env.RPC_URL as string
+            );
+            const tx = await registryContract.devAddIdentityCommitment(attestationId, BigInt(nullifier), BigInt(commitment));
+
+            return {
+                status: "success",
+                data: [tx.hash],
+            };
+        },
+        {
+          body: t.Object({
+            attestationId: t.String(),
+            nullifier: t.String(),
+            commitment: t.String(),
+          }),
+          response: {
+            200: t.Object({
+              status: t.String(),
+              data: t.Array(t.String()),
+            }),
+            500: t.Object({
+              status: t.String(),
+              message: t.String(),
+            }),
+          },
+          detail: {
+            tags: ['Contracts'],
+            summary: 'Add identity commitment to registry contract as a dev role',
+            description: 'Add identity commitment to registry contract as a dev role',
           },
         },
     )

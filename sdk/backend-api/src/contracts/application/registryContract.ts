@@ -17,7 +17,7 @@ export class RegistryContract {
         nullifier: bigint,
         commitment: bigint
     ) {
-        const tx = await this.registry.devAddIdentityCommitment(
+        const tx = await this.registry.write.devAddIdentityCommitment(
             attestationId,
             nullifier,
             commitment
