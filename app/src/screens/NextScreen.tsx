@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { ArrowRight } from '@tamagui/lucide-icons';
+import { ArrowRight, Cpu } from '@tamagui/lucide-icons';
 import { Fieldset, Image, Text, YStack, useWindowDimensions } from 'tamagui';
 
 import { attributeToPosition } from '../../../common/src/constants/constants';
@@ -146,8 +146,8 @@ const NextScreen: React.FC = () => {
       <YStack f={1} />
       <CustomButton
         onPress={async () => await firePayload(generateInputs())}
-        text="Next"
-        Icon={<ArrowRight color={textBlack} />}
+        text="TEE PROVING"
+        Icon={<Cpu color={textBlack} />}
       />
 
       <CustomButton

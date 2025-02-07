@@ -28,8 +28,8 @@ export const MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
 
 export const MAX_PADDED_ECONTENT_LEN: Partial<Record<(typeof hashAlgos)[number], number>> = {
   sha1: 384,
-  sha224: 512,
-  sha256: 512,
+  sha224: 384,
+  sha256: 384,
   sha384: 768,
   sha512: 896,
 };

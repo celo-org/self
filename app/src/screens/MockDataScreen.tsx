@@ -64,7 +64,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
   };
 
   const signatureAlgorithmToStrictSignatureAlgorithm = {
-    'rsa sha256': 'rsa_sha256_65537_2048',
+    'rsa sha256': 'rsa_sha256_65537_4096',
     'rsa sha1': 'rsa_sha1_65537_2048',
     'rsapss sha256': 'rsapss_sha256_65537_2048',
   } as const;
@@ -96,8 +96,8 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
           );
         } else {
           mockPassportData = genMockPassportData(
-            hashAlgo,
-            hashAlgo,
+            'sha1',
+            'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
             selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
@@ -108,7 +108,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
           );
         }
         useUserStore.getState().registerPassportData(mockPassportData);
-        const parsedPassportData = parsePassportData(mockPassportData);
+        const parsedPassportData = parsePassportData(mockPassportData)
         useUserStore.getState().setPassportMetadata(parsedPassportData);
         useUserStore.getState().setRegistered(true);
         resolve(null);

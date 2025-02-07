@@ -2,14 +2,12 @@ import elliptic from "elliptic";
 import forge from 'node-forge';
 
 const { ec: EC } = elliptic;
-const rpcUrl =
-    "ws://ad3c378249c1242619c12616bbbc4036-28818039163c2199.elb.eu-west-1.amazonaws.com:8888/";
-const wsUrl =
-    "ws://ad3c378249c1242619c12616bbbc4036-28818039163c2199.elb.eu-west-1.amazonaws.com:8890/";
+const rpcUrl = "ws://3.110.229.45:8888/";
+const wsUrl = "ws://43.205.137.10:8888/";
 
-const good_inputs = {
-}
-
+import { v4 } from 'uuid';
+import { getPublicKey, verifyAttestion } from "./proving/attest";
+import { good_inputs } from "./proving/inputs";
 
 function encryptAES256GCM(plaintext: string, key: forge.util.ByteStringBuffer) {
     // Generate a random 12-byte IV
@@ -44,23 +42,23 @@ const key1 = ec.genKeyPair();
 const pubkey =
     key1.getPublic().getX().toString("hex").padStart(64, "0") +
     key1.getPublic().getY().toString("hex").padStart(64, "0");
-const helloBody = {
-    jsonrpc: "2.0",
-    method: "openpassport_hello",
-    id: 1,
-    params: {
-        user_pubkey: [4, ...Array.from(Buffer.from(pubkey, "hex"))],
-    },
-};
-
-const circuitNames = [
-    "registerSha1Sha256Sha256Rsa655374096",
-    "registerSha256Sha256Sha256EcdsaBrainpoolP256r1",
-];
 
 export async function firePayload(inputs: any, timeoutMs = 1200000) {
+    console.log('Inputs:', inputs);
+    console.log('Good inputs:', good_inputs);
+    const uuid = v4();
     const ws = new WebSocket(rpcUrl);
     let ws2: WebSocket | null = null;
+
+    const helloBody = {
+        jsonrpc: "2.0",
+        method: "openpassport_hello",
+        id: 1,
+        params: {
+            user_pubkey: [4, ...Array.from(Buffer.from(pubkey, "hex"))],
+            uuid: uuid,
+        },
+    };
 
     ws.addEventListener("open", () => {
         console.log("Connected to rpc");
@@ -73,11 +71,16 @@ export async function firePayload(inputs: any, timeoutMs = 1200000) {
             const result = JSON.parse(event.data);
             console.log("Received message:", result);
 
-            if (result.result?.pubkey !== undefined) {
-                const serverPubkey = result.result.pubkey;
+            if (result.result?.attestation !== undefined) {
+                // const { userData, pubkey } = await verifyAttestation(
+                //     result.result.attestation
+                // );
+                const serverPubkey = getPublicKey(result.result.attestation);
+                const verified = await verifyAttestion(result.result.attestation);
+                console.log("Verified:", verified);
                 console.log("Server pubkey:", serverPubkey);
 
-                const key2 = ec.keyFromPublic(serverPubkey, "hex");
+                const key2 = ec.keyFromPublic(serverPubkey as string, "hex");
                 const sharedKey = key1.derive(key2.getPublic());
 
                 console.log("Generated shared key");
@@ -90,9 +93,9 @@ export async function firePayload(inputs: any, timeoutMs = 1200000) {
                 const encryptionData = encryptAES256GCM(
                     JSON.stringify({
                         type: "register",
-                        prove: {
-                            name: 'registerSha1Sha256Sha256Rsa655374096',
-                            inputs: JSON.stringify(good_inputs),
+                        circuit: {
+                            name: 'register_sha1_sha256_sha256_rsa_65537_4096',
+                            inputs: JSON.stringify(inputs),
                             public_inputs: JSON.stringify({}),
                         },
                     }),
@@ -129,7 +132,7 @@ export async function firePayload(inputs: any, timeoutMs = 1200000) {
 
                 ws2.addEventListener("open", () => {
                     console.log("WS2: Connection opened");
-                    ws2?.send(uuid);
+                    ws2?.send(`subscribe_${uuid}`);
                 });
 
                 ws2.addEventListener("error", (err) => {
