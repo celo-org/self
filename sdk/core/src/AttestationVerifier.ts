@@ -1,9 +1,5 @@
 import { groth16 } from 'snarkjs';
 import {
-  n_dsc,
-  k_dsc,
-  ECDSA_K_LENGTH_FACTOR,
-  k_dsc_ecdsa,
   countryNames,
   countryCodes,
 } from '../../../common/src/constants/constants';
@@ -32,13 +28,15 @@ import { unpackReveal } from '../../../common/src/utils/revealBitmap';
 import { getCSCAModulusMerkleTree } from '../../../common/src/utils/csca';
 import { OpenPassportVerifierReport } from './OpenPassportVerifierReport';
 import { fetchTreeFromUrl } from '../../../common/src/utils/pubkeyTree';
-import { parseCertificateSimple } from '../../../common/src/utils/certificate_parsing/parseCertificateSimple';
-import { PublicKeyDetailsRSA } from '../../../common/src/utils/certificate_parsing/dataStructure';
+import fs from 'fs';
+import { ethers } from 'ethers';
+import { VcAndDiscloseHubProofStruct } from '../../../common/src/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1';
 
 export class AttestationVerifier {
   protected devMode: boolean;
   protected scope: string;
   protected report: OpenPassportVerifierReport;
+
   protected minimumAge: { enabled: boolean; value: string } = { enabled: false, value: '18' };
   protected nationality: { enabled: boolean; value: (typeof countryNames)[number] } = {
     enabled: false,
@@ -49,11 +47,23 @@ export class AttestationVerifier {
     value: [],
   };
   protected ofac: boolean = false;
-  protected commitmentMerkleTreeUrl: string = '';
 
-  constructor(devMode: boolean = false) {
+  protected registryContract: any;
+  protected hubContract: any;
+
+  constructor(
+    devMode: boolean = false,
+    rpcUrl: string,
+    registryContractAddress: `0x${string}`,
+    hubContractAddress: `0x${string}`
+  ) {
     this.devMode = devMode;
     this.report = new OpenPassportVerifierReport();
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const registryAbi = JSON.parse(fs.readFileSync('./abi/IdentityRegistryImplV1.json', 'utf8'));
+    this.registryContract = new ethers.Contract(registryContractAddress, registryAbi.abi, provider);
+    const hubAbi = JSON.parse(fs.readFileSync('./abi/IdentityVerificationHubImplV1.json', 'utf8'));
+    this.hubContract = new ethers.Contract(hubContractAddress, hubAbi.abi, provider);
   }
 
   public async verify(attestation: OpenPassportAttestation): Promise<OpenPassportVerifierReport> {
@@ -86,12 +96,7 @@ export class AttestationVerifier {
   }
 
   private verifyDiscloseAttributes(attestation: OpenPassportAttestation) {
-    let parsedPublicSignals;
-    if (attestation.proof.mode === 'vc_and_disclose') {
-      parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
-    } else {
-      parsedPublicSignals = parsePublicSignalsProve(attestation.proof.value.publicSignals, k_dsc);
-    }
+    let parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
     this.verifyAttribute(
       'current_date',
       parsedPublicSignals.current_date.toString(),
@@ -156,20 +161,14 @@ export class AttestationVerifier {
     signatureAlgorithm: string,
     hashFunction: string
   ): Promise<void> {
-    const vkey = getVkeyFromArtifacts(mode, signatureAlgorithm, hashFunction);
-    const isVerified = await groth16.verify(vkey, publicSignals, proof as any);
-    this.verifyAttribute('proof', isVerified.toString(), 'true');
-  }
+    try {
+      const vcAndDiscloseHubProof = {
 
-  private verifyAttribute(
-    attribute: keyof OpenPassportVerifierReport,
-    value: string,
-    expectedValue: string
-  ) {
-    if (value !== expectedValue) {
-      this.report.exposeAttribute(attribute, value, expectedValue);
-    } else {
-      console.log('\x1b[32m%s\x1b[0m', `- attribute ${attribute} verified`);
+      }
+      const result = await this.hubContract.verifyVcAndDisclose(proof);
+    } catch (error) {
+      this.report.exposeAttribute('proof', 'false', 'true');
     }
   }
+
 }
