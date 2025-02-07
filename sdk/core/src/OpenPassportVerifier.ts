@@ -23,6 +23,7 @@ export class OpenPassportVerifier extends AttestationVerifier {
   private modalServerUrl: string = MODAL_SERVER_ADDRESS;
   private rpcUrl: string = DEFAULT_RPC_URL;
   private cscaMerkleTreeUrl: string = '';
+  private registryContractAddress: string = '';
 
   constructor(mode: Mode, scope: string, devMode: boolean = false) {
     super(devMode);
@@ -62,18 +63,22 @@ export class OpenPassportVerifier extends AttestationVerifier {
     return this;
   }
 
-  // Register
-  setModalServerUrl(modalServerUrl: string): this {
-    this.modalServerUrl = modalServerUrl;
-    return this;
-  }
-
   setCommitmentMerkleTreeUrl(commitmentMerkleTreeUrl: string): this {
     this.commitmentMerkleTreeUrl = commitmentMerkleTreeUrl;
     return this;
   }
 
   // On chain
+  setRpcUrl(rpcUrl: string): this {
+    this.rpcUrl = rpcUrl;
+    return this;
+  }
+
+  setRegistryContractAddress(registryContractAddress: string): this {
+    this.registryContractAddress = registryContractAddress;
+    return this;
+  }
+
   setRpcUrl(rpcUrl: string): this {
     this.rpcUrl = rpcUrl;
     return this;
@@ -104,41 +109,6 @@ export class OpenPassportVerifier extends AttestationVerifier {
 
     let openPassportArguments: ArgumentsProveOffChain | ArgumentsRegister;
     switch (this.mode) {
-      case 'prove_onchain':
-        const argsProveOnChain: ArgumentsProveOnChain = {
-          disclosureOptions: {
-            minimumAge: this.minimumAge,
-            nationality: this.nationality,
-            excludedCountries: this.excludedCountries,
-            ofac: this.ofac,
-          },
-          modalServerUrl: this.modalServerUrl,
-          merkleTreeUrl: this.cscaMerkleTreeUrl,
-        };
-        openPassportArguments = argsProveOnChain;
-        break;
-      case 'prove_offchain':
-        const argsProveOffChain: ArgumentsProveOffChain = {
-          disclosureOptions: {
-            minimumAge: this.minimumAge,
-            nationality: this.nationality,
-            excludedCountries: this.excludedCountries,
-            ofac: this.ofac,
-          },
-        };
-        openPassportArguments = argsProveOffChain;
-        break;
-      case 'register':
-        if (!this.commitmentMerkleTreeUrl) {
-          throw new Error("Commitment merkle tree URL is required for mode 'register'");
-        }
-        const argsRegisterOnChain: ArgumentsRegister = {
-          modalServerUrl: this.modalServerUrl,
-          cscaMerkleTreeUrl: this.cscaMerkleTreeUrl,
-          commitmentMerkleTreeUrl: this.commitmentMerkleTreeUrl,
-        };
-        openPassportArguments = argsRegisterOnChain;
-        break;
       case 'vc_and_disclose':
         const argsVcAndDisclose: ArgumentsDisclose = {
           disclosureOptions: {

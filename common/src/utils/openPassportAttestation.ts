@@ -357,16 +357,14 @@ export function parsePublicSignalsDsc(publicSignals) {
 
 export function parsePublicSignalsDisclose(publicSignals) {
   return {
-    nullifier: publicSignals[0],
-    revealedData_packed: publicSignals.slice(1, 4),
-    older_than: publicSignals.slice(4, 6),
-    forbidden_countries_list_packed_disclosed: publicSignals.slice(6, 8),
-    ofac_result: publicSignals[8],
-    attestation_id: publicSignals[9],
-    merkle_root: publicSignals[10],
-    scope: publicSignals[11],
-    current_date: publicSignals.slice(12, 18),
-    user_identifier: publicSignals[18],
-    smt_root: publicSignals[19],
+    revealedData_packed: publicSignals.slice(0, 2),
+    forbidden_countries_list_packed: publicSignals.slice(3),
+    nullifier: publicSignals[4],
+    attestation_id: publicSignals[5],
+    merkle_root: publicSignals[6],
+    current_date: publicSignals.slice(7, 12),
+    smt_root: publicSignals[13],
+    scope: publicSignals[14],
+    user_identifier: publicSignals[15],
   };
 }
