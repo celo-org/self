@@ -92,8 +92,8 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                   Scan a partner's QR code
                 </Description>
                 <Additional style={styles.description}>
-                  Look for a QR code from a Self partner and position it in
-                  the camera frame above.
+                  Look for a QR code from a Self partner and position it in the
+                  camera frame above.
                 </Additional>
               </View>
             </XStack>
