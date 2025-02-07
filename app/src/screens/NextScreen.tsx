@@ -5,14 +5,15 @@ import { ArrowRight, Cpu } from '@tamagui/lucide-icons';
 import { Fieldset, Image, Text, YStack, useWindowDimensions } from 'tamagui';
 
 import { attributeToPosition } from '../../../common/src/constants/constants';
+import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import CustomButton from '../components/CustomButton';
 import USER_PROFILE from '../images/user_profile.png';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
-import { formatAttribute, getFirstName, maskString } from '../utils/utils';
-import { firePayload } from '../utils/proving/tee';
-import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import { generateTeeInputsRegister } from '../utils/generateInputsInApp';
+import { firePayload } from '../utils/proving/tee';
+import { formatAttribute, getFirstName, maskString } from '../utils/utils';
+
 const NextScreen: React.FC = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -30,17 +31,19 @@ const NextScreen: React.FC = () => {
     date_of_birth: 'optional',
   };
 
-
   async function firePayloadRegister() {
     if (!passportData) {
       return null;
     }
     const parsedPassportData = initPassportDataParsing(passportData);
-    const { inputs, circuitName } = generateTeeInputsRegister('0', parsedPassportData);
+    const { inputs, circuitName } = generateTeeInputsRegister(
+      '0',
+      parsedPassportData,
+    );
     console.log('****$$$$', inputs);
     console.log('circuitName', circuitName);
     const result = await firePayload(inputs, circuitName);
-    console.log("RESULT OF THE REGISTER", result);
+    console.log('RESULT OF THE REGISTER', result);
   }
 
   return (

@@ -30,9 +30,9 @@ import {
   textBlack,
 } from '../utils/colors';
 
-interface MockDataScreenProps { }
+interface MockDataScreenProps {}
 
-const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
+const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
   const navigation = useNavigation();
   const [age, setAge] = useState(24);
   const [expiryYears, setExpiryYears] = useState(5);
@@ -79,13 +79,12 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
     await new Promise(resolve =>
       setTimeout(() => {
         let mockPassportData;
-        const hashAlgo = selectedAlgorithm === 'rsa sha1' ? 'sha1' : 'sha256';
         if (isInOfacList) {
           mockPassportData = genMockPassportData(
             'sha1',
             'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
-            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),
@@ -99,7 +98,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
             'sha1',
             'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
-            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),
@@ -108,7 +107,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
           );
         }
         useUserStore.getState().registerPassportData(mockPassportData);
-        const parsedPassportData = parsePassportData(mockPassportData)
+        const parsedPassportData = parsePassportData(mockPassportData);
         useUserStore.getState().setPassportMetadata(parsedPassportData);
         useUserStore.getState().setRegistered(true);
         resolve(null);
