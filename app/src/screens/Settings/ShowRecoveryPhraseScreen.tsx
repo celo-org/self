@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import { findBestLanguageTag } from 'react-native-localize';
 
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +14,7 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { AuthContext } from '../../stores/authProvider';
 import { slate400 } from '../../utils/colors';
 import { loadSecretOrCreateIt } from '../../utils/keychain';
 
@@ -21,15 +23,17 @@ interface ShowRecoveryPhraseScreenProps {}
 const ShowRecoveryPhraseScreen: React.FC<
   ShowRecoveryPhraseScreenProps
 > = ({}) => {
-  const navigation = useNavigation();
+  const { loginWithBiometrics } = useContext(AuthContext);
   const [mnemonic, setMnemonic] = useState<string[]>();
   const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
 
-  const onRevealWords = useCallback(() => {
+  const onRevealWords = useCallback(async () => {
+    await loadMnemonic();
+    await loginWithBiometrics();
     setUserHasSeenMnemonic(true);
   }, []);
 
-  const loadPassword = useCallback(async () => {
+  const loadMnemonic = useCallback(async () => {
     const privKey = await loadSecretOrCreateIt();
 
     const { languageTag } = findBestLanguageTag(
@@ -44,14 +48,10 @@ const ShowRecoveryPhraseScreen: React.FC<
     setMnemonic(words.trim().split(' '));
   }, []);
 
-  useEffect(() => {
-    loadPassword();
-  }, []);
-
   const onCloudBackupPress = useHapticNavigation('TODO: cloud backup');
   const onSkipPress = useHapticNavigation('AccountVerifiedSuccess');
 
-  return (src/Navigation.tsx
+  return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.BottomSection>
         <YStack

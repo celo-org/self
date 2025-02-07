@@ -1,30 +1,23 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { findBestLanguageTag } from 'react-native-localize';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
-import { Button, Text, TextArea, View, XStack, YStack } from 'tamagui';
+import { Text, TextArea, View, XStack, YStack } from 'tamagui';
 
-import Mnemonic from '../../components/Mnemonic';
-import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
-import { Caption } from '../../components/typography/Caption';
 import Description from '../../components/typography/Description';
-import { Title } from '../../components/typography/Title';
 import Paste from '../../images/icons/paste.svg';
-import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import {
   black,
-  slate200,
   slate300,
   slate400,
   slate600,
   slate700,
   white,
 } from '../../utils/colors';
-import { loadSecretOrCreateIt, restoreSecret } from '../../utils/keychain';
+import { restoreSecret } from '../../utils/keychain';
 
 interface RecoverWithPhraseScreenProps {}
 

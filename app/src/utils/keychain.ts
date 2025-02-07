@@ -8,6 +8,7 @@ import { PassportData } from '../../../common/src/utils/types';
 export async function restoreSecret(mnemonic: string) {
   const restoredWallet = ethers.Wallet.fromPhrase(mnemonic);
   const newSecret = restoredWallet.privateKey;
+
   const existingSecret = await Keychain.getGenericPassword({
     service: 'secret',
   });

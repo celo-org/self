@@ -15,7 +15,7 @@ import {
 
 interface MnemonicProps {
   words?: string[];
-  onRevealWords?: () => void;
+  onRevealWords?: () => Promise<void>;
 }
 interface WordPill {
   index: number;
@@ -46,9 +46,9 @@ const REDACTED = new Array(24).fill(' '.repeat(4));
 const Mnemonic = ({ words = REDACTED, onRevealWords }: MnemonicProps) => {
   const [revealWords, setRevealWords] = useState(false);
   const [copied, setCopied] = useState(false);
-  const copyToClipboardOrReveal = useCallback(() => {
+  const copyToClipboardOrReveal = useCallback(async () => {
     if (!revealWords) {
-      onRevealWords?.();
+      await onRevealWords?.();
       return setRevealWords(previous => !previous);
     }
     Clipboard.setString(words.join(' '));
