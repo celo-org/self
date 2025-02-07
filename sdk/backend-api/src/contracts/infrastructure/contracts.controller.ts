@@ -1,5 +1,7 @@
 import Elysia, { t } from 'elysia';
 import { ProofVerifier } from '../../contracts/application/proofVerifier';
+import { RegistryContract } from '../../contracts/application/registryContract';
+import { getChain } from '../../contracts/application/chains';
 
 export const ContractsController = new Elysia()
     .get(
@@ -32,16 +34,26 @@ export const ContractsController = new Elysia()
         'verify-vc-and-disclose-proof',
         async (request) => {
             try {
+
+                const registryContract = new RegistryContract(
+                    getChain(process.env.NETWORK as string),
+                    process.env.PRIVATE_KEY as `0x${string}`,
+                    process.env.RPC_URL as string
+                );
+
+                const identityCommitmentRoot = await registryContract.getIdentityCommitmentMerkleRoot();
+                const ofacRoot = await registryContract.getOfacRoot();
+
                 const { proof, publicSignals } = await request.json();
 
                 const proofVerifier = new ProofVerifier(
-                    true,
-                    true,
-                    true,
-                    process.env.OFAC_ROOT || "sample-ofac-root",
+                    process.env.OFAC_ENABLED === "true",
+                    process.env.OLDER_THAN_ENABLED === "true",
+                    process.env.EXCLUDED_COUNTRIES_ENABLED === "true",
+                    ofacRoot,
                     process.env.OLDER_THAN || "18",
                     (process.env.EXCLUDED_COUNTRIES || "USA,IRN,CHN").split(','),
-                    process.env.IDENTITY_COMMITMENT_ROOT || "sample-commitment-root",
+                    identityCommitmentRoot,
                     {}
                 );
 

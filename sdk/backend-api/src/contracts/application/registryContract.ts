@@ -30,4 +30,14 @@ export class RegistryContract {
         const root = await this.registry.getIdentityCommitmentMerkleRoot();
         return root;
     }
+
+    public async getCscaRoot() {
+        const root = await this.registry.getCscaRoot();
+        return root;
+    }
+
+    public async getOfacRoot() {
+        const root = await this.registry.getOfacRoot();
+        return root;
+    }
 }
