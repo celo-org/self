@@ -1,29 +1,33 @@
 import { getContractInstance } from "./getContracts";
+import { waitForTransactionReceipt } from "viem/actions";
 
 export class RegistryContract {
 
     protected registry: any;
+    protected client: any;
 
     constructor(
         chain: any,
         privateKey: `0x${string}`,
         rpcUrl: string
     ) {
-        this.registry = getContractInstance("registry", chain, privateKey, rpcUrl);
+        const { contract, publicClient } = getContractInstance("registry", chain, privateKey, rpcUrl);
+        this.registry = contract;
+        this.client = publicClient;
     }
 
     public async transferOwnership(
         newOwner: `0x${string}`
     ) {
-        const tx = await this.registry.write.transferOwnership(newOwner);
-        await tx.wait();
-        return tx;
+        const hash = await this.registry.write.transferOwnership([newOwner]) as `0x${string}`;
+        const receipt = await waitForTransactionReceipt(this.client, { hash });
+        return { hash };
     }
 
     public async acceptOwnership() {
-        const tx = await this.registry.write.acceptOwnership();
-        await tx.wait();
-        return tx;
+        const hash = await this.registry.write.acceptOwnership() as `0x${string}`;
+        const receipt = await waitForTransactionReceipt(this.client, { hash });
+        return { hash };
     }
 
     public async devAddIdentityCommitment(
@@ -31,21 +35,19 @@ export class RegistryContract {
         nullifier: bigint,
         commitment: bigint
     ) {
-        const tx = await this.registry.write.devAddIdentityCommitment(
-            attestationId,
-            nullifier,
-            commitment
-        );
-        await tx.wait();
-        return tx;
+        const hash = await this.registry.write.devAddIdentityCommitment(
+            [attestationId, nullifier, commitment]
+        ) as `0x${string}`;
+        const receipt = await waitForTransactionReceipt(this.client, { hash });
+        return { hash };
     }
 
     public async devAddDscKeyCommitment(
         dscCommitment: bigint
     ) {
-        const tx = await this.registry.write.devAddDscKeyCommitment([dscCommitment]);
-        await tx.wait();
-        return tx;
+        const hash = await this.registry.write.devAddDscKeyCommitment([dscCommitment]) as `0x${string}`;
+        const receipt = await waitForTransactionReceipt(this.client, { hash });
+        return { hash };
     }
 
     public async getIdentityCommitmentMerkleRoot() {

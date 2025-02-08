@@ -1,5 +1,5 @@
-import {getPublicClient, getWalletClient} from "./client";
-import {getContract} from "viem";
+import { getPublicClient, getWalletClient } from "./client";
+import { getContract } from "viem";
 import fs from "fs";
 import path from "path";
 
@@ -17,7 +17,7 @@ export function getContractInstance(contractName: ContractName, chain: any, priv
     let contractBase: ContractBase;
     switch (contractName) {
         case "registry":
-           contractBase = {
+            contractBase = {
                 abi: getAbi("IdentityRegistryImplV1"),
                 address: getAddresses(chain.id)["DeployRegistryModule#IdentityRegistry"],
             };
@@ -32,11 +32,17 @@ export function getContractInstance(contractName: ContractName, chain: any, priv
             throw new Error(`Contract ${contractName} not found`);
     }
 
-    return getContract({
+    const contract = getContract({
         abi: contractBase.abi,
         address: contractBase.address as `0x${string}`,
         client: { public: publicClient, wallet: walletClient }
     });
+
+    return {
+        contract,
+        walletClient,
+        publicClient
+    };
 }
 
 export function getAddresses(chainId: number) {
