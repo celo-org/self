@@ -44,26 +44,10 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     [store, navigation],
   );
 
-  const onIOSMount = useCallback(() => {
-    if (Platform.OS === 'ios') {
-      const cancelCamera = startCameraScan(onPassportRead);
-      return cancelCamera;
-    }
-  }, [onPassportRead]);
-
-  useFocusEffect(() => {
-    return onIOSMount();
-  });
-
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        {Platform.OS !== 'ios' && (
-          <PassportCamera
-            onPassportRead={onPassportRead}
-            isMounted={isFocused}
-          />
-        )}
+        <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
         <LottieView
           autoPlay
           loop
