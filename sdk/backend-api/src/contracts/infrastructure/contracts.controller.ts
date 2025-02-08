@@ -76,6 +76,74 @@ export const ContractsController = new Elysia()
         },
     )
     .post(
+        'transfer-ownership',
+        async (request) => {
+            const { newOwner } = request.body;
+            const registryContract = new RegistryContract(
+                getChain(process.env.NETWORK as string),
+                process.env.PRIVATE_KEY as `0x${string}`,
+                process.env.RPC_URL as string
+            );
+            const tx = await registryContract.transferOwnership(newOwner);
+            return {
+                status: "success",
+                data: [tx.hash],
+            };
+        },
+        {
+            body: t.Object({
+                newOwner: t.String(),
+            }),
+            response: {
+                200: t.Object({
+                    status: t.String(),
+                    data: t.Array(t.String()),
+                }),
+                500: t.Object({
+                    status: t.String(),
+                    message: t.String(),
+                }),
+            },
+            detail: {
+                tags: ['Contracts'],
+                summary: 'Transfer ownership of the registry contract',
+                description: 'Transfer ownership of the registry contract',
+            },
+        },
+    )
+    .post(
+        'accept-ownership',
+        async () => {
+            const registryContract = new RegistryContract(
+                getChain(process.env.NETWORK as string),
+                process.env.PRIVATE_KEY as `0x${string}`,
+                process.env.RPC_URL as string
+            );
+            const tx = await registryContract.acceptOwnership();
+            return {
+                status: "success",
+                data: [tx.hash],
+            };
+        },
+        {
+            response: {
+                200: t.Object({
+                    status: t.String(),
+                    data: t.Array(t.String()),
+                }),
+                500: t.Object({
+                    status: t.String(),
+                    message: t.String(),
+                }),
+            },
+            detail: {
+                tags: ['Contracts'],
+                summary: 'Accept ownership of the registry contract',
+                description: 'Accept ownership of the registry contract',
+            },
+        },
+    )
+    .post(
         'dev-add-dsc-key-commitment',
         async (request) => {
             const { dscCommitment } = request.body;

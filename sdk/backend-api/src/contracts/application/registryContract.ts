@@ -12,6 +12,20 @@ export class RegistryContract {
         this.registry = getContractInstance("registry", chain, privateKey, rpcUrl);
     }
 
+    public async transferOwnership(
+        newOwner: `0x${string}`
+    ) {
+        const tx = await this.registry.write.transferOwnership(newOwner);
+        await tx.wait();
+        return tx;
+    }
+
+    public async acceptOwnership() {
+        const tx = await this.registry.write.acceptOwnership();
+        await tx.wait();
+        return tx;
+    }
+
     public async devAddIdentityCommitment(
         attestationId: string,
         nullifier: bigint,
