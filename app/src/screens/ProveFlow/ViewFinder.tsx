@@ -15,7 +15,6 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
-import QRUpload from '../../images/icons/qr_upload.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { slate800 } from '../../utils/colors';
@@ -94,24 +93,6 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                 <Additional style={styles.description}>
                   Look for a QR code from a Self partner and position it in the
                   camera frame above.
-                </Additional>
-              </View>
-            </XStack>
-            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
-              <View pt="$2">
-                <QRUpload height={40} width={40} color={slate800} />
-              </View>
-              <View
-                alignItems="flex-start"
-                justifyContent="flex-start"
-                maxWidth="75%"
-              >
-                <Description style={styles.subheader}>
-                  Upload from photo roll
-                </Description>
-                <Additional style={styles.description}>
-                  You can also upload an image of a Self QR code from your
-                  camera roll instead.
                 </Additional>
               </View>
             </XStack>
