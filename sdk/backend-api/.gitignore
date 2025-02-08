@@ -42,6 +42,5 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 
-/src/abi/*
 /src/circuits/*
-/src/addresses/*
+/src/addresses/chain-31337*
