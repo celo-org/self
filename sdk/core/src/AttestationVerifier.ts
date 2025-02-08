@@ -14,7 +14,7 @@ import {
   parsePublicSignalsDisclose,
   parsePublicSignalsDsc,
   parsePublicSignalsProve,
-} from '../../../common/src/utils/openPassportAttestation';
+} from '../../../common/src/utils/selfAttestation';
 import { Mode } from 'fs';
 import forge from 'node-forge';
 import {
@@ -26,11 +26,18 @@ import {
 } from '../../../common/src/utils/utils';
 import { unpackReveal } from '../../../common/src/utils/revealBitmap';
 import { getCSCAModulusMerkleTree } from '../../../common/src/utils/csca';
-import { OpenPassportVerifierReport } from './OpenPassportVerifierReport';
+import { OpenPassportVerifierReport } from './SelfVerifierReport';
 import { fetchTreeFromUrl } from '../../../common/src/utils/pubkeyTree';
 import fs from 'fs';
 import { ethers } from 'ethers';
-import { VcAndDiscloseHubProofStruct } from '../../../common/src/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1';
+import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
+import { revealedDataTypes } from '../../../common/src/constants/constants';
+import {
+  Groth16Proof,
+  PublicSignals,
+  groth16
+} from 'snarkjs';
+import { CIRCUIT_CONSTANTS } from '../../../common/src/constants/constants';
 
 export class AttestationVerifier {
   protected devMode: boolean;
@@ -73,101 +80,129 @@ export class AttestationVerifier {
     this.verifyAttribute('scope', castToScope(parsedPublicSignals.scope), this.scope);
 
     await this.verifyProof(
-      attestation.proof.mode,
-      attestation.proof.value.proof,
-      attestation.proof.value.publicSignals,
-      attestation.proof.signatureAlgorithm,
-      attestation.proof.hashFunction
+      attestation
     );
 
-    switch (attestation.proof.mode) {
-      case 'vc_and_disclose':
-        await this.verifyDisclose(attestation);
-        break;
-    }
     return this.report;
   }
 
-  private async verifyDisclose(attestation: OpenPassportAttestation) {
-    // verify the root of the commitment
-    this.verifyCommitment(attestation);
-    // verify disclose attributes
-    this.verifyDiscloseAttributes(attestation);
-  }
-
-  private verifyDiscloseAttributes(attestation: OpenPassportAttestation) {
-    let parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
-    this.verifyAttribute(
-      'current_date',
-      parsedPublicSignals.current_date.toString(),
-      getCurrentDateFormatted().toString()
-    );
-
-    const unpackedReveal = unpackReveal(parsedPublicSignals.revealedData_packed);
-    if (this.minimumAge.enabled) {
-      const attributeValueInt = getOlderThanFromCircuitOutput(parsedPublicSignals.older_than);
-      const selfAttributeOlderThan = parseInt(this.minimumAge.value);
-      if (attributeValueInt < selfAttributeOlderThan) {
-        this.report.exposeAttribute(
-          'older_than',
-          attributeValueInt.toString(),
-          this.minimumAge.value.toString()
-        );
-      } else {
-        console.log('\x1b[32m%s\x1b[0m', '- minimum age verified');
-      }
-    }
-    if (this.nationality.enabled) {
-      if (this.nationality.value === 'Any') {
-        console.log('\x1b[32m%s\x1b[0m', '- nationality verified');
-      } else {
-        const attributeValue = getAttributeFromUnpackedReveal(unpackedReveal, 'nationality');
-        this.verifyAttribute('nationality', countryCodes[attributeValue], this.nationality.value);
-      }
-    }
-    if (this.ofac) {
-      const attributeValue = parsedPublicSignals.ofac_result.toString();
-      this.verifyAttribute('ofac', attributeValue, '1');
-    }
-    if (this.excludedCountries.enabled) {
-      const formattedCountryList = formatForbiddenCountriesListFromCircuitOutput(
-        parsedPublicSignals.forbidden_countries_list_packed_disclosed
-      );
-      const formattedCountryListFullCountryNames = formattedCountryList.map(
-        (countryCode) => countryCodes[countryCode]
-      );
-      this.verifyAttribute(
-        'forbidden_countries_list',
-        formattedCountryListFullCountryNames.toString(),
-        this.excludedCountries.value.toString()
-      );
-    }
-  }
-
-  private async verifyCommitment(attestation: OpenPassportAttestation) {
-    const tree = await fetchTreeFromUrl(this.commitmentMerkleTreeUrl);
-    const parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
-    this.verifyAttribute(
-      'merkle_root_commitment',
-      tree.root.toString(),
-      parsedPublicSignals.merkle_root
-    );
-  }
-
   private async verifyProof(
-    mode: Mode,
-    proof: string[],
-    publicSignals: string[],
-    signatureAlgorithm: string,
-    hashFunction: string
+    attestation: OpenPassportAttestation
   ): Promise<void> {
-    try {
-      const vcAndDiscloseHubProof = {
 
+    const solidityProof = await groth16.exportSolidityCallData(
+      attestation.proof.value.proof,
+      attestation.proof.value.publicSignals,
+    );
+
+    const vcAndDiscloseHubProof: VcAndDiscloseHubProofStruct = {
+      olderThanEnabled: this.minimumAge.enabled,
+      olderThan: BigInt(this.minimumAge.value),
+      forbiddenCountriesEnabled: this.excludedCountries.enabled,
+      forbiddenCountriesListPacked: BigInt(this.excludedCountries.value.length),
+      ofacEnabled: this.ofac,
+      vcAndDiscloseProof: solidityProof
+    }
+
+    let result
+    try {
+      result = await this.hubContract.verifyVcAndDisclose(vcAndDiscloseHubProof);
+    } catch (error: any) {
+      let errorName: string | undefined;
+      try {
+        const decodedError = this.hubContract.interface.parseError(error.data);
+        errorName = decodedError?.name;
+      } catch (e) {
+        console.error("Error decoding revert data:", e);
       }
-      const result = await this.hubContract.verifyVcAndDisclose(proof);
-    } catch (error) {
-      this.report.exposeAttribute('proof', 'false', 'true');
+      
+      switch (errorName) {
+        case "INVALID_COMMITMENT_ROOT":
+          const expectedRoot = await this.registryContract.getIdentityCommitmentRoot();
+          this.report.exposeAttribute(
+            'merkle_root_commitment', 
+            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_MERKLE_ROOT_INDEX], 
+            expectedRoot
+          );
+          break;
+        case "CURRENT_DATE_NOT_IN_VALID_RANGE":
+          this.report.exposeAttribute(
+            'current_date', 
+            , 
+            'true'
+          );
+          break;
+        case "INVALID_OLDER_THAN":
+          this.report.exposeAttribute(
+            'older_than', 
+            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_OLDER_THAN_INDEX], 
+            this.minimumAge.value
+          );
+          break;
+        case "INVALID_OFAC":
+          this.report.exposeAttribute(
+            'ofac', 
+            'false', 
+            'true'
+          );
+          break;
+        case "INVALID_OFAC_ROOT":
+          const expectedOfacRoot = await this.registryContract.getOfacMerkleRoot();
+          this.report.exposeAttribute(
+            'merkle_root_ofac',
+            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_OFAC_ROOT_INDEX], 
+            expectedOfacRoot
+          );
+          break;
+        case "INVALID_FORBIDDEN_COUNTRIES":
+          this.report.exposeAttribute(
+            'forbidden_countries_list',
+            formatForbiddenCountriesListFromCircuitOutput(
+              attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_FORBIDDEN_COUNTRIES_LIST_PACKED_INDEX]
+            ), 
+            this.excludedCountries.value
+          );
+          break;
+        case "INVALID_VC_AND_DISCLOSE_PROOF":
+          this.report.exposeAttribute(
+            'proof', 
+            'false', 
+            'true'
+          );
+          break;
+        default:
+          console.error("Unknown error occurred:", error);
+          break;
+      }
+    }
+
+    const readableRevealedData = await this.registryContract.getReadableRevealedData(
+      result.revealedDataPacked, 
+      [
+        revealedDataTypes.issuing_state, 
+        revealedDataTypes.name, 
+        revealedDataTypes.passport_number, 
+        revealedDataTypes.nationality, 
+        revealedDataTypes.date_of_birth, 
+        revealedDataTypes.gender, 
+        revealedDataTypes.expiry_date, 
+        revealedDataTypes.older_than, 
+        revealedDataTypes.ofac
+      ]
+    );
+
+      return readableRevealedData;
+  }
+
+  private verifyAttribute(
+    attribute: keyof OpenPassportVerifierReport,
+    value: string,
+    expectedValue: string
+  ) {
+    if (value !== expectedValue) {
+      this.report.exposeAttribute(attribute, value, expectedValue);
+    } else {
+      console.log('\x1b[32m%s\x1b[0m', `- attribute ${attribute} verified`);
     }
   }
 

@@ -79,11 +79,6 @@ export class OpenPassportVerifier extends AttestationVerifier {
     return this;
   }
 
-  setRpcUrl(rpcUrl: string): this {
-    this.rpcUrl = rpcUrl;
-    return this;
-  }
-
   allowMockPassports(): this {
     this.devMode = true;
     return this;
