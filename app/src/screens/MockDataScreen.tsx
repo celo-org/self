@@ -20,6 +20,7 @@ import {
 
 import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
+import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import CustomButton from '../components/CustomButton';
 import useUserStore from '../stores/userStore';
 import {
@@ -28,11 +29,10 @@ import {
   separatorColor,
   textBlack,
 } from '../utils/colors';
-import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 
-interface MockDataScreenProps { }
+interface MockDataScreenProps {}
 
-const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
+const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
   const navigation = useNavigation();
   const [age, setAge] = useState(24);
   const [expiryYears, setExpiryYears] = useState(5);
@@ -84,7 +84,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
             'sha1',
             'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
-            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),
@@ -98,7 +98,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({ }) => {
             'sha1',
             'sha256',
             signatureAlgorithmToStrictSignatureAlgorithm[
-            selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
+              selectedAlgorithm as keyof typeof signatureAlgorithmToStrictSignatureAlgorithm
             ],
             selectedCountry as keyof typeof countryCodes,
             castDate(-age),

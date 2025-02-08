@@ -9,8 +9,8 @@ import CustomButton from '../components/CustomButton';
 import USER_PROFILE from '../images/user_profile.png';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
-import { formatAttribute, getFirstName, maskString } from '../utils/utils';
 import { sendRegisterPayload } from '../utils/proving/payload';
+import { formatAttribute, getFirstName, maskString } from '../utils/utils';
 
 const NextScreen: React.FC = () => {
   const { passportData, setRegistered } = useUserStore();
@@ -130,7 +130,9 @@ const NextScreen: React.FC = () => {
 
       <YStack f={1} />
       <CustomButton
-        onPress={async () => passportData && await sendRegisterPayload(passportData)}
+        onPress={async () =>
+          passportData && (await sendRegisterPayload(passportData))
+        }
         text="TEE PROVING"
         Icon={<Cpu color={textBlack} />}
       />

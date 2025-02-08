@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import {
-  Platform,
   NativeSyntheticEvent,
   PixelRatio,
+  Platform,
   requireNativeComponent,
 } from 'react-native';
 
@@ -37,17 +37,18 @@ export const QRCodeScannerView: React.FC<QRCodeScannerViewProps> = ({
         error: string;
         errorMessage: string;
         stackTrace: string;
-      }>
+      }>,
     ) => {
       if (!isMounted) {
         return;
       }
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       const { error, errorMessage, stackTrace } = event.nativeEvent;
       const e = new Error(errorMessage);
       e.stack = stackTrace;
       onQRData(e);
     },
-    [onQRData, isMounted]
+    [onQRData, isMounted],
   );
 
   const _onQRData = useCallback(
@@ -58,7 +59,7 @@ export const QRCodeScannerView: React.FC<QRCodeScannerViewProps> = ({
       console.log(event.nativeEvent.data);
       onQRData(null, event.nativeEvent.data);
     },
-    [onQRData, isMounted]
+    [onQRData, isMounted],
   );
 
   const style = {

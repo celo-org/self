@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NativeModules, Platform } from 'react-native';
 import PassportReader from 'react-native-passport-reader';
 
@@ -6,12 +7,12 @@ import * as amplitude from '@amplitude/analytics-react-native';
 import '@react-navigation/native';
 import { Buffer } from 'buffer';
 
+import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { checkInputs } from '../utils/utils';
-import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 
 interface Inputs {
   passportNumber: string;
@@ -53,7 +54,6 @@ const scanAndroid = async (inputs: Inputs) => {
     amplitude.track('nfc_scan_unsuccessful', { error: e.message });
     if (e.message.includes('InvalidMRZKey')) {
       // TODO: Go back to the previous screen and rescan the passport with the camera/manual inputs
-
       //   toast.show('Error', {
       //     message:
       //       'Go to previous screen and rescan your passport with the camera',
@@ -123,13 +123,11 @@ const handleResponseIOS = async (response: any) => {
   const _isPACESupported = parsed?.isPACESupported;
   const _isChipAuthenticationSupported = parsed?.isChipAuthenticationSupported;
   const _residenceAddress = parsed?.residenceAddress;
-  // const passportPhoto = parsed?.passportPhoto;
-  const _encapsulatedContentDigestAlgorithm = parsed?.encapsulatedContentDigestAlgorithm;
+  const passportPhoto = parsed?.passportPhoto;
+  const _encapsulatedContentDigestAlgorithm =
+    parsed?.encapsulatedContentDigestAlgorithm;
   const documentSigningCertificate = parsed?.documentSigningCertificate;
-  const pem = JSON.parse(documentSigningCertificate).PEM.replace(
-    /\n/g,
-    '',
-  );
+  const pem = JSON.parse(documentSigningCertificate).PEM.replace(/\n/g, '');
   const eContentArray = Array.from(Buffer.from(signedAttributes, 'base64'));
   const signedEContentArray = eContentArray.map(byte =>
     byte > 127 ? byte - 256 : byte,
@@ -216,7 +214,6 @@ const handleResponseAndroid = async (response: any) => {
     parsed: false,
   };
 
-
   try {
     parsePassportDataAsync(passportData);
   } catch (e: any) {
@@ -255,8 +252,7 @@ async function parsePassportDataAsync(passportData: PassportData) {
     csca_signature_algorithm: passportMetadata.cscaSignatureAlgorithm,
     csca_salt_length: passportMetadata.cscaSaltLength,
     csca_curve_or_exponent: passportMetadata.cscaCurveOrExponent,
-    csca_signature_algorithm_bits:
-      passportMetadata.cscaSignatureAlgorithmBits,
+    csca_signature_algorithm_bits: passportMetadata.cscaSignatureAlgorithmBits,
     dsc: passportMetadata.dsc,
   });
 

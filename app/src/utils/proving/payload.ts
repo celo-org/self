@@ -3,10 +3,7 @@ import { generateCircuitInputsRegister } from '../../../../common/src/utils/circ
 import { PassportData } from '../../../../common/src/utils/types';
 import { sendPayload } from './tee';
 
-function generateTeeInputsRegister(
-  secret: string,
-  passportData: PassportData,
-) {
+function generateTeeInputsRegister(secret: string, passportData: PassportData) {
   const inputs = generateCircuitInputsRegister(secret, passportData);
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
@@ -47,5 +44,5 @@ export async function sendRegisterPayload(passportData: PassportData) {
     '0', //TODO: retrieve the secret from keychain
     passportData,
   );
-  const result = await sendPayload(inputs, circuitName);
+  await sendPayload(inputs, circuitName);
 }
