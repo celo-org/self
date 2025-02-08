@@ -12,14 +12,13 @@ interface RCTQRCodeScannerViewProps extends RCTFragmentViewManagerProps {
   onQRData: (event: NativeSyntheticEvent<{ data: string }>) => void;
 }
 
-let QRCodeNativeComponent: React.ComponentType<any>;
+const QRCodeNativeComponent = Platform.select({
+  ios: requireNativeComponent('QRCodeScannerView'),
+  android: requireNativeComponent('QRCodeScannerViewManager'),
+});
 
-if (Platform.OS === 'ios') {
-  // For iOS, use the new native module (registered as 'QRCodeScannerView')
-  QRCodeNativeComponent = requireNativeComponent('QRCodeScannerView');
-} else {
-  // For Android, use the existing native component (registered as 'QRCodeScannerViewManager')
-  QRCodeNativeComponent = requireNativeComponent('QRCodeScannerViewManager');
+if (!QRCodeNativeComponent) {
+  throw new Error('QRCodeScannerView not registered for this platform');
 }
 
 export interface QRCodeScannerViewProps {
