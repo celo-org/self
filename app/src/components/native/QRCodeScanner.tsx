@@ -61,17 +61,15 @@ export const QRCodeScannerView: React.FC<QRCodeScannerViewProps> = ({
     [onQRData, isMounted],
   );
 
-  const style = {
-    height: PixelRatio.getPixelSizeForLayoutSize(800),
-    width: PixelRatio.getPixelSizeForLayoutSize(400),
-  };
-
   if (Platform.OS === 'ios') {
     return (
       <QRCodeNativeComponent
         onQRData={_onQRData}
         onError={_onError}
-        style={style}
+        style={{
+          width: '110%',
+          height: '110%',
+        }}
       />
     );
   } else {
@@ -82,7 +80,10 @@ export const QRCodeScannerView: React.FC<QRCodeScannerViewProps> = ({
         RCTFragmentViewManager={QRCodeNativeComponent}
         fragmentComponentName="QRCodeScannerViewManager"
         isMounted={isMounted}
-        style={style}
+        style={{
+          height: PixelRatio.getPixelSizeForLayoutSize(800),
+          width: PixelRatio.getPixelSizeForLayoutSize(400),
+        }}
         onError={_onError}
         onQRData={_onQRData}
       />
