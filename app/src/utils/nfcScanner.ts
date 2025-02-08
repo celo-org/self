@@ -4,11 +4,12 @@ import PassportReader from 'react-native-passport-reader';
 // @ts-ignore
 import { Buffer } from 'buffer';
 
-import { parsePassportData } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
+import { parsePassportData, PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
 import useUserStore from '../stores/userStore';
 import { checkInputs } from '../utils/utils';
+import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 
 export const scan = async (
   setModalProofStep: (modalProofStep: number) => void,
@@ -285,22 +286,10 @@ const handleResponseAndroid = async (
     eContent: JSON.parse(encapContent),
     signedAttr: JSON.parse(eContent),
     encryptedDigest: JSON.parse(encryptedDigest),
-    photoBase64: photo?.base64 ?? '',
+    photoBase64: '',
     mockUser: false,
     parsed: false,
   };
-
-  console.log(
-    'passportData',
-    JSON.stringify(
-      {
-        ...passportData,
-        photoBase64: passportData.photoBase64.substring(0, 100) + '...',
-      },
-      null,
-      2,
-    ),
-  );
   /***
   console.log('mrz', passportData?.mrz);
   console.log('dataGroupHashes', passportData?.eContent);
@@ -339,33 +328,35 @@ const handleResponseAndroid = async (
 
 async function parsePassportDataAsync(passportData: PassportData) {
   const { trackEvent } = useNavigationStore.getState();
-  const parsedPassportData = parsePassportData(passportData);
-  useUserStore.getState().setPassportMetadata(parsedPassportData);
-  await useUserStore.getState().registerPassportData(passportData);
+  const parsedPassportData = initPassportDataParsing(passportData);
+  const passportMetadata: PassportMetadata =
+    parsedPassportData.passportMetadata as PassportMetadata;
+  console.log('passportMetadata', passportMetadata);
+  await useUserStore.getState().registerPassportData(parsedPassportData);
   trackEvent('Passport Parsed', {
     success: true,
-    data_groups: parsedPassportData.dataGroups,
-    dg1_hash_function: parsedPassportData.dg1HashFunction,
-    dg1_hash_offset: parsedPassportData.dg1HashOffset,
-    dg_padding_bytes: parsedPassportData.dgPaddingBytes,
-    e_content_size: parsedPassportData.eContentSize,
-    e_content_hash_function: parsedPassportData.eContentHashFunction,
-    e_content_hash_offset: parsedPassportData.eContentHashOffset,
-    signed_attr_size: parsedPassportData.signedAttrSize,
-    signed_attr_hash_function: parsedPassportData.signedAttrHashFunction,
-    signature_algorithm: parsedPassportData.signatureAlgorithm,
-    salt_length: parsedPassportData.saltLength,
-    curve_or_exponent: parsedPassportData.curveOrExponent,
-    signature_algorithm_bits: parsedPassportData.signatureAlgorithmBits,
-    country_code: parsedPassportData.countryCode,
-    csca_found: parsedPassportData.cscaFound,
-    csca_hash_function: parsedPassportData.cscaHashFunction,
-    csca_signature_algorithm: parsedPassportData.cscaSignatureAlgorithm,
-    csca_salt_length: parsedPassportData.cscaSaltLength,
-    csca_curve_or_exponent: parsedPassportData.cscaCurveOrExponent,
+    data_groups: passportMetadata.dataGroups,
+    dg1_hash_function: passportMetadata.dg1HashFunction,
+    dg1_hash_offset: passportMetadata.dg1HashOffset,
+    dg_padding_bytes: passportMetadata.dgPaddingBytes,
+    e_content_size: passportMetadata.eContentSize,
+    e_content_hash_function: passportMetadata.eContentHashFunction,
+    e_content_hash_offset: passportMetadata.eContentHashOffset,
+    signed_attr_size: passportMetadata.signedAttrSize,
+    signed_attr_hash_function: passportMetadata.signedAttrHashFunction,
+    signature_algorithm: passportMetadata.signatureAlgorithm,
+    salt_length: passportMetadata.saltLength,
+    curve_or_exponent: passportMetadata.curveOrExponent,
+    signature_algorithm_bits: passportMetadata.signatureAlgorithmBits,
+    country_code: passportMetadata.countryCode,
+    csca_found: passportMetadata.cscaFound,
+    csca_hash_function: passportMetadata.cscaHashFunction,
+    csca_signature_algorithm: passportMetadata.cscaSignatureAlgorithm,
+    csca_salt_length: passportMetadata.cscaSaltLength,
+    csca_curve_or_exponent: passportMetadata.cscaCurveOrExponent,
     csca_signature_algorithm_bits:
-      parsedPassportData.cscaSignatureAlgorithmBits,
-    dsc: parsedPassportData.dsc,
+      passportMetadata.cscaSignatureAlgorithmBits,
+    dsc: passportMetadata.dsc,
   });
 
   useNavigationStore.getState().setSelectedTab('next');

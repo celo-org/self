@@ -28,7 +28,7 @@ const pubkey =
   key1.getPublic().getX().toString('hex').padStart(64, '0') +
   key1.getPublic().getY().toString('hex').padStart(64, '0');
 
-export async function firePayload(
+export async function sendPayload(
   inputs: any,
   circuitName: string,
   timeoutMs = 1200000,
