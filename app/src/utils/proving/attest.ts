@@ -1,12 +1,11 @@
 import { X509Certificate } from '@peculiar/x509';
+import { Certificate } from 'pkijs';
 import { decode } from '@stablelib/cbor';
+import elliptic from 'elliptic';
 //@ts-ignore
-import * as asn1 from 'asn1.js';
+import * as asn1js from 'asn1.js';
 import { Buffer } from 'buffer';
 
-import { getCurveForElliptic } from '../../../../common/src/utils/certificate_parsing/curves';
-import { PublicKeyDetailsECDSA } from '../../../../common/src/utils/certificate_parsing/dataStructure';
-import { parseCertificateSimple } from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
 import { IMAGE_HASH } from '../../../../common/src/constants/constants';
@@ -24,7 +23,7 @@ export const requiredFields = [
 ];
 
 /**
- * @notice ASN.1 context interface for use with asn1.js.
+ * @notice ASN.1 context interface for use with asn1js.js.
  */
 interface ASN1Context {
   seq(): ASN1Context;
@@ -37,7 +36,7 @@ interface ASN1Context {
 /**
  * @notice ASN.1 definition for an Elliptic Curve Public Key.
  */
-export const ECPublicKeyASN = asn1.define(
+export const ECPublicKeyASN = asn1js.define(
   'ECPublicKey',
   function (this: ASN1Context) {
     this.seq().obj(
@@ -202,13 +201,7 @@ export const verifyAttestation = async (attestation: Array<number>) => {
     throw new Error('Invalid certificate chain');
   }
 
-  const parsed = parseCertificateSimple(cert);
-  const publicKeyDetails = parsed.publicKeyDetails as PublicKeyDetailsECDSA;
-
-  const curve = getCurveForElliptic(publicKeyDetails.curve);
-
-  const x = publicKeyDetails.x;
-  const y = publicKeyDetails.y;
+  const { x, y, curve } = getPublicKeyFromPem(cert);
 
   const verifier = {
     key: {
@@ -217,6 +210,7 @@ export const verifyAttestation = async (attestation: Array<number>) => {
       curve,
     },
   };
+  console.log('verifier', verifier);
   await cose.sign.verify(Buffer.from(attestation), verifier, {
     defaultType: 18,
   });
@@ -295,3 +289,50 @@ type AttestationDoc = {
   user_data: string | null;
   nonce: string | null;
 };
+
+/**
+ * @notice Extracts the public key from a PEM formatted certificate.
+ * @param pem A string containing the PEM formatted certificate.
+ * @return An object with the x and y coordinates of the public key and the curve used.
+ * @see https://docs.aws.amazon.com/enclaves/latest/user/set-up-attestation.html for p384 usage
+ * @dev This function parses the certificate using getCertificateFromPem(), then uses the elliptic library
+ *      on the "p384" curve to derive the public key's x and y coordinates. This public key is then returned,
+ *      ensuring it is padded correctly.
+ */
+function getPublicKeyFromPem(pem: string) {
+  const cert = getCertificateFromPem(pem);
+  const curve = 'p384';
+  const publicKeyBuffer = cert.subjectPublicKeyInfo.subjectPublicKey.valueBlock.valueHexView;
+  const ec = new elliptic.ec(curve);
+  const key = ec.keyFromPublic(publicKeyBuffer);
+  const x_point = key.getPublic().getX().toString('hex');
+  const y_point = key.getPublic().getY().toString('hex');
+
+  const x = x_point.length % 2 === 0 ? x_point : '0' + x_point;
+  const y = y_point.length % 2 === 0 ? y_point : '0' + y_point;
+  return { x, y, curve };
+}
+
+/**
+ * @notice Converts a PEM formatted certificate to a PKI.js Certificate object.
+ * @param pemContent A string containing the PEM formatted certificate including header/footer markers.
+ * @return A Certificate object parsed from the PEM content.
+ * @dev The function strips the PEM header/footer and line breaks, decodes the base64 content into binary,
+ *      creates an ArrayBuffer, and then parses the ASN.1 structure using asn1js.fromBER. Throws an error if parsing fails.
+ */
+export function getCertificateFromPem(pemContent: string): Certificate {
+  const pemFormatted = pemContent.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g, '');
+  const binary = Buffer.from(pemFormatted, 'base64');
+  const arrayBuffer = new ArrayBuffer(binary.length);
+  const view = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < binary.length; i++) {
+    view[i] = binary[i];
+  }
+
+  const asn1 = asn1js.fromBER(arrayBuffer);
+  if (asn1.offset === -1) {
+    throw new Error(`ASN.1 parsing error: ${asn1.result.error}`);
+  }
+
+  return new Certificate({ schema: asn1.result })
+}
