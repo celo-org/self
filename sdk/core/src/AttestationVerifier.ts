@@ -20,7 +20,6 @@ import {
 } from '../../../common/src/utils/circuits/formatOutputs';
 import { castToScope } from '../../../common/src/utils/circuits/uuid';
 import { SelfVerifierReport } from './SelfVerifierReport';
-import fs from 'fs';
 import {
   registryAbi
 } from "./abi/IdentityRegistryImplV1";

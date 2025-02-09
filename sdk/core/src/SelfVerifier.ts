@@ -13,24 +13,27 @@ import {
   WEBSOCKET_URL,
   countryNames,
 } from '../../../common/src/constants/constants';
-import { UserIdType } from '../../../common/src/utils/utils';
+import { UserIdType } from '../../../common/src/utils/circuits/uuid';
 import msgpack from 'msgpack-lite';
 import { AttestationVerifier } from './AttestationVerifier';
-export class OpenPassportVerifier extends AttestationVerifier {
-  private mode: Mode;
+export class SelfVerifier extends AttestationVerifier {
 
-  private modalServerUrl: string = MODAL_SERVER_ADDRESS;
-  private rpcUrl: string = DEFAULT_RPC_URL;
-  private cscaMerkleTreeUrl: string = '';
-  private registryContractAddress: string = '';
-
-  constructor(mode: Mode, scope: string, devMode: boolean = false) {
-    super(devMode);
-    this.mode = mode;
+  constructor( 
+    scope: string, 
+    devMode: boolean = false,
+    rpcUrl: string = DEFAULT_RPC_URL,
+    registryContractAddress: `0x${string}`,
+    hubContractAddress: `0x${string}`
+  ) {
+    super(
+      devMode,
+      rpcUrl,
+      registryContractAddress,
+      hubContractAddress
+    );
     this.scope = scope;
   }
 
-  // Disclose
   setMinimumAge(age: number): this {
     if (age < 10) {
       throw new Error('Minimum age must be at least 10 years old');
@@ -62,17 +65,6 @@ export class OpenPassportVerifier extends AttestationVerifier {
     return this;
   }
 
-  // On chain
-  setRpcUrl(rpcUrl: string): this {
-    this.rpcUrl = rpcUrl;
-    return this;
-  }
-
-  setRegistryContractAddress(registryContractAddress: string): this {
-    this.registryContractAddress = registryContractAddress;
-    return this;
-  }
-
   allowMockPassports(): this {
     this.devMode = true;
     return this;
@@ -85,9 +77,8 @@ export class OpenPassportVerifier extends AttestationVerifier {
     sessionId: string,
     websocketUrl: string = WEBSOCKET_URL
   ): string {
-    const intent_raw: OpenPassportAppPartial = {
+    const intent_raw: SelfAppPartial = {
       appName: appName,
-      mode: this.mode,
       scope: this.scope,
       websocketUrl: websocketUrl,
       sessionId: sessionId,
@@ -97,22 +88,17 @@ export class OpenPassportVerifier extends AttestationVerifier {
     };
 
     let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
-    switch (this.mode) {
-      case 'vc_and_disclose':
         const argsVcAndDisclose: ArgumentsDisclose = {
           disclosureOptions: {
             minimumAge: this.minimumAge,
             nationality: this.nationality,
             excludedCountries: this.excludedCountries,
             ofac: this.ofac,
-          },
-          commitmentMerkleTreeUrl: this.commitmentMerkleTreeUrl,
         };
         selfArguments = argsVcAndDisclose;
-        break;
     }
 
-    const intent: OpenPassportApp = {
+    const intent: SelfApp = {
       ...intent_raw,
       args: selfArguments,
     };
