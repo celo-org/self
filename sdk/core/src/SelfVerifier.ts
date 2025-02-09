@@ -4,8 +4,8 @@ import {
   ArgumentsProveOnChain,
   ArgumentsRegister,
   Mode,
-  OpenPassportAppPartial,
-  OpenPassportApp
+  SelfAppPartial,
+  SelfApp
 } from '../../../common/src/utils/appType';
 import {
   DEFAULT_RPC_URL,
@@ -14,7 +14,6 @@ import {
   countryNames,
 } from '../../../common/src/constants/constants';
 import { UserIdType } from '../../../common/src/utils/utils';
-import * as pako from 'pako';
 import msgpack from 'msgpack-lite';
 import { AttestationVerifier } from './AttestationVerifier';
 export class OpenPassportVerifier extends AttestationVerifier {
@@ -63,11 +62,6 @@ export class OpenPassportVerifier extends AttestationVerifier {
     return this;
   }
 
-  setCommitmentMerkleTreeUrl(commitmentMerkleTreeUrl: string): this {
-    this.commitmentMerkleTreeUrl = commitmentMerkleTreeUrl;
-    return this;
-  }
-
   // On chain
   setRpcUrl(rpcUrl: string): this {
     this.rpcUrl = rpcUrl;
@@ -102,7 +96,7 @@ export class OpenPassportVerifier extends AttestationVerifier {
       devMode: this.devMode,
     };
 
-    let openPassportArguments: ArgumentsProveOffChain | ArgumentsRegister;
+    let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
     switch (this.mode) {
       case 'vc_and_disclose':
         const argsVcAndDisclose: ArgumentsDisclose = {
@@ -114,13 +108,13 @@ export class OpenPassportVerifier extends AttestationVerifier {
           },
           commitmentMerkleTreeUrl: this.commitmentMerkleTreeUrl,
         };
-        openPassportArguments = argsVcAndDisclose;
+        selfArguments = argsVcAndDisclose;
         break;
     }
 
     const intent: OpenPassportApp = {
       ...intent_raw,
-      args: openPassportArguments,
+      args: selfArguments,
     };
     const encoded = msgpack.encode(intent);
     try {

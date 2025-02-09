@@ -5,7 +5,7 @@ export type CircuitMode = 'prove_onchain' | 'register' | 'prove_offchain';
 export type Mode = 'prove_offchain' | 'prove_onchain' | 'register' | 'vc_and_disclose' | 'dsc';
 
 // OpenPassportAppType
-export interface OpenPassportAppPartial {
+export interface SelfAppPartial {
   mode: Mode;
   appName: string;
   scope: string;
@@ -16,7 +16,7 @@ export interface OpenPassportAppPartial {
   devMode: boolean;
 }
 
-export interface OpenPassportApp extends OpenPassportAppPartial {
+export interface SelfApp extends SelfAppPartial {
   args: ArgumentsProveOffChain | ArgumentsProveOnChain | ArgumentsRegister | ArgumentsDisclose;
 }
 

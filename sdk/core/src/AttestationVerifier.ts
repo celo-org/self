@@ -1,4 +1,3 @@
-import { groth16 } from 'snarkjs';
 import {
   countryNames,
   countryCodes,
@@ -10,25 +9,24 @@ import {
   verifyDSCValidity,
 } from '../utils/utils';
 import {
-  OpenPassportAttestation,
+  SelfAttestation,
   parsePublicSignalsDisclose,
-  parsePublicSignalsDsc,
-  parsePublicSignalsProve,
 } from '../../../common/src/utils/selfAttestation';
-import { Mode } from 'fs';
-import forge from 'node-forge';
 import {
-  castToScope,
   formatForbiddenCountriesListFromCircuitOutput,
   getAttributeFromUnpackedReveal,
   getOlderThanFromCircuitOutput,
-  splitToWords,
-} from '../../../common/src/utils/utils';
-import { unpackReveal } from '../../../common/src/utils/revealBitmap';
-import { getCSCAModulusMerkleTree } from '../../../common/src/utils/csca';
-import { OpenPassportVerifierReport } from './SelfVerifierReport';
-import { fetchTreeFromUrl } from '../../../common/src/utils/pubkeyTree';
+  unpackReveal,
+} from '../../../common/src/utils/circuits/formatOutputs';
+import { castToScope } from '../../../common/src/utils/circuits/uuid';
+import { SelfVerifierReport } from './SelfVerifierReport';
 import fs from 'fs';
+import {
+  registryAbi
+} from "./abi/IdentityRegistryImplV1";
+import {
+  hubAbi
+} from "./abi/IdentityVerificationHubImplV1";
 import { ethers } from 'ethers';
 import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
 import { revealedDataTypes } from '../../../common/src/constants/constants';
@@ -42,7 +40,7 @@ import { CIRCUIT_CONSTANTS } from '../../../common/src/constants/constants';
 export class AttestationVerifier {
   protected devMode: boolean;
   protected scope: string;
-  protected report: OpenPassportVerifierReport;
+  protected report: SelfVerifierReport;
 
   protected minimumAge: { enabled: boolean; value: string } = { enabled: false, value: '18' };
   protected nationality: { enabled: boolean; value: (typeof countryNames)[number] } = {
@@ -65,30 +63,52 @@ export class AttestationVerifier {
     hubContractAddress: `0x${string}`
   ) {
     this.devMode = devMode;
-    this.report = new OpenPassportVerifierReport();
+    this.report = new SelfVerifierReport();
     const provider = new ethers.JsonRpcProvider(rpcUrl);
-    const registryAbi = JSON.parse(fs.readFileSync('./abi/IdentityRegistryImplV1.json', 'utf8'));
-    this.registryContract = new ethers.Contract(registryContractAddress, registryAbi.abi, provider);
-    const hubAbi = JSON.parse(fs.readFileSync('./abi/IdentityVerificationHubImplV1.json', 'utf8'));
-    this.hubContract = new ethers.Contract(hubContractAddress, hubAbi.abi, provider);
+    this.registryContract = new ethers.Contract(registryContractAddress, registryAbi, provider);
+    this.hubContract = new ethers.Contract(hubContractAddress, hubAbi, provider);
   }
 
-  public async verify(attestation: OpenPassportAttestation): Promise<OpenPassportVerifierReport> {
+  public async verify(attestation: SelfAttestation): Promise<SelfVerifierReport> {
 
     let parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
 
     this.verifyAttribute('scope', castToScope(parsedPublicSignals.scope), this.scope);
 
-    await this.verifyProof(
+    const revealdedData = await this.verifyProof(
       attestation
     );
+
+    if (attestation.credentialSubject.issuing_state) {
+      this.verifyAttribute('issuing_state', revealdedData.issuing_state, attestation.credentialSubject.issuing_state);
+    } else if (attestation.credentialSubject.name) {
+      this.verifyAttribute('name', revealdedData.name, attestation.credentialSubject.name);
+    } else if (attestation.credentialSubject.passport_number) {
+      this.verifyAttribute('passport_number', revealdedData.passport_number, attestation.credentialSubject.passport_number);
+    } else if (attestation.credentialSubject.nationality) {
+      this.verifyAttribute('nationality', revealdedData.nationality, attestation.credentialSubject.nationality);
+    } else if (attestation.credentialSubject.date_of_birth) {
+      this.verifyAttribute('date_of_birth', revealdedData.date_of_birth, attestation.credentialSubject.date_of_birth);
+    } else if (attestation.credentialSubject.gender) {
+      this.verifyAttribute('gender', revealdedData.gender, attestation.credentialSubject.gender);
+    } else if (attestation.credentialSubject.expiry_date) {
+      this.verifyAttribute('expiry_date', revealdedData.expiry_date, attestation.credentialSubject.expiry_date);
+    }
 
     return this.report;
   }
 
   private async verifyProof(
-    attestation: OpenPassportAttestation
-  ): Promise<void> {
+    attestation: SelfAttestation
+   ) {
+
+    const unpackedReveal = unpackReveal(
+      [
+        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX],
+        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX + 1],
+        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX + 2],
+      ]
+    );
 
     const solidityProof = await groth16.exportSolidityCallData(
       attestation.proof.value.proof,
@@ -104,7 +124,7 @@ export class AttestationVerifier {
       vcAndDiscloseProof: solidityProof
     }
 
-    let result
+    let result: any;
     try {
       result = await this.hubContract.verifyVcAndDisclose(vcAndDiscloseHubProof);
     } catch (error: any) {
@@ -126,16 +146,18 @@ export class AttestationVerifier {
           );
           break;
         case "CURRENT_DATE_NOT_IN_VALID_RANGE":
+          const parsedPublicSignals = parsePublicSignalsDisclose(attestation.proof.value.publicSignals);
           this.report.exposeAttribute(
             'current_date', 
-            , 
-            'true'
+            parsedPublicSignals.current_date.toString(), 
+            getCurrentDateFormatted().toString()
           );
           break;
         case "INVALID_OLDER_THAN":
+          const olderThan = getAttributeFromUnpackedReveal(unpackedReveal, "older_than");
           this.report.exposeAttribute(
             'older_than', 
-            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_OLDER_THAN_INDEX], 
+            olderThan,
             this.minimumAge.value
           );
           break;
@@ -150,7 +172,7 @@ export class AttestationVerifier {
           const expectedOfacRoot = await this.registryContract.getOfacMerkleRoot();
           this.report.exposeAttribute(
             'merkle_root_ofac',
-            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_OFAC_ROOT_INDEX], 
+            attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SMT_ROOT_INDEX], 
             expectedOfacRoot
           );
           break;
@@ -176,26 +198,23 @@ export class AttestationVerifier {
       }
     }
 
-    const readableRevealedData = await this.registryContract.getReadableRevealedData(
-      result.revealedDataPacked, 
-      [
-        revealedDataTypes.issuing_state, 
-        revealedDataTypes.name, 
-        revealedDataTypes.passport_number, 
-        revealedDataTypes.nationality, 
-        revealedDataTypes.date_of_birth, 
-        revealedDataTypes.gender, 
-        revealedDataTypes.expiry_date, 
-        revealedDataTypes.older_than, 
-        revealedDataTypes.ofac
-      ]
-    );
+    const readableRevealedData = {
+      issuing_state: getAttributeFromUnpackedReveal(unpackedReveal, 'issuing_state'),
+      name: getAttributeFromUnpackedReveal(unpackedReveal, 'name'),
+      passport_number: getAttributeFromUnpackedReveal(unpackedReveal, 'passport_number'),
+      nationality: getAttributeFromUnpackedReveal(unpackedReveal, 'nationality'),
+      date_of_birth: getAttributeFromUnpackedReveal(unpackedReveal, 'date_of_birth'),
+      gender: getAttributeFromUnpackedReveal(unpackedReveal, 'gender'),
+      expiry_date: getAttributeFromUnpackedReveal(unpackedReveal, 'expiry_date'),
+      older_than: getAttributeFromUnpackedReveal(unpackedReveal, 'older_than'),
 
-      return readableRevealedData;
+    }
+
+    return readableRevealedData;
   }
 
   private verifyAttribute(
-    attribute: keyof OpenPassportVerifierReport,
+    attribute: keyof SelfVerifierReport,
     value: string,
     expectedValue: string
   ) {
