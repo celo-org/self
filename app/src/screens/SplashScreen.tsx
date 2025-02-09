@@ -7,6 +7,7 @@ import LottieView from 'lottie-react-native';
 import splashAnimation from '../assets/animations/splash.json';
 import useUserStore from '../stores/userStore';
 import { black } from '../utils/colors';
+import { impactLight } from '../utils/haptic';
 
 const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
@@ -22,6 +23,7 @@ const SplashScreen: React.FC = ({}) => {
 
   const handleAnimationFinish = useCallback(() => {
     setTimeout(() => {
+      impactLight();
       redirect();
     }, 750);
   }, [redirect]);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,7 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { slate100 } from '../../utils/colors';
+import { buttonTap, cancelTap } from '../../utils/haptic';
 
 interface PassportOnboardingScreenProps {}
 
@@ -20,6 +21,16 @@ const PassportOnboardingScreen: React.FC<
   PassportOnboardingScreenProps
 > = ({}) => {
   const navigation = useNavigation();
+
+  const handleCameraPress = useCallback(() => {
+    buttonTap();
+    navigation.navigate('PassportCamera');
+  }, [navigation]);
+
+  const onCancelPress = useCallback(() => {
+    cancelTap();
+    navigation.navigate('Launch');
+  }, [navigation]);
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -46,12 +57,8 @@ const PassportOnboardingScreen: React.FC<
           </Additional>
         </TextsContainer>
         <ButtonsContainer>
-          <PrimaryButton onPress={() => navigation.navigate('PassportCamera')}>
-            Open Camera
-          </PrimaryButton>
-          <SecondaryButton onPress={() => navigation.navigate('Launch')}>
-            Cancel
-          </SecondaryButton>
+          <PrimaryButton onPress={handleCameraPress}>Open Camera</PrimaryButton>
+          <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
         </ButtonsContainer>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>

@@ -24,6 +24,7 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { slate100 } from '../../utils/colors';
 import { scan } from '../../utils/nfcScannerNew';
+import { buttonTap, cancelTap } from '../../utils/haptic';
 
 interface PassportNFCScanScreenProps {}
 
@@ -60,7 +61,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
     }
   }, []);
 
-  const onPress = useCallback(async () => {
+  const onVerifyPress = useCallback(async () => {
+    buttonTap();
     if (isNfcEnabled) {
       try {
         setIsNfcSheetOpen(true);
@@ -81,6 +83,10 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       }
     }
   }, [isNfcSupported, isNfcEnabled, passportNumber, dateOfBirth, dateOfExpiry]);
+  const onCancelPress = useCallback(() => {
+    cancelTap();
+    navigation.navigate('PassportCamera');
+  }, [navigation]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _cancelScanIfRunning = useCallback(async () => {
@@ -152,13 +158,13 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               />
             </TextsContainer>
             <ButtonsContainer>
-              <PrimaryButton onPress={onPress} disabled={!isNfcSupported}>
+              <PrimaryButton onPress={onVerifyPress} disabled={!isNfcSupported}>
                 {isNfcEnabled || !isNfcSupported
                   ? 'Start Scan'
                   : 'Open settings'}
               </PrimaryButton>
               <SecondaryButton
-                onPress={() => navigation.navigate('PassportCamera')}
+                onPress={onCancelPress}
               >
                 Cancel
               </SecondaryButton>

@@ -18,6 +18,7 @@ import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { slate800 } from '../../utils/colors';
+import { cancelTap } from '../../utils/haptic';
 
 interface PassportNFCScanScreen {}
 
@@ -38,6 +39,10 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     },
     [store, navigation],
   );
+  const onCancelPress = useCallback(() => {
+    cancelTap();
+    navigation.navigate('PassportOnboarding');
+  }, [navigation]);
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -91,7 +96,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
           </YStack>
 
           <SecondaryButton
-            onPress={() => navigation.navigate('PassportOnboarding')}
+            onPress={onCancelPress}
           >
             Cancel
           </SecondaryButton>
