@@ -71,10 +71,7 @@ const WrongProofScreen: React.FC = () => {
           autoPlay
           loop={false}
           source={require('../../assets/animations/proof_failed.json')}
-          style={{
-            width: '125%',
-            height: '125%',
-          }}
+          style={styles.animation}
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>

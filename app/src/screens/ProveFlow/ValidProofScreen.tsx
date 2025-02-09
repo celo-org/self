@@ -22,10 +22,9 @@ const SuccessScreen: React.FC = () => {
           autoPlay
           loop={false}
           source={require('../../assets/animations/proof_success.json')}
-          style={{
-            width: '125%',
-            height: '125%',
-          }}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -51,6 +50,10 @@ const SuccessScreen: React.FC = () => {
 export default SuccessScreen;
 
 export const styles = StyleSheet.create({
+  animation: {
+    width: '125%',
+    height: '125%',
+  },
   content: {
     paddingTop: 40,
     paddingHorizontal: 10,

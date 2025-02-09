@@ -4,6 +4,7 @@ import {
   NativeEventEmitter,
   NativeModules,
   Platform,
+  StyleSheet,
   Text,
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
@@ -111,11 +112,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           autoPlay
           loop={false}
           source={require('../../assets/animations/passport_verify.json')}
-          style={{
-            backgroundColor: slate100,
-            width: '115%',
-            height: '115%',
-          }}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -172,3 +171,11 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
 };
 
 export default PassportNFCScanScreen;
+
+const styles = StyleSheet.create({
+  animation: {
+    color: slate100,
+    width: '115%',
+    height: '115%',
+  },
+});

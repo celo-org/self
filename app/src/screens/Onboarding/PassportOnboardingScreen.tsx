@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -27,11 +28,9 @@ const PassportOnboardingScreen: React.FC<
           autoPlay
           loop={false}
           source={require('../../assets/animations/passport_onboarding.json')}
-          style={{
-            backgroundColor: slate100,
-            width: '115%',
-            height: '115%',
-          }}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -60,3 +59,11 @@ const PassportOnboardingScreen: React.FC<
 };
 
 export default PassportOnboardingScreen;
+
+const styles = StyleSheet.create({
+  animation: {
+    backgroundColor: slate100,
+    width: '115%',
+    height: '115%',
+  },
+});

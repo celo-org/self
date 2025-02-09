@@ -69,11 +69,9 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
               autoPlay
               loop
               source={require('../../assets/animations/qr_scan.json')}
-              style={{
-                position: 'absolute',
-                width: '115%',
-                height: '115%',
-              }}
+              style={styles.animation}
+              cacheComposition={true}
+              renderMode="HARDWARE"
             />
           </>
         )}
@@ -129,6 +127,11 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
 export default QRCodeViewFinderScreen;
 
 const styles = StyleSheet.create({
+  animation: {
+    position: 'absolute',
+    width: '115%',
+    height: '115%',
+  },
   subheader: {
     color: slate800,
     textAlign: 'left',

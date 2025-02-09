@@ -47,11 +47,9 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
           autoPlay
           loop
           source={require('../../assets/animations/passport_scan.json')}
-          style={{
-            position: 'absolute',
-            width: '115%',
-            height: '115%',
-          }}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -106,6 +104,11 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
 export default PassportCameraScreen;
 
 const styles = StyleSheet.create({
+  animation: {
+    position: 'absolute',
+    width: '115%',
+    height: '115%',
+  },
   subheader: {
     color: slate800,
     textAlign: 'left',

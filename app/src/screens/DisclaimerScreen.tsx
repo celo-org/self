@@ -21,11 +21,9 @@ const DisclaimerScreen: React.FC = () => {
           autoPlay
           loop={false}
           source={require('../assets/animations/warning.json')}
-          style={{
-            position: 'absolute',
-            width: '125%',
-            height: '125%',
-          }}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
         <YStack f={1} jc="flex-end" pb="$4">
           <Text style={styles.subheader}>Caution</Text>
@@ -59,6 +57,11 @@ const DisclaimerScreen: React.FC = () => {
 export default DisclaimerScreen;
 
 const styles = StyleSheet.create({
+  animation: {
+    position: 'absolute',
+    width: '125%',
+    height: '125%',
+  },
   subheader: {
     color: white,
     fontFamily: 'DINOT-Medium',
