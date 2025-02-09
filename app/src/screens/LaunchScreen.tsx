@@ -8,6 +8,7 @@ import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700 } from '../utils/colors';
+import { confirmAction } from '../utils/haptic';
 
 interface LaunchScreenProps {}
 
@@ -44,7 +45,12 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
             </Anchor>
             &nbsp;of Self ID provided by Self Inc.
           </Text>
-          <PrimaryButton onPress={() => navigation.navigate('Start')}>
+          <PrimaryButton
+            onPress={() => {
+              confirmAction();
+              navigation.navigate('Start');
+            }}
+          >
             Get Started
           </PrimaryButton>
         </YStack>
