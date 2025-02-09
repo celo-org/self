@@ -32,8 +32,8 @@ export const notificationSuccess = () => triggerFeedback('notificationSuccess');
 export const notificationWarning = () => triggerFeedback('notificationWarning');
 export const selectionChange = () => triggerFeedback('selection');
 export const buttonTap = impactLight;
-export const confirmTap = impactMedium;
 export const cancelTap = selectionChange;
+export const confirmTap = impactMedium;
 
 /**
  * Triggers haptic feedback or vibration based on platform.

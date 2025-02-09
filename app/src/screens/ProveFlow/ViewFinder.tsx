@@ -13,6 +13,7 @@ import {
 import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
+import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
 import QRUpload from '../../images/icons/qr_upload.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
@@ -58,6 +59,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
     },
     [store, navigation, doneScanningQR],
   );
+  const onCancelPress = useHapticNavigation('Home', 'cancel');
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -115,9 +117,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
             </XStack>
           </YStack>
 
-          <SecondaryButton onPress={() => navigation.navigate('Home')}>
-            Cancel
-          </SecondaryButton>
+          <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
         </YStack>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>

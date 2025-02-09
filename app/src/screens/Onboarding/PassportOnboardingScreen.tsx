@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import ButtonsContainer from '../../components/ButtonsContainer';
@@ -11,26 +10,17 @@ import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
+import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { slate100 } from '../../utils/colors';
-import { buttonTap, cancelTap } from '../../utils/haptic';
 
 interface PassportOnboardingScreenProps {}
 
 const PassportOnboardingScreen: React.FC<
   PassportOnboardingScreenProps
 > = ({}) => {
-  const navigation = useNavigation();
-
-  const handleCameraPress = useCallback(() => {
-    buttonTap();
-    navigation.navigate('PassportCamera');
-  }, [navigation]);
-
-  const onCancelPress = useCallback(() => {
-    cancelTap();
-    navigation.navigate('Launch');
-  }, [navigation]);
+  const handleCameraPress = useHapticNavigation('PassportCamera');
+  const onCancelPress = useHapticNavigation('Launch', 'cancel');
 
   return (
     <ExpandableBottomLayout.Layout>

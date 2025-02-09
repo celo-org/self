@@ -1,23 +1,18 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
 import { Anchor, Image, Text, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
+import useHapticNavigation from '../hooks/useHapticNavigation';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700 } from '../utils/colors';
-import { buttonTap } from '../utils/haptic';
 
 interface LaunchScreenProps {}
 
 const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
-  const navigation = useNavigation();
-  const onStartPress = useCallback(() => {
-    buttonTap();
-    navigation.navigate('Start');
-  }, [navigation]);
+  const onStartPress = useHapticNavigation('Start');
 
   return (
     <ExpandableBottomLayout.Layout>

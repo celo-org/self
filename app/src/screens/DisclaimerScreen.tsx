@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -9,10 +9,15 @@ import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
 import { slate700, white } from '../utils/colors';
+import { confirmTap, notificationWarning } from '../utils/haptic';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
   const { dismissPrivacyNote } = useSettingStore();
+
+  useEffect(() => {
+    notificationWarning();
+  }, []);
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -42,6 +47,7 @@ const DisclaimerScreen: React.FC = () => {
           <PrimaryButton
             style={{ marginVertical: 30 }}
             onPress={() => {
+              confirmTap();
               dismissPrivacyNote();
               navigation.navigate('Home');
             }}
