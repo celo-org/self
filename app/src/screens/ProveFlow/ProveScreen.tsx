@@ -35,6 +35,7 @@ import { buttonTap } from '../../utils/haptic';
 // import { generateCircuitInputsInApp } from '../../utils/generateInputsInApp';
 // import { generateProof } from '../../utils/prover';
 import { CircuitName } from '../../utils/zkeyDownload';
+import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
@@ -61,13 +62,6 @@ const ProveScreen: React.FC = () => {
     );
   }
 
-  const { signatureAlgorithm } = parseCertificateSimple(passportData.dsc);
-  const parsedPassportData = parsePassportData(passportData);
-  const circuitName = getCircuitNameOld(
-    selectedApp.mode,
-    signatureAlgorithm,
-    parsedPassportData.signedAttrHashFunction,
-  );
 
   const waitForSocketConnection = (socketInstance: Socket): Promise<void> => {
     return new Promise(resolve => {
@@ -277,12 +271,7 @@ const ProveScreen: React.FC = () => {
           confidential info will be revealed to {selectedApp.appName}
         </Caption>
         <PrimaryButton
-          onPress={handleProve}
-          disabled={
-            generatingProof ||
-            isConnecting ||
-            isZkeyDownloading[circuitName as CircuitName]
-          }
+          onPress={() => sendVcAndDisclosePayload(passportData)}
         >
           Verify with Passcode
         </PrimaryButton>

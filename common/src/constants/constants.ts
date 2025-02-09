@@ -11,7 +11,8 @@ export const DEFAULT_USER_ID_TYPE = 'uuid';
 export const MODAL_SERVER_ADDRESS = 'https://zk-passport--dsc-prover-generate-dsc-proof.modal.run';
 
 export const WS_RPC_URL = "ws://3.110.229.45:8888/";
-export const WS_URL = "ws://13.200.14.145:8888/";
+export const WS_URL = "ws://43.205.137.10:8888/";
+export const IMAGE_HASH = "75bcf9a39f457e65051f4f43645e8e36ecedb1b933cf524f7e769e2b6231a223b58f4ab17234549491a17a8d2ec41bc8";
 
 export const PASSPORT_ATTESTATION_NAME = 'E-PASSPORT';
 // poseidon1([BigInt(Buffer.from(PASSPORT_ATTESTATION_NAME).readUIntBE(0, 6))]).toString();
