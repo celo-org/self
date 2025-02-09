@@ -1,22 +1,22 @@
-// get tree
-// get dsc commitment tree
-// write in db
-// if init, start by checking inside the db to get the past events and the tree
-// add the events in the db
-// then from these events, get the events and reconstruct the tree
-// add the tree in the db
-// functions to remove the tree in the db
-//local instance, db serialization
+import { RegistryContract } from "../registryContract";
+import { getChain } from "../chains";
 
 
-export function getDSCTree() {
-
+export async function getContractInstanceRoot(type: string) {
+    switch (type) {
+        case 'dscKeyCommitment':
+            return getDscKeyCommitmentRoot();
+        default:
+            throw new Error(`Unknown tree type: ${type}`);
+    }
 }
 
-function getTree(type: string) {
-
-}
-
-function addTree() {
-
+async function getDscKeyCommitmentRoot() {
+    const registryContract = new RegistryContract(
+        getChain(process.env.NETWORK as string),
+        process.env.PRIVATE_KEY as `0x${string}`,
+        process.env.RPC_URL as string
+    );
+    const dscKeyCommitmentRoot = (await registryContract.getDscKeyCommitmentMerkleRoot()).toString();
+    return dscKeyCommitmentRoot;
 }

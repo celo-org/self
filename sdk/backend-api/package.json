@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.2.0",
+    "@openpassport/zk-kit-lean-imt": "^0.0.6",
     "dotenv": "^16.4.7",
     "elysia": "latest",
     "logixlysia": "^4.1.1",
+    "poseidon-lite": "^0.3.0",
     "snarkjs": "^0.7.5",
     "swagger": "^0.7.5",
     "viem": "^2.22.23"

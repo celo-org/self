@@ -1,21 +1,13 @@
 import { getContractInstance } from "./getContracts";
 import { getChain } from "./chains";
 import { createPublicClient, http, Log, decodeEventLog } from "viem";
-
-export type DscCommitmentEvent = {
-    index: number;
-    commitment: bigint;
-    merkleRoot: bigint;
-    blockNumber: number;
-    timestamp: number;
-}
-
+import { EventsData } from "./tree-reader/constants";
 async function getEvents(
     eventName: string,
     startBlock: number,
     rpcUrl: string,
     network: string
-): Promise<DscCommitmentEvent[]> {
+): Promise<EventsData[]> {
     try {
         const chain = getChain(network);
         const { contract, publicClient } = getContractInstance(
@@ -25,12 +17,6 @@ async function getEvents(
             rpcUrl
         );
 
-        console.log('Getting events with params:', {
-            address: contract.address,
-            eventName,
-            startBlock,
-            network
-        });
 
         const logs = await publicClient.getContractEvents({
             address: contract.address,
@@ -41,9 +27,9 @@ async function getEvents(
             strict: true
         });
 
-        console.log(`Found ${logs.length} ${eventName} events`);
+        console.log(`\x1b[90mFound ${logs.length} ${eventName} events\x1b[0m`);
 
-        const events: DscCommitmentEvent[] = [];
+        const events: EventsData[] = [];
 
         for (const log of logs) {
             try {
@@ -79,18 +65,14 @@ async function getEvents(
 }
 
 export async function getDscCommitmentEvents(
-    startBlock: number = 7649934,
+    startBlock: number,
     rpcUrl: string,
     network: string
-): Promise<DscCommitmentEvent[]> {
-    const [devEvents, regularEvents] = await Promise.all([
+): Promise<EventsData[]> {
+    const events = await Promise.all([
         getEvents('DevDscKeyCommitmentRegistered', startBlock, rpcUrl, network),
         getEvents('DscKeyCommitmentRegistered', startBlock, rpcUrl, network)
-    ]);
+    ]).then(([devEvents, regularEvents]) => [...devEvents, ...regularEvents]);
 
-    return [...devEvents, ...regularEvents].sort((a, b) =>
-        a.blockNumber === b.blockNumber
-            ? a.index - b.index
-            : a.blockNumber - b.blockNumber
-    );
+    return events.sort((a, b) => a.index - b.index);
 }

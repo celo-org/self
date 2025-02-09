@@ -3,6 +3,9 @@ import { ProofVerifier } from '../../contracts/application/proofVerifier';
 import { RegistryContract } from '../../contracts/application/registryContract';
 import { getChain } from '../../contracts/application/chains';
 import { getDscCommitmentEvents } from '../application/getEvents';
+import { MerkleTreeService } from '../application/tree-reader/leanImtService';
+
+const dscTree = new MerkleTreeService('dscKeyCommitment');
 
 export const ContractsController = new Elysia()
   .get(
@@ -336,6 +339,42 @@ export const ContractsController = new Elysia()
         tags: ['Contracts'],
         summary: 'Get DSC commitment events from registry contract',
         description: 'Retrieve all DSC commitment registration events from a given block number (default: 7649934)'
+      }
+    }
+  )
+  .get(
+    'dsc-commitment-tree',
+    async () => {
+      try {
+        const tree = await dscTree.getTree();
+        return {
+          status: 'success',
+          data: tree
+        };
+      } catch (error) {
+        return {
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          data: null
+        };
+      }
+    },
+    {
+      response: {
+        200: t.Object({
+          status: t.String(),
+          data: t.Any()
+        }),
+        500: t.Object({
+          status: t.String(),
+          message: t.String(),
+          data: t.Any()
+        })
+      },
+      detail: {
+        tags: ['Contracts'],
+        summary: 'Get DSC commitment Merkle tree',
+        description: 'Retrieve the current state of the DSC commitment Merkle tree'
       }
     }
   );

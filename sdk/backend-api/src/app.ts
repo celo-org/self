@@ -1,8 +1,7 @@
 import { Elysia } from "elysia";
 import swagger from "@elysiajs/swagger";
 import logger from "logixlysia";
-
-import { AppRoutes } from "./app.routes.ts";
+import { AppRoutes } from "./app.routes";
 import dotenv from "dotenv";
 
 dotenv.config();
