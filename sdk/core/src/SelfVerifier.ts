@@ -1,20 +1,17 @@
-import {
-  ArgumentsDisclose,
-  ArgumentsProveOffChain,
-  ArgumentsProveOnChain,
-  ArgumentsRegister,
-  Mode,
-  SelfAppPartial,
-  SelfApp
-} from '../../../common/src/utils/appType';
+// import {
+//   ArgumentsDisclose,
+//   ArgumentsProveOffChain,
+//   ArgumentsProveOnChain,
+//   ArgumentsRegister,
+//   Mode,
+//   SelfAppPartial,
+//   SelfApp
+// } from '../../../common/src/utils/appType';
 import {
   DEFAULT_RPC_URL,
-  MODAL_SERVER_ADDRESS,
-  WEBSOCKET_URL,
   countryNames,
 } from '../../../common/src/constants/constants';
-import { UserIdType } from '../../../common/src/utils/circuits/uuid';
-import msgpack from 'msgpack-lite';
+// import { UserIdType } from '../../../common/src/utils/circuits/uuid';
 import { AttestationVerifier } from './AttestationVerifier';
 export class SelfVerifier extends AttestationVerifier {
 
@@ -70,45 +67,45 @@ export class SelfVerifier extends AttestationVerifier {
     return this;
   }
 
-  getIntent(
-    appName: string,
-    userId: string,
-    userIdType: UserIdType,
-    sessionId: string,
-    websocketUrl: string = WEBSOCKET_URL
-  ): string {
-    const intent_raw: SelfAppPartial = {
-      appName: appName,
-      scope: this.scope,
-      websocketUrl: websocketUrl,
-      sessionId: sessionId,
-      userId: userId,
-      userIdType: userIdType,
-      devMode: this.devMode,
-    };
+  // getIntent(
+  //   appName: string,
+  //   userId: string,
+  //   userIdType: UserIdType,
+  //   sessionId: string,
+  //   websocketUrl: string = WEBSOCKET_URL
+  // ): string {
+  //   const intent_raw: SelfAppPartial = {
+  //     appName: appName,
+  //     scope: this.scope,
+  //     websocketUrl: websocketUrl,
+  //     sessionId: sessionId,
+  //     userId: userId,
+  //     userIdType: userIdType,
+  //     devMode: this.devMode,
+  //   };
 
-    let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
-        const argsVcAndDisclose: ArgumentsDisclose = {
-          disclosureOptions: {
-            minimumAge: this.minimumAge,
-            nationality: this.nationality,
-            excludedCountries: this.excludedCountries,
-            ofac: this.ofac,
-        };
-        selfArguments = argsVcAndDisclose;
-    }
+  //   let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
+  //       const argsVcAndDisclose: ArgumentsDisclose = {
+  //         disclosureOptions: {
+  //           minimumAge: this.minimumAge,
+  //           nationality: this.nationality,
+  //           excludedCountries: this.excludedCountries,
+  //           ofac: this.ofac,
+  //       };
+  //       selfArguments = argsVcAndDisclose;
+  //   }
 
-    const intent: SelfApp = {
-      ...intent_raw,
-      args: selfArguments,
-    };
-    const encoded = msgpack.encode(intent);
-    try {
-      const compressedData = pako.deflate(encoded);
-      return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
-    } catch (err) {
-      console.error(err);
-      return '';
-    }
-  }
+  //   const intent: SelfApp = {
+  //     ...intent_raw,
+  //     args: selfArguments,
+  //   };
+  //   const encoded = msgpack.encode(intent);
+  //   try {
+  //     const compressedData = pako.deflate(encoded);
+  //     return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
+  //   } catch (err) {
+  //     console.error(err);
+  //     return '';
+  //   }
+  // }
 }

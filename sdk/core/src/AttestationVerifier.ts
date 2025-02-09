@@ -1,12 +1,8 @@
 import {
   countryNames,
-  countryCodes,
 } from '../../../common/src/constants/constants';
 import {
-  areArraysEqual,
   getCurrentDateFormatted,
-  getVkeyFromArtifacts,
-  verifyDSCValidity,
 } from '../utils/utils';
 import {
   SelfAttestation,
@@ -15,7 +11,6 @@ import {
 import {
   formatForbiddenCountriesListFromCircuitOutput,
   getAttributeFromUnpackedReveal,
-  getOlderThanFromCircuitOutput,
   unpackReveal,
 } from '../../../common/src/utils/circuits/formatOutputs';
 import { castToScope } from '../../../common/src/utils/circuits/uuid';
@@ -28,10 +23,7 @@ import {
 } from "./abi/IdentityVerificationHubImplV1";
 import { ethers } from 'ethers';
 import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
-import { revealedDataTypes } from '../../../common/src/constants/constants';
 import {
-  Groth16Proof,
-  PublicSignals,
   groth16
 } from 'snarkjs';
 import { CIRCUIT_CONSTANTS } from '../../../common/src/constants/constants';
@@ -123,9 +115,8 @@ export class AttestationVerifier {
       vcAndDiscloseProof: solidityProof
     }
 
-    let result: any;
     try {
-      result = await this.hubContract.verifyVcAndDisclose(vcAndDiscloseHubProof);
+      await this.hubContract.verifyVcAndDisclose(vcAndDiscloseHubProof);
     } catch (error: any) {
       let errorName: string | undefined;
       try {
