@@ -17,7 +17,12 @@ include "../date/isOlderThan.circom";
 /// @input selector_ofac bitmap used to reveal the OFAC verification result
 /// @output revealedData_packed Packed revealed data
 /// @output forbidden_countries_list_packed Packed forbidden countries list
-template DISCLOSE(MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH) {
+template DISCLOSE(
+    MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH,
+    passportNoTreeLevels,
+    namedobTreeLevels,
+    nameyobTreeLevels
+) {
 
     signal input dg1[93];
     signal input selector_dg1[88];
@@ -28,9 +33,18 @@ template DISCLOSE(MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH) {
 
     signal input forbidden_countries_list[MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH * 3];
 
-    signal input smt_leaf_key;
-    signal input smt_root;
-    signal input smt_siblings[256];
+    signal input ofac_passportno_smt_leaf_key;
+    signal input ofac_passportno_smt_root;
+    signal input ofac_passportno_smt_siblings[passportNoTreeLevels];
+
+    signal input ofac_namedob_smt_leaf_key;
+    signal input ofac_namedob_smt_root;
+    signal input ofac_namedob_smt_siblings[namedobTreeLevels];
+
+    signal input ofac_nameyob_smt_leaf_key;
+    signal input ofac_nameyob_smt_root;
+    signal input ofac_nameyob_smt_siblings[nameyobTreeLevels];
+    
     signal input selector_ofac;
     
     // assert selectors are 0 or 1
@@ -60,8 +74,29 @@ template DISCLOSE(MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH) {
     revealedData[88] <== older_than_verified[0] * selector_older_than;
     revealedData[89] <== older_than_verified[1] * selector_older_than;
 
-    signal ofacCheckResult <== OFAC_NAME()(dg1, smt_leaf_key, smt_root, smt_siblings);
-    revealedData[90] <== ofacCheckResult * selector_ofac;
+    signal ofacCheckResultPassportNo <== OFAC_PASSPORT_NUMBER(passportNoTreeLevels)(
+        dg1,
+        ofac_passportno_smt_leaf_key,
+        ofac_passportno_smt_root,
+        ofac_passportno_smt_siblings
+    );
+
+    signal ofacCheckResultNameDob <== OFAC_NAME_DOB(namedobTreeLevels)(
+        dg1,
+        ofac_namedob_smt_leaf_key,
+        ofac_namedob_smt_root,
+        ofac_namedob_smt_siblings
+    );
+
+    signal ofacCheckResultNameYob <== OFAC_NAME_YOB(nameyobTreeLevels)(
+        dg1,
+        ofac_nameyob_smt_leaf_key,
+        ofac_nameyob_smt_root,
+        ofac_nameyob_smt_siblings
+    );
+    signal ofacCheckResultPacked <== ofacCheckResultPassportNo + ofacCheckResultNameDob * 2 + ofacCheckResultNameYob * 4;
+    
+    revealedData[90] <== ofacCheckResultPacked * selector_ofac;
 
     signal output revealedData_packed[3] <== PackBytes(91)(revealedData);
 

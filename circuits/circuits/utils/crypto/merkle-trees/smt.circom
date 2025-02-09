@@ -21,11 +21,11 @@ template SMTVerify(nLength) {
     signal input root;
     signal input siblings[nLength];
     signal input mode;
-    signal depth <-- getSiblingsLength(siblings); // no need to constraint this as bad input will give the wrong root
+    signal depth <-- getSiblingsLength(siblings, nLength); // no need to constraint this as bad input will give the wrong root
 
     // Calculate path
     signal path[nLength];
-    signal path_in_bits_reversed[nLength] <== Num2Bits(256)(virtualKey);
+    signal path_in_bits_reversed[nLength] <== Num2Bits(nLength)(virtualKey);
     var path_in_bits[nLength];
 
     for (var i = 0; i < nLength; i++) {
@@ -61,10 +61,10 @@ template SMTVerify(nLength) {
 /// @dev Handles arrays that may have zeros in between valid elements
 /// @input siblings[256] Array of sibling nodes in a Merkle proof
 /// @output length The effective length of the siblings array (position of last non-zero element)
-function getSiblingsLength(siblings) {
+function getSiblingsLength(siblings, nLevels) {
     var length;
 
-    for (var i = 0; i < 256; i++) {
+    for (var i = 0; i < nLevels; i++) {
         if (siblings[i] != 0) {
             length = i;
         }

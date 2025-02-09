@@ -12,7 +12,9 @@ import { generateCircuitInputsVCandDisclose } from '../../../common/src/utils/ci
 import crypto from 'crypto';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
 import { SMT } from '@openpassport/zk-kit-smt';
-import namejson from '../../../common/ofacdata/outputs/nameSMT.json';
+import nameAndDobjson from '../../../common/ofacdata/outputs/nameAndDobSMT.json';
+import nameAndYobjson from '../../../common/ofacdata/outputs/nameAndYobSMT.json';
+import passportNojson from '../../../common/ofacdata/outputs/passportNoAndNationalitySMT.json';
 import {
   formatAndUnpackReveal,
   formatAndUnpackForbiddenCountriesList,
@@ -65,8 +67,15 @@ describe('Disclose', function () {
     console.log('commitment in js ', commitment);
     tree = new LeanIMT((a, b) => poseidon2([a, b]), []);
     tree.insert(BigInt(commitment));
-    let smt = new SMT(poseidon2, true);
-    smt.import(namejson);
+
+    let passportNo_smt = new SMT(poseidon2, true);
+    passportNo_smt.import(passportNojson);
+
+    let nameAndDob_smt = new SMT(poseidon2, true);
+    nameAndDob_smt.import(nameAndDobjson);
+
+    let nameAndYob_smt = new SMT(poseidon2, true);
+    nameAndYob_smt.import(nameAndYobjson);
 
     const selector_ofac = 1;
     forbidden_countries_list = ['ALG', 'DZA'];
@@ -80,7 +89,9 @@ describe('Disclose', function () {
       selector_older_than,
       tree,
       majority,
-      smt,
+      passportNo_smt,
+      nameAndDob_smt,
+      nameAndYob_smt,
       selector_ofac,
       forbidden_countries_list,
       user_identifier
