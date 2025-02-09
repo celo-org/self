@@ -1,13 +1,19 @@
+import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
+import { SMT } from '@openpassport/zk-kit-smt';
 import { poseidon2 } from 'poseidon-lite';
+
+import namejson from '../../../../common/ofacdata/outputs/nameSMT.json';
 import { PASSPORT_ATTESTATION_ID } from '../../../../common/src/constants/constants';
 import { getCircuitNameFromPassportData } from '../../../../common/src/utils/circuits/circuitsName';
-import { generateCircuitInputsDSC, generateCircuitInputsRegister, generateCircuitInputsVCandDisclose } from '../../../../common/src/utils/circuits/generateInputs';
+import {
+  generateCircuitInputsDSC,
+  generateCircuitInputsRegister,
+  generateCircuitInputsVCandDisclose,
+} from '../../../../common/src/utils/circuits/generateInputs';
 import { generateCommitment } from '../../../../common/src/utils/passports/passport';
 import { PassportData } from '../../../../common/src/utils/types';
 import { sendPayload } from './tee';
-import namejson from '../../../../common/ofacdata/outputs/nameSMT.json';
-import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
-import { SMT } from '@openpassport/zk-kit-smt';
+
 const mock_secret = '0'; //TODO: retrieve the secret from keychain
 
 function generateTeeInputsRegister(secret: string, passportData: PassportData) {
@@ -85,7 +91,11 @@ function generateTeeInputsVCAndDisclose(passportData: PassportData) {
   const scope = '@coboyApp';
   const attestation_id = PASSPORT_ATTESTATION_ID;
 
-  const commitment = generateCommitment(mock_secret, attestation_id, passportData);
+  const commitment = generateCommitment(
+    mock_secret,
+    attestation_id,
+    passportData,
+  );
   const tree = new LeanIMT<bigint>((a, b) => poseidon2([a, b]), []);
   tree.insert(BigInt(commitment));
   let smt = new SMT(poseidon2, true);
@@ -106,7 +116,7 @@ function generateTeeInputsVCAndDisclose(passportData: PassportData) {
     smt,
     selector_ofac,
     forbidden_countries_list,
-    user_identifier
+    user_identifier,
   );
   return { inputs, circuitName: 'vc_and_disclose' };
 }

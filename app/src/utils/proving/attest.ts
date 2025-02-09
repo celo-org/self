@@ -1,14 +1,14 @@
 import { X509Certificate } from '@peculiar/x509';
-import { Certificate } from 'pkijs';
 import { decode } from '@stablelib/cbor';
-import elliptic from 'elliptic';
 //@ts-ignore
 import * as asn1js from 'asn1.js';
 import { Buffer } from 'buffer';
+import elliptic from 'elliptic';
+import { Certificate } from 'pkijs';
 
+import { IMAGE_HASH } from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
-import { IMAGE_HASH } from '../../../../common/src/constants/constants';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
@@ -263,7 +263,8 @@ export function getImageHash(attestation: Array<number>) {
   if (!Array.isArray(coseSign1) || coseSign1.length !== 4) {
     throw new Error('Invalid COSE_Sign1 format');
   }
-  const [_protectedHeaderBytes, _unprotectedHeader, payload, _signature] = coseSign1;
+  const [_protectedHeaderBytes, _unprotectedHeader, payload, _signature] =
+    coseSign1;
   const attestationDoc = decode(payload);
   if (!attestationDoc.pcrs) {
     throw new Error('Missing required field: pcrs');
@@ -272,8 +273,11 @@ export function getImageHash(attestation: Array<number>) {
   if (!pcr0) {
     throw new Error('PCR0 (image hash) is missing in the attestation document');
   }
-  if (pcr0.length !== 48) { // SHA384 produces a 48-byte hash
-    throw new Error(`Invalid PCR0 length - expected 48 bytes, got ${pcr0.length} bytes`);
+  if (pcr0.length !== 48) {
+    // SHA384 produces a 48-byte hash
+    throw new Error(
+      `Invalid PCR0 length - expected 48 bytes, got ${pcr0.length} bytes`,
+    );
   }
   return Buffer.from(pcr0).toString('hex');
 }
@@ -302,7 +306,8 @@ type AttestationDoc = {
 function getPublicKeyFromPem(pem: string) {
   const cert = getCertificateFromPem(pem);
   const curve = 'p384';
-  const publicKeyBuffer = cert.subjectPublicKeyInfo.subjectPublicKey.valueBlock.valueHexView;
+  const publicKeyBuffer =
+    cert.subjectPublicKeyInfo.subjectPublicKey.valueBlock.valueHexView;
   const ec = new elliptic.ec(curve);
   const key = ec.keyFromPublic(publicKeyBuffer);
   const x_point = key.getPublic().getX().toString('hex');
@@ -321,7 +326,10 @@ function getPublicKeyFromPem(pem: string) {
  *      creates an ArrayBuffer, and then parses the ASN.1 structure using asn1js.fromBER. Throws an error if parsing fails.
  */
 export function getCertificateFromPem(pemContent: string): Certificate {
-  const pemFormatted = pemContent.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g, '');
+  const pemFormatted = pemContent.replace(
+    /(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g,
+    '',
+  );
   const binary = Buffer.from(pemFormatted, 'base64');
   const arrayBuffer = new ArrayBuffer(binary.length);
   const view = new Uint8Array(arrayBuffer);
@@ -334,5 +342,5 @@ export function getCertificateFromPem(pemContent: string): Certificate {
     throw new Error(`ASN.1 parsing error: ${asn1.result.error}`);
   }
 
-  return new Certificate({ schema: asn1.result })
+  return new Certificate({ schema: asn1.result });
 }
