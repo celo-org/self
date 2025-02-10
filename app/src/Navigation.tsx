@@ -107,7 +107,7 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'PassportDataInfo',
+  initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
