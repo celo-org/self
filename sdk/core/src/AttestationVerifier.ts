@@ -94,12 +94,11 @@ export class AttestationVerifier {
     console.log(result);
 
     const credentialSubject = {
-      userId: publicSignals[CIRCUIT_CONSTANTS.REGISTER_USER_IDENTIFIER_INDEX],
-      application: publicSignals[CIRCUIT_CONSTANTS.REGISTER_APPLICATION_IDENTIFIER_INDEX],
-      scope: publicSignals[CIRCUIT_CONSTANTS.REGISTER_SCOPE_IDENTIFIER_INDEX],
-      merkle_root: publicSignals[CIRCUIT_CONSTANTS.REGISTER_MERKLE_ROOT_INDEX],
-      attestation_id: publicSignals[CIRCUIT_CONSTANTS.REGISTER_ATTENDATION_ID_INDEX],
-      current_date: publicSignals[CIRCUIT_CONSTANTS.REGISTER_CURRENT_DATE_INDEX],
+      userId: "",
+      application: this.scope,
+      merkle_root: "",
+      attestation_id: "",
+      current_date: "",
       issuing_state: result[0],
       name: result[1],
       passport_number: result[2],

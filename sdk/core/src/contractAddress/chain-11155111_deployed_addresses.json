@@ -1,12 +1,14 @@
 {
-  "DeployVerifiers#Verifier_dsc_sha256_rsa_65537_4096": "0x583a4eBf6227B670B9Bc230bE4C121f90F1d9a37",
-  "DeployVerifiers#Verifier_register_sha256_sha256_sha256_rsa_65537_4096": "0x8A8D8B953e5255ec9fEF0E11698c57aB7eDb2F20",
-  "DeployVerifiers#Verifier_vc_and_disclose": "0x27b7c511f1bdD5aB3Dda35815D76a87A261303De",
-  "DeployRegistryModule#PoseidonT3": "0x9ea847fC73AD27107BFc47b1C634264a109fD3Be",
-  "DeployRegistryModule#IdentityRegistryImplV1": "0x28B0762591122cCCb021832Af867e89eb1A4d590",
-  "DeployRegistryModule#IdentityRegistry": "0x7e2141b4aCc9155dA47Aae691E1213c48D882326",
-  "DeployHub#IdentityVerificationHubImplV1": "0xa491039C0c776aA9f14969176b767863E4c5870c",
-  "DeployHub#IdentityVerificationHub": "0xF02d92fc3B35cDe4066B027A0Ac9949a139437f3",
-  "UpdateRegistryCscaRoot#IdentityRegistryImplV1": "0x7e2141b4aCc9155dA47Aae691E1213c48D882326",
-  "UpdateRegistryOfacRoot#IdentityRegistryImplV1": "0x7e2141b4aCc9155dA47Aae691E1213c48D882326"
+  "DeployVerifiers#Verifier_dsc_sha256_rsa_65537_4096": "0x7a4DD396a164d49D82DB0Ba0D26E4c028f9Ac23b",
+  "DeployVerifiers#Verifier_register_sha256_sha256_sha256_rsa_65537_4096": "0xA3d441c6c8c53A9E53ad10C720161890E39524D9",
+  "DeployVerifiers#Verifier_vc_and_disclose": "0x2a4e75c6164d746D2113884f557f0A1c8eb57F39",
+  "DeployRegistryModule#PoseidonT3": "0xeB0A32b54953f5DA3c363739C8CB1dE41F155011",
+  "DeployRegistryModule#IdentityRegistryImplV1": "0xa339Fa4D27533BEb0122aB3586Cc48dfBfFB9CE4",
+  "DeployRegistryModule#IdentityRegistry": "0xc35f7882F2cEbE48eb10cAdB57f533ae6B19bd9A",
+  "DeployHub#IdentityVerificationHubImplV1": "0xBc542eAF0983A216B8d896f88E002233f01Cb804",
+  "DeployHub#IdentityVerificationHub": "0xCa88837092A5CF34B31727955962f8c57d06eaB1",
+  "UpdateRegistryCscaRoot#IdentityRegistryImplV1": "0xc35f7882F2cEbE48eb10cAdB57f533ae6B19bd9A",
+  "UpdateRegistryOfacRoot#IdentityRegistryImplV1": "0xc35f7882F2cEbE48eb10cAdB57f533ae6B19bd9A",
+  "UpdateRegistryHub#IdentityRegistryImplV1": "0xc35f7882F2cEbE48eb10cAdB57f533ae6B19bd9A",
+  "DeployVerifyAll#VerifyAll": "0x027BDac4bF61c495Be84347feF3e408DCb64EF13"
 }
