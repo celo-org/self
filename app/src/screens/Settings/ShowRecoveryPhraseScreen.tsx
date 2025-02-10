@@ -11,7 +11,6 @@ import { Caption } from '../../components/typography/Caption';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { slate400 } from '../../utils/colors';
 import { loadSecretOrCreateIt } from '../../utils/keychain';
 
 interface ShowRecoveryPhraseScreenProps {}
@@ -57,7 +56,7 @@ const ShowRecoveryPhraseScreen: React.FC<
           </Description>
           <Mnemonic words={mnemonic} revealWords={false} />
           <YStack gap="$2.5" width="100%" pt="$6" alignItems="center">
-            <Caption color={slate400}>
+            <Caption size="small">
               You can reveal your recovery phrase in settings.
             </Caption>
             <PrimaryButton

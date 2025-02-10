@@ -31,6 +31,7 @@ import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
 import AccountRecoveryScreen from './screens/Settings/AccountRecoveryScreen';
+import PassportDataInfoScreen from './screens/Settings/PassportDataInfoScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
@@ -106,7 +107,7 @@ const HomeNavBar = (props: StackHeaderProps) => {
 };
 
 const RootStack = createStackNavigator({
-  initialRouteName: 'Splash',
+  initialRouteName: 'PassportDataInfo',
   screenOptions: {
     header: DefaultNavBar,
   },
@@ -229,6 +230,12 @@ const RootStack = createStackNavigator({
       screen: ShowRecoveryPhraseScreen,
       options: {
         headerShown: false,
+      },
+    },
+    PassportDataInfo: {
+      screen: PassportDataInfoScreen,
+      options: {
+        title: 'Passport Data Info',
       },
     },
   },
