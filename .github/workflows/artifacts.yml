@@ -22,11 +22,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install npm
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-          nvm install 20
-          npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # cache: 'yarn'
+          # cache-dependency-path: 'circuits/yarn.lock'
 
       - name: Install dependencies
         run: |
