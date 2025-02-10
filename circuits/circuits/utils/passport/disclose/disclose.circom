@@ -66,7 +66,7 @@ template DISCLOSE(
     older_than_verified[0] <== isOlderThan.out * majority[0];
     older_than_verified[1] <== isOlderThan.out * majority[1];
 
-    signal revealedData[91]; // mrz: 88 bytes | older_than: 2 bytes | ofac: 1 byte
+    signal revealedData[93]; // mrz: 88 bytes | older_than: 2 bytes | ofac: 3 byte
     for (var i = 0; i < 88; i++) {
         revealedData[i] <== dg1[5+i] * selector_dg1[i];
     }
@@ -94,11 +94,11 @@ template DISCLOSE(
         ofac_nameyob_smt_root,
         ofac_nameyob_smt_siblings
     );
-    signal ofacCheckResultPacked <== ofacCheckResultPassportNo + ofacCheckResultNameDob * 2 + ofacCheckResultNameYob * 4;
     
-    revealedData[90] <== ofacCheckResultPacked * selector_ofac;
-
-    signal output revealedData_packed[3] <== PackBytes(91)(revealedData);
+    revealedData[90] <== ofacCheckResultPassportNo * selector_ofac;
+    revealedData[91] <== ofacCheckResultNameDob * selector_ofac;
+    revealedData[92] <== ofacCheckResultNameYob * selector_ofac;
+    signal output revealedData_packed[3] <== PackBytes(93)(revealedData);
 
     var chunkLength = computeIntChunkLength(MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH * 3);
     signal output forbidden_countries_list_packed[chunkLength] <== ProveCountryIsNotInList(MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH)(dg1, forbidden_countries_list);

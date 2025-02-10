@@ -219,11 +219,12 @@ describe('Disclose', function () {
       
       console.log('reveal_unpacked', reveal_unpacked);
       // OFAC result is stored at index 90 in the revealed data
-      const ofac_result = reveal_unpacked[90];
+      const ofac_results = reveal_unpacked.slice(90, 93);
 
-      const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0').split('').map(bit => parseInt(bit, 10));
-      expect(ofac_result_bits).to.deep.equal([1, 1, 1], 'OFAC result bits should be [1, 1, 1]');
-      expect(ofac_result).to.not.equal('\x00', 'OFAC result should be revealed');
+      console.log('ofac_results', ofac_results);
+
+      expect(ofac_results).to.deep.equal(['\x01', '\x01', '\x01'], 'OFAC result bits should be [1, 1, 1]');
+      expect(ofac_results).to.not.equal(['\x00', '\x00', '\x00'], 'OFAC result should be revealed');
     });
 
     it('should not disclose OFAC check result when selector is 0', async function () {
@@ -251,7 +252,7 @@ describe('Disclose', function () {
             'DIF123456',
             'DIFFERENT NAME', 'DIFFERENT SURNAME'
           ),
-          expectedBits: [1, 1, 1]
+          expectedBits: ['\x01', '\x01', '\x01']
         },
         {
           desc: 'Only passport number matches',
@@ -262,7 +263,7 @@ describe('Disclose', function () {
             '98lh90556', // Matching passport number
             'DIFFERENT NAME', 'DIFFERENT SURNAME'
           ),
-          expectedBits: [1, 1, 1]
+          expectedBits: ['\x01', '\x01', '\x01']
         },
         {
           desc: 'Only nationality matches',
@@ -272,7 +273,7 @@ describe('Disclose', function () {
             'DIF123456', // different passport number
             'DIFFERENT NAME', 'DIFFERENT SURNAME'
           ),
-          expectedBits: [1, 1, 1]
+          expectedBits: ['\x01', '\x01', '\x01']
         },
         {
           desc: 'Only passport number and nationality matches',
@@ -282,7 +283,7 @@ describe('Disclose', function () {
             '98lh90556',
             'DIFFERENT NAME', 'DIFFERENT SURNAME'
           ),
-          expectedBits: [1, 1, 0]
+          expectedBits: ['\x00', '\x01', '\x01']
         },
         {
           desc: 'Name and DOB matches (so YOB matches too)',
@@ -292,7 +293,7 @@ describe('Disclose', function () {
             'DIF123456',
             'HENAO MONTOYA', 'ARCANGEL DE JESUS'
           ),
-          expectedBits: [0, 0, 1]
+          expectedBits: ['\x01', '\x00', '\x00']
         },
         {
           desc: 'Only name and YOB match',
@@ -302,7 +303,7 @@ describe('Disclose', function () {
             'DIF123456',
             'HENAO MONTOYA', 'ARCANGEL DE JESUS'
           ),
-          expectedBits: [0, 1, 1]
+          expectedBits: ['\x01', '\x01', '\x00']
         },
         {
           desc: 'All details match',
@@ -312,7 +313,7 @@ describe('Disclose', function () {
             '98lh90556',
             'HENAO MONTOYA', 'ARCANGEL DE JESUS'
           ),
-          expectedBits: [0, 0, 0]
+          expectedBits: ['\x00', '\x00', '\x00']
         },
       ];
 
@@ -343,12 +344,10 @@ describe('Disclose', function () {
         w = await circuit.calculateWitness(testInputs);
         const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
         const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
-        const ofac_result = reveal_unpacked[90];
-        const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0')
-          .split('').map(bit => parseInt(bit, 10));
+        const ofac_results = reveal_unpacked.slice(90, 93);
         
-        console.log(`${testCase.desc} - OFAC bits:`, ofac_result_bits);
-        expect(ofac_result_bits).to.deep.equal(
+        console.log(`${testCase.desc} - OFAC bits:`, ofac_results);
+        expect(ofac_results).to.deep.equal(
           testCase.expectedBits,
           `Failed matching pattern for: ${testCase.desc}`
         );
