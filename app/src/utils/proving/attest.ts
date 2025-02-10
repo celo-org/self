@@ -1,5 +1,8 @@
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
+//@ts-ignore
+import * as asn1 from 'asn1.js';
+import * as asn1js from 'asn1js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
 import { Certificate } from 'pkijs';
@@ -7,10 +10,6 @@ import { Certificate } from 'pkijs';
 import { IMAGE_HASH } from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
-
-//@ts-ignore
-import * as asn1 from 'asn1.js';
-import * as asn1js from 'asn1js';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
