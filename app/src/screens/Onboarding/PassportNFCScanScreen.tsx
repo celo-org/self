@@ -8,7 +8,11 @@ import {
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
 
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  usePreventRemove,
+} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
 
@@ -41,7 +45,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   const [isNfcSupported, setIsNfcSupported] = useState(true);
   const [isNfcEnabled, setIsNfcEnabled] = useState(true);
   const [isNfcSheetOpen, setIsNfcSheetOpen] = useState(false);
-  const [scanningMessage, setScanningMessage] = useState('');
+
+  usePreventRemove(true, () => {});
 
   const checkNfcSupport = useCallback(async () => {
     const isSupported = await NfcManager.isSupported();
@@ -70,7 +75,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
         await scan({ passportNumber, dateOfBirth, dateOfExpiry });
         // Feels better somehow
         await new Promise(resolve => setTimeout(resolve, 1000));
-        navigation.navigate('NextScreen');
+        navigation.navigate('ConfirmBelongingScreen');
       } catch (e) {
         console.log(e);
       } finally {
@@ -99,7 +104,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       if (Platform.OS === 'android' && emitter) {
         const subscription = emitter.addListener(
           'NativeEvent',
-          (event: string) => setScanningMessage(event),
+          (event: string) => console.info(event),
         );
 
         return () => {
@@ -140,12 +145,6 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
                 uri: NFC_IMAGE,
               }}
               margin={20}
-            />
-            <Description
-              alignSelf="center"
-              children={scanningMessage}
-              textAlign="center"
-              marginBottom={20}
             />
           </>
         ) : (
