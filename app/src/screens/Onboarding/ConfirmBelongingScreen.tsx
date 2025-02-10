@@ -10,6 +10,7 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ValidProofScreen';
+import { usePreventRemove } from '@react-navigation/native';
 
 const ConfirmBelongingScreen: React.FC = () => {
   const onOkPress = useHapticNavigation('Home');
@@ -17,6 +18,9 @@ const ConfirmBelongingScreen: React.FC = () => {
   useEffect(() => {
     notificationSuccess();
   }, []);
+
+  // Prevents back navigation
+  usePreventRemove(true, () => {});
 
   return (
     <>
