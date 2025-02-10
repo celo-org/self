@@ -38,22 +38,34 @@ describe('Disclose', function () {
     '000101',
     '300101'
   );
-  let sanctionedPassportData = genMockPassportData(
-    'sha256',
-    'sha256', 
-    'rsa_sha256_65537_2048',
-    'FRA',
-    '541007',
-    '300101',
-    '98lh90556',
-    'HENAO MONTOYA',
-    'ARCANGEL DE JESUS'
-  );
   passportData = initPassportDataParsing(passportData);
-  sanctionedPassportData = initPassportDataParsing(sanctionedPassportData);
-  let tree: any;
-  let forbidden_countries_list: any;
-  let sanctionedInputs: any;
+  const forbidden_countries_list = ['ALG', 'DZA'];
+
+  const secret = BigInt(Math.floor(Math.random() * Math.pow(2, 254))).toString();
+  const majority = '18';
+  const user_identifier = crypto.randomUUID();
+  const selector_dg1 = Array(88).fill('1');
+  const selector_older_than = '1';
+  const scope = '@coboyApp';
+  const attestation_id = PASSPORT_ATTESTATION_ID;
+
+  // compute the commitment and insert it in the tree
+  const commitment = generateCommitment(secret, attestation_id, passportData);
+  console.log('commitment in js ', commitment);
+  const tree: any = new LeanIMT((a, b) => poseidon2([a, b]), []);
+  tree.insert(BigInt(commitment));
+
+  const passportNo_smt = new SMT(poseidon2, true);
+  passportNo_smt.import(passportNojson);
+
+  const nameAndDob_smt = new SMT(poseidon2, true);
+  nameAndDob_smt.import(nameAndDobjson);
+
+  const nameAndYob_smt = new SMT(poseidon2, true);
+  nameAndYob_smt.import(nameAndYobjson);
+
+  const selector_ofac = 1;
+  
 
   before(async () => {
     circuit = await wasm_tester(
@@ -66,37 +78,6 @@ describe('Disclose', function () {
         ],
       }
     );
-
-    const secret = BigInt(Math.floor(Math.random() * Math.pow(2, 254))).toString();
-    const majority = '18';
-    const user_identifier = crypto.randomUUID();
-    const selector_dg1 = Array(88).fill('1');
-    const selector_older_than = '1';
-    const scope = '@coboyApp';
-    const attestation_id = PASSPORT_ATTESTATION_ID;
-
-    // compute the commitment and insert it in the tree
-    const commitment = generateCommitment(secret, attestation_id, passportData);
-    console.log('commitment in js ', commitment);
-    tree = new LeanIMT((a, b) => poseidon2([a, b]), []);
-    tree.insert(BigInt(commitment));
-
-    // compute the commitment for the sanctioned person and insert it in the tree
-    const sanctionedCommitment = generateCommitment(secret, attestation_id, sanctionedPassportData);
-    console.log('sanctioned commitment in js ', sanctionedCommitment);
-    tree.insert(BigInt(sanctionedCommitment));
-
-    let passportNo_smt = new SMT(poseidon2, true);
-    passportNo_smt.import(passportNojson);
-
-    let nameAndDob_smt = new SMT(poseidon2, true);
-    nameAndDob_smt.import(nameAndDobjson);
-
-    let nameAndYob_smt = new SMT(poseidon2, true);
-    nameAndYob_smt.import(nameAndYobjson);
-
-    const selector_ofac = 1;
-    forbidden_countries_list = ['ALG', 'DZA'];
 
     inputs = generateCircuitInputsVCandDisclose(
       secret,
@@ -111,24 +92,6 @@ describe('Disclose', function () {
       nameAndDob_smt,
       nameAndYob_smt,
       selector_ofac,
-      forbidden_countries_list,
-      user_identifier
-    );
-
-    // Generate inputs with sanctioned passport data
-    sanctionedInputs = generateCircuitInputsVCandDisclose(
-      secret,
-      PASSPORT_ATTESTATION_ID,
-      sanctionedPassportData,
-      scope,
-      Array(88).fill('0'),  // selector_dg1
-      selector_older_than,
-      tree,
-      majority,
-      passportNo_smt,
-      nameAndDob_smt,
-      nameAndYob_smt,
-      '1', // selector_ofac
       forbidden_countries_list,
       user_identifier
     );
@@ -258,9 +221,7 @@ describe('Disclose', function () {
       // OFAC result is stored at index 90 in the revealed data
       const ofac_result = reveal_unpacked[90];
 
-      console.log('ofac_result', ofac_result);
       const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0').split('').map(bit => parseInt(bit, 10));
-      console.log('ofac_result_bits', ofac_result_bits);
       expect(ofac_result_bits).to.deep.equal([1, 1, 1], 'OFAC result bits should be [1, 1, 1]');
       expect(ofac_result).to.not.equal('\x00', 'OFAC result should be revealed');
     });
@@ -274,28 +235,124 @@ describe('Disclose', function () {
       const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
       const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
       
-      console.log('reveal_unpacked', reveal_unpacked);
-
       // OFAC result should be hidden (null byte)
       const ofac_result = reveal_unpacked[90];
       expect(ofac_result).to.equal('\x00', 'OFAC result should not be revealed');
     });
 
-    it('should show OFAC failure for sanctioned passport data', async function () {
-      w = await circuit.calculateWitness(sanctionedInputs);
+    it('should show different levels of OFAC matching', async function () {
+      // Test cases for different matching scenarios
+      const testCases = [
+        {
+          desc: 'No details match',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'USA', '010101', '300101',
+            'DIF123456',
+            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+          ),
+          expectedBits: [1, 1, 1]
+        },
+        {
+          desc: 'Only passport number matches',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'ESP', // different nationality
+            '000101', '300101',
+            '98lh90556', // Matching passport number
+            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+          ),
+          expectedBits: [1, 1, 1]
+        },
+        {
+          desc: 'Only nationality matches',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'FRA', '991231', '300101',
+            'DIF123456', // different passport number
+            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+          ),
+          expectedBits: [1, 1, 1]
+        },
+        {
+          desc: 'Only passport number and nationality matches',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'FRA', '991231', '300101',
+            '98lh90556',
+            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+          ),
+          expectedBits: [1, 1, 0]
+        },
+        {
+          desc: 'Name and DOB matches (so YOB matches too)',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'FRA', '541007', '300101',
+            'DIF123456',
+            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+          ),
+          expectedBits: [0, 0, 1]
+        },
+        {
+          desc: 'Only name and YOB match',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'FRA', '541299', '300101', // Same year (54) different month/day
+            'DIF123456',
+            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+          ),
+          expectedBits: [0, 1, 1]
+        },
+        {
+          desc: 'All details match',
+          data: genMockPassportData(
+            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'FRA', '541007', '300101',
+            '98lh90556',
+            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+          ),
+          expectedBits: [0, 0, 0]
+        },
+      ];
 
-      const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
-      const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
-      
-      console.log('reveal_unpacked for sanctioned data', reveal_unpacked);
-      const ofac_result = reveal_unpacked[90];
-      console.log('ofac_result for sanctioned data', ofac_result);
-      
-      const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0').split('').map(bit => parseInt(bit, 10));
-      console.log('ofac_result_bits for sanctioned data', ofac_result_bits);
-      
-      // For a sanctioned person, we expect [0, 0, 0] indicating all OFAC checks failed
-      expect(ofac_result_bits).to.deep.equal([0, 0, 0], 'OFAC result bits should be [0, 0, 0] for sanctioned data');
+      for (const testCase of testCases) {
+        console.log(`Testing: ${testCase.desc}`);
+        
+        const passportData = initPassportDataParsing(testCase.data);
+        const sanctionedCommitment = generateCommitment(secret, PASSPORT_ATTESTATION_ID, passportData);
+        tree.insert(BigInt(sanctionedCommitment));
+
+        const testInputs = generateCircuitInputsVCandDisclose(
+          secret,
+          PASSPORT_ATTESTATION_ID,
+          passportData,
+          scope,
+          Array(88).fill('0'),  // selector_dg1
+          selector_older_than,
+          tree,
+          majority,
+          passportNo_smt,
+          nameAndDob_smt,
+          nameAndYob_smt,
+          '1', // selector_ofac
+          forbidden_countries_list,
+          user_identifier
+        );
+
+        w = await circuit.calculateWitness(testInputs);
+        const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
+        const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
+        const ofac_result = reveal_unpacked[90];
+        const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0')
+          .split('').map(bit => parseInt(bit, 10));
+        
+        console.log(`${testCase.desc} - OFAC bits:`, ofac_result_bits);
+        expect(ofac_result_bits).to.deep.equal(
+          testCase.expectedBits,
+          `Failed matching pattern for: ${testCase.desc}`
+        );
+      }
     });
   });
 });
