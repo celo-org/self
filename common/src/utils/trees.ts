@@ -181,9 +181,6 @@ export function generateMerkleProof(imt: LeanIMT, _index: number, maxleaf_depth:
   return { siblings, path, leaf_depth };
 }
 
-
-
-
 // SMT trees for 3 levels of matching :
 // 1. Passport Number and Nationality tree : level 3 (Absolute Match)
 // 2. Name and date of birth combo tree : level 2 (High Probability Match)
@@ -278,6 +275,10 @@ const getCountryCode = (countryName: string): string | undefined => {
   return countries.getAlpha3Code(normalizeCountryName(countryName), "en");
 };
 
+function generateSmallKey(input: bigint): bigint {
+  return input % (BigInt(1) << BigInt(OFAC_TREE_LEVELS));
+}
+
 function processNameAndDob(entry: any, i: number): bigint {
   const firstName = entry.First_Name;
   const lastName = entry.Last_Name;
@@ -290,8 +291,7 @@ function processNameAndDob(entry: any, i: number): bigint {
   }
   const nameHash = processName(firstName, lastName, i);
   const dobHash = processDob(day, month, year, i);
-  const leaf = poseidon2([dobHash, nameHash]);
-  return leaf;
+  return generateSmallKey(poseidon2([dobHash, nameHash]));
 }
 
 function processNameAndYob(entry: any, i: number): bigint {
@@ -304,8 +304,7 @@ function processNameAndYob(entry: any, i: number): bigint {
   }
   const nameHash = processName(firstName, lastName, i);
   const yearHash = processYear(year, i);
-  const leaf = poseidon2([yearHash, nameHash]);
-  return leaf;
+  return generateSmallKey(poseidon2([yearHash, nameHash]));
 }
 
 function processYear(year: string, i: number): bigint {
@@ -406,7 +405,8 @@ export function getPassportNumberAndNationalityLeaf(passport: (bigint | number)[
     return;
   }
   try {
-    return poseidon12(passport.concat(nationality));
+    const fullHash = poseidon12(passport.concat(nationality));
+    return generateSmallKey(fullHash);
   } catch (err) {
     console.log('err : passport', err, i, passport);
   }
@@ -417,7 +417,7 @@ export function getNameDobLeaf(
   dobMrz: (bigint | number)[],
   i?: number
 ): bigint {
-  return poseidon2([getDobLeaf(dobMrz), getNameLeaf(nameMrz)]);
+  return generateSmallKey(poseidon2([getDobLeaf(dobMrz), getNameLeaf(nameMrz)]));
 }
 
 export function getNameYobLeaf(
@@ -425,7 +425,7 @@ export function getNameYobLeaf(
   yobMrz: (bigint | number)[],
   i?: number
 ): bigint {
-  return poseidon2([getYearLeaf(yobMrz), getNameLeaf(nameMrz)]);
+  return generateSmallKey(poseidon2([getYearLeaf(yobMrz), getNameLeaf(nameMrz)]));
 }
 
 export function getNameLeaf(nameMrz: (bigint | number)[], i?: number): bigint {

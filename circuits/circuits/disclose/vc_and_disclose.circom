@@ -142,4 +142,4 @@ component main {
         current_date,
         attestation_id
     ]
-} = VC_AND_DISCLOSE(33, 10, 256, 256, 256);
+} = VC_AND_DISCLOSE(33, 10, 64, 64, 64);

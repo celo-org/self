@@ -17,5 +17,5 @@ template OFAC_PASSPORT_NUMBER(nLevels) {
         poseidon_hasher.inputs[9 + i] <== dg1[59 + i];
     }
 
-   signal output ofacCheckResult <== SMTVerify(nLevels)(poseidon_hasher.out, smt_leaf_key, smt_root, smt_siblings, 0);
+    signal output ofacCheckResult <== SMTVerify(nLevels)(poseidon_hasher.out, smt_leaf_key, smt_root, smt_siblings, 0);
 }

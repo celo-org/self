@@ -75,7 +75,7 @@ describe('OFAC - Passport number and Nationality match', function () {
     expect(circuit).to.not.be.undefined;
   });
 
-  // Correct siblings and closest leaf : Everything correct as a proof
+  // Correct siblings and closest leaf: Everything correct as a proof
   it('should pass without errors, all conditions satisfied', async function () {
     let w = await circuit.calculateWitness(nonMemSmtInputs);
     const ofacCheckResult = (await circuit.getOutput(w, ['ofacCheckResult'])).ofacCheckResult;
@@ -89,7 +89,7 @@ describe('OFAC - Passport number and Nationality match', function () {
     expect(ofacCheckResult).to.equal('0');
   });
 
-  // Give wrong closest leaf but correct siblings array : Fail of SMT Verification
+  // Give wrong closest leaf but correct siblings array: Fail of SMT Verification
   it('should pass - wrong merkleroot, level 3', async function () {
     const wrongInputs = {
       ...nonMemSmtInputs,
