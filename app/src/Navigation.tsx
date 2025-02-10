@@ -1,6 +1,9 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import {
   StaticParamList,
@@ -26,9 +29,9 @@ import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScr
 import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
+import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
 import AccountRecoveryScreen from './screens/Settings/AccountRecoveryScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
-import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
@@ -62,12 +65,14 @@ const DefaultNavBar = (props: StackHeaderProps) => {
 };
 
 const HomeNavBar = (props: StackHeaderProps) => {
+  const insets = useSafeAreaInsets();
   return (
     <NavBar.Container
       backgroundColor={black}
       barStyle={'light-content'}
       padding={16}
       justifyContent="space-between"
+      paddingTop={Math.max(insets.top, 20)}
     >
       <NavBar.LeftAction
         component={
