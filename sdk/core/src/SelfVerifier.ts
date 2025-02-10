@@ -31,6 +31,11 @@ export class SelfVerifier extends AttestationVerifier {
     this.scope = scope;
   }
 
+  setTargetRootTimestamp(targetRootTimestamp: number): this {
+    this.targetRootTimestamp = targetRootTimestamp;
+    return this;
+  }
+
   setMinimumAge(age: number): this {
     if (age < 10) {
       throw new Error('Minimum age must be at least 10 years old');
@@ -67,45 +72,46 @@ export class SelfVerifier extends AttestationVerifier {
     return this;
   }
 
-  // getIntent(
-  //   appName: string,
-  //   userId: string,
-  //   userIdType: UserIdType,
-  //   sessionId: string,
-  //   websocketUrl: string = WEBSOCKET_URL
-  // ): string {
-  //   const intent_raw: SelfAppPartial = {
-  //     appName: appName,
-  //     scope: this.scope,
-  //     websocketUrl: websocketUrl,
-  //     sessionId: sessionId,
-  //     userId: userId,
-  //     userIdType: userIdType,
-  //     devMode: this.devMode,
-  //   };
+  // TODO: related to the qr code
+  getIntent(
+    appName: string,
+    userId: string,
+    userIdType: UserIdType,
+    sessionId: string,
+    websocketUrl: string = WEBSOCKET_URL
+  ): string {
+    const intent_raw: SelfAppPartial = {
+      appName: appName,
+      scope: this.scope,
+      websocketUrl: websocketUrl,
+      sessionId: sessionId,
+      userId: userId,
+      userIdType: userIdType,
+      devMode: this.devMode,
+    };
 
-  //   let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
-  //       const argsVcAndDisclose: ArgumentsDisclose = {
-  //         disclosureOptions: {
-  //           minimumAge: this.minimumAge,
-  //           nationality: this.nationality,
-  //           excludedCountries: this.excludedCountries,
-  //           ofac: this.ofac,
-  //       };
-  //       selfArguments = argsVcAndDisclose;
-  //   }
+    let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
+        const argsVcAndDisclose: ArgumentsDisclose = {
+          disclosureOptions: {
+            minimumAge: this.minimumAge,
+            nationality: this.nationality,
+            excludedCountries: this.excludedCountries,
+            ofac: this.ofac,
+        };
+        selfArguments = argsVcAndDisclose;
+    }
 
-  //   const intent: SelfApp = {
-  //     ...intent_raw,
-  //     args: selfArguments,
-  //   };
-  //   const encoded = msgpack.encode(intent);
-  //   try {
-  //     const compressedData = pako.deflate(encoded);
-  //     return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
-  //   } catch (err) {
-  //     console.error(err);
-  //     return '';
-  //   }
-  // }
+    const intent: SelfApp = {
+      ...intent_raw,
+      args: selfArguments,
+    };
+    const encoded = msgpack.encode(intent);
+    try {
+      const compressedData = pako.deflate(encoded);
+      return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
+    } catch (err) {
+      console.error(err);
+      return '';
+    }
+  }
 }

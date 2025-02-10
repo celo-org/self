@@ -27,22 +27,12 @@ import {
 import { CIRCUIT_CONSTANTS } from '../../../common/src/constants/constants';
 
 export class AttestationVerifier {
+
   protected devMode: boolean;
   protected scope: string;
   protected report: SelfVerifierReport;
   protected attestationId: number = 1;
   protected targetRootTimestamp: number = 0;
-
-  protected issuingState: { enabled: boolean; value: string } = { enabled: false, value: '' };
-  protected name: { enabled: boolean; value: string } = { enabled: false, value: '' };
-  protected passportNumber: { enabled: boolean; value: string } = { enabled: false, value: '' };
-  protected nationality: { enabled: boolean; value: (typeof countryNames)[number] } = {
-    enabled: false,
-    value: '' as (typeof countryNames)[number],
-  };
-  protected dateOfBirth: { enabled: boolean; value: string } = { enabled: false, value: '' };
-  protected gender: { enabled: boolean; value: string } = { enabled: false, value: '' };
-  protected expiryDate: { enabled: boolean; value: string } = { enabled: false, value: '' };
 
   protected minimumAge: { enabled: boolean; value: string } = { enabled: false, value: '18' };
   protected excludedCountries: { enabled: boolean; value: (typeof countryNames)[number][] } = {
