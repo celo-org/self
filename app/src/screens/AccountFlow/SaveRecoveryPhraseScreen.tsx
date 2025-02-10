@@ -16,10 +16,10 @@ import { AuthContext } from '../../stores/authProvider';
 import { slate400 } from '../../utils/colors';
 import { loadSecretOrCreateIt } from '../../utils/keychain';
 
-interface ShowRecoveryPhraseScreenProps {}
+interface SaveRecoveryPhraseScreenProps {}
 
-const ShowRecoveryPhraseScreen: React.FC<
-  ShowRecoveryPhraseScreenProps
+const SaveRecoveryPhraseScreen: React.FC<
+  SaveRecoveryPhraseScreenProps
 > = ({}) => {
   const { loginWithBiometrics } = useContext(AuthContext);
   const [mnemonic, setMnemonic] = useState<string[]>();
@@ -82,4 +82,4 @@ const ShowRecoveryPhraseScreen: React.FC<
   );
 };
 
-export default ShowRecoveryPhraseScreen;
+export default SaveRecoveryPhraseScreen;
