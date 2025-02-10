@@ -10,6 +10,7 @@ import WarnIcon from '../images/icons/warning.svg';
 import SelfCard from '../images/self-card.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
+import { usePreventRemove } from '@react-navigation/native';
 
 const ScanButton = styled(Button, {
   borderRadius: 20,
@@ -25,7 +26,8 @@ const ScanButton = styled(Button, {
 const HomeScreen: React.FC = () => {
   const onCaptionPress = useHapticNavigation('Launch');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
-
+  // Prevents back navigation
+  usePreventRemove(true, () => {});
   return (
     <YStack bg={black} gap={20} jc="space-between" height={'100%'} padding={20}>
       <YStack ai="center" gap={20} justifyContent="flex-start">
