@@ -13,8 +13,8 @@ import {
 import Additional from '../../components/typography/Additional';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
+import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
-import QRUpload from '../../images/icons/qr_upload.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
 import { slate800 } from '../../utils/colors';
@@ -58,6 +58,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
     },
     [store, navigation, doneScanningQR],
   );
+  const onCancelPress = useHapticNavigation('Home', 'cancel');
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -69,11 +70,9 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
               autoPlay
               loop
               source={require('../../assets/animations/qr_scan.json')}
-              style={{
-                position: 'absolute',
-                width: '115%',
-                height: '115%',
-              }}
+              style={styles.animation}
+              cacheComposition={true}
+              renderMode="HARDWARE"
             />
           </>
         )}
@@ -82,7 +81,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
       <ExpandableBottomLayout.BottomSection>
         <YStack alignItems="center" gap="$2.5" paddingBottom={20}>
           <YStack alignItems="center" gap="$6" pb="$2.5">
-            <Title>Verify your Self ID</Title>
+            <Title>Verify your ID</Title>
             <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
               <View pt="$2">
                 <QRScan height={40} width={40} color={slate800} />
@@ -92,34 +91,14 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
                   Scan a partner's QR code
                 </Description>
                 <Additional style={styles.description}>
-                  Look for a QR code from a Self ID partner and position it in
-                  the camera frame above.
-                </Additional>
-              </View>
-            </XStack>
-            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
-              <View pt="$2">
-                <QRUpload height={40} width={40} color={slate800} />
-              </View>
-              <View
-                alignItems="flex-start"
-                justifyContent="flex-start"
-                maxWidth="75%"
-              >
-                <Description style={styles.subheader}>
-                  Upload from photo roll
-                </Description>
-                <Additional style={styles.description}>
-                  You can also upload an image of a Self ID QR code from your
-                  camera roll instead.
+                  Look for a QR code from a Self partner and position it in the
+                  camera frame above.
                 </Additional>
               </View>
             </XStack>
           </YStack>
 
-          <SecondaryButton onPress={() => navigation.navigate('Home')}>
-            Cancel
-          </SecondaryButton>
+          <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
         </YStack>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
@@ -129,6 +108,11 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
 export default QRCodeViewFinderScreen;
 
 const styles = StyleSheet.create({
+  animation: {
+    position: 'absolute',
+    width: '115%',
+    height: '115%',
+  },
   subheader: {
     color: slate800,
     textAlign: 'left',

@@ -10,19 +10,24 @@ import {
   createStaticNavigation,
 } from '@react-navigation/native';
 import {
-  StackHeaderProps,
-  createStackNavigator,
-} from '@react-navigation/stack';
+  NativeStackHeaderProps,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import { Button, ViewStyle } from 'tamagui';
 
 import { NavBar } from './components/NavBar';
 import ActivityIcon from './images/icons/activity.svg';
 import SettingsIcon from './images/icons/settings.svg';
+import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
+import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
+import RecoverWithPhraseScreen from './screens/AccountFlow/RecoverWithPhraseScreen';
+import SaveRecoveryPhraseScreen from './screens/AccountFlow/SaveRecoveryPhraseScreen';
 import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
 import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
+import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
@@ -30,15 +35,14 @@ import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
-import AccountRecoveryScreen from './screens/Settings/AccountRecoveryScreen';
 import PassportDataInfoScreen from './screens/Settings/PassportDataInfoScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
-import { black, neutral400, white } from './utils/colors';
+import { black, neutral400, slate300, white } from './utils/colors';
 
-const DefaultNavBar = (props: StackHeaderProps) => {
+const DefaultNavBar = (props: NativeStackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
   const { options } = props;
   const headerStyle = (options.headerStyle || {}) as ViewStyle;
@@ -54,18 +58,20 @@ const DefaultNavBar = (props: StackHeaderProps) => {
       }
     >
       <NavBar.LeftAction
-        component={canGoBack() ? 'back' : undefined}
+        component={
+          options.headerBackTitle || (canGoBack() ? 'back' : undefined)
+        }
         onPress={goBack}
-        color={options.headerTintColor}
+        {...options.headerTitleStyle}
       />
-      <NavBar.Title color={options.headerTintColor}>
+      <NavBar.Title {...options.headerTitleStyle}>
         {props.options.title}
       </NavBar.Title>
     </NavBar.Container>
   );
 };
 
-const HomeNavBar = (props: StackHeaderProps) => {
+const HomeNavBar = (props: NativeStackHeaderProps) => {
   const insets = useSafeAreaInsets();
   return (
     <NavBar.Container
@@ -106,12 +112,11 @@ const HomeNavBar = (props: StackHeaderProps) => {
   );
 };
 
-const RootStack = createStackNavigator({
+const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
   },
-
   layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
     Splash: {
@@ -155,6 +160,12 @@ const RootStack = createStackNavigator({
         dateOfExpiry: '',
       },
     },
+    ConfirmBelongingScreen: {
+      screen: ConfirmBelongingScreen,
+      options: {
+        headerShown: false,
+      },
+    },
     CreateMock: {
       screen: MockDataScreen,
       options: {
@@ -172,7 +183,7 @@ const RootStack = createStackNavigator({
     Home: {
       screen: HomeScreen,
       options: {
-        title: 'Self ID',
+        title: 'Self',
         header: HomeNavBar,
       },
     },
@@ -226,10 +237,39 @@ const RootStack = createStackNavigator({
         headerShown: false,
       },
     },
+    SaveRecoveryPhrase: {
+      screen: SaveRecoveryPhraseScreen,
+      options: {
+        headerShown: false,
+      },
+    },
+    RecoverWithPhrase: {
+      screen: RecoverWithPhraseScreen,
+      options: {
+        headerTintColor: black,
+        title: 'Enter Recovery Phrase',
+        headerStyle: {
+          backgroundColor: black,
+        },
+        headerTitleStyle: {
+          color: slate300,
+        },
+        headerBackTitle: 'close',
+      },
+    },
+    AccountVerifiedSuccess: {
+      screen: AccountVerifiedSuccessScreen,
+      options: {
+        headerShown: false,
+      },
+    },
     ShowRecoveryPhrase: {
       screen: ShowRecoveryPhraseScreen,
       options: {
-        headerShown: false,
+        title: 'Recovery Phrase',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
     PassportDataInfo: {
@@ -241,9 +281,7 @@ const RootStack = createStackNavigator({
   },
 });
 
-const AppNavigation = createStaticNavigation(RootStack);
-
-type RootStackParamList = StaticParamList<typeof RootStack>;
+export type RootStackParamList = StaticParamList<typeof AppNavigation>;
 
 declare global {
   namespace ReactNavigation {
@@ -251,4 +289,4 @@ declare global {
   }
 }
 
-export default AppNavigation;
+export default createStaticNavigation(AppNavigation);
