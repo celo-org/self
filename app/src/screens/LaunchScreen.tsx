@@ -12,7 +12,7 @@ import { slate50, slate100, slate500, slate700 } from '../utils/colors';
 interface LaunchScreenProps {}
 
 const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
-  const onStartPress = useHapticNavigation('Start');
+  const onStartPress = useHapticNavigation('PassportCamera');
 
   return (
     <ExpandableBottomLayout.Layout>
