@@ -338,10 +338,10 @@ export function getCertificateFromPem(pemContent: string): Certificate {
     view[i] = binary[i];
   }
 
-  const asn1 = asn1js.fromBER(arrayBuffer);
+  const asn1Data = asn1js.fromBER(arrayBuffer);
   if (asn1.offset === -1) {
-    throw new Error(`ASN.1 parsing error: ${asn1.result.error}`);
+    throw new Error(`ASN.1 parsing error: ${asn1Data.result.error}`);
   }
 
-  return new Certificate({ schema: asn1.result });
+  return new Certificate({ schema: asn1Data.result });
 }

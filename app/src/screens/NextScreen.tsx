@@ -133,7 +133,7 @@ const NextScreen: React.FC = () => {
       <CustomButton
         onPress={async () => {
           confirmTap();
-          passportData && (await sendRegisterPayload(passportData))
+          passportData && (await sendRegisterPayload(passportData));
         }}
         text="TEE PROVING REGISTER"
         Icon={<Cpu color={textBlack} />}
@@ -141,9 +141,8 @@ const NextScreen: React.FC = () => {
       <CustomButton
         onPress={async () => {
           confirmTap();
-          passportData && (await sendDscPayload(passportData))
-        }
-        }
+          passportData && (await sendDscPayload(passportData));
+        }}
         text="TEE PROVING DSC"
         Icon={<Cpu color={textBlack} />}
       />
