@@ -13,7 +13,6 @@ export async function restoreSecret(mnemonic: string) {
     service: 'secret',
   });
 
-  console.log(newSecret, existingSecret);
   if (newSecret !== (existingSecret as Keychain.UserCredentials).password) {
     throw new Error('Mnemonic didnt match previously stored secret');
   }
