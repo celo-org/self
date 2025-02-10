@@ -38,14 +38,14 @@ contract VerifyAll is Ownable {
         } catch {
             IIdentityVerificationHubV1.ReadableRevealedData memory emptyData = IIdentityVerificationHubV1.ReadableRevealedData({
                 issuingState: "",
-                name: "",
+                name: new string[](0),
                 passportNumber: "",
                 nationality: "",
                 dateOfBirth: "",
                 gender: "",
                 expiryDate: "",
-                olderThan: "",
-                ofac: ""
+                olderThan: 0,
+                ofac: 0
             });
             return (emptyData, false);
         }
@@ -54,14 +54,14 @@ contract VerifyAll is Ownable {
             if (_registry.rootTimestamps(result.identityCommitmentRoot) != targetRootTimestamp) {
                 IIdentityVerificationHubV1.ReadableRevealedData memory emptyData = IIdentityVerificationHubV1.ReadableRevealedData({
                     issuingState: "",
-                    name: "",
+                    name: new string[](0),
                     passportNumber: "",
                     nationality: "",
                     dateOfBirth: "",
                     gender: "",
                     expiryDate: "",
-                    olderThan: "",
-                    ofac: ""
+                    olderThan: 0,
+                    ofac: 0
                 });
                 return (emptyData, false);
             }
