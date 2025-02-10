@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View } from 'tamagui';
+import { StatusBar } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
@@ -10,7 +10,6 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ValidProofScreen';
-import { StatusBar } from 'react-native';
 
 const ConfirmBelongingScreen: React.FC = () => {
   const onOkPress = useHapticNavigation('Home');
@@ -36,7 +35,8 @@ const ConfirmBelongingScreen: React.FC = () => {
         <ExpandableBottomLayout.BottomSection gap={20}>
           <Title textAlign="center">Confirm your identity</Title>
           <Description textAlign="center" paddingBottom={20}>
-            By continuing, you certify that this passport belongs to you and is not stolen or forged.
+            By continuing, you certify that this passport belongs to you and is
+            not stolen or forged.
           </Description>
           <PrimaryButton onPress={onOkPress}>Confirm</PrimaryButton>
         </ExpandableBottomLayout.BottomSection>
@@ -46,5 +46,3 @@ const ConfirmBelongingScreen: React.FC = () => {
 };
 
 export default ConfirmBelongingScreen;
-
-

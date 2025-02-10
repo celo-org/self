@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {View, ViewProps} from 'tamagui';
+
+import { View, ViewProps } from 'tamagui';
+
 import { black, white } from '../utils/colors';
 
 interface ExpandableBottomLayoutProps {
@@ -17,15 +19,26 @@ interface BottomSectionProps extends ViewProps {
 }
 
 const Layout: React.FC<ExpandableBottomLayoutProps> = ({ children }) => {
-  return <SafeAreaView  style={styles.layout}>{children}</SafeAreaView>;
+  return <SafeAreaView style={styles.layout}>{children}</SafeAreaView>;
 };
 
 const TopSection: React.FC<TopSectionProps> = ({ children, ...props }) => {
-  return <View {...props} style={styles.topSection}>{children}</View>;
+  return (
+    <View {...props} style={styles.topSection}>
+      {children}
+    </View>
+  );
 };
 
-const BottomSection: React.FC<BottomSectionProps> = ({ children, ...props }) => {
-  return <View {...props} style={styles.bottomSection}>{children}</View>;
+const BottomSection: React.FC<BottomSectionProps> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <View {...props} style={styles.bottomSection}>
+      {children}
+    </View>
+  );
 };
 
 /**

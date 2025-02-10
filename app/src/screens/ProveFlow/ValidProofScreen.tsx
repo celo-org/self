@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { StyleSheet,  View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { BodyText } from '../../components/typography/BodyText';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { typography } from '../../components/typography/styles';
@@ -11,7 +12,6 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useNavigationStore from '../../stores/navigationStore';
 import { notificationSuccess } from '../../utils/haptic';
-import { BodyText } from '../../components/typography/BodyText';
 
 const SuccessScreen: React.FC = () => {
   const { selectedApp } = useNavigationStore();

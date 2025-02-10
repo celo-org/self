@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
-import { BodyText} from '../../components/typography/BodyText';
+
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
@@ -16,6 +16,7 @@ import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
+import { BodyText } from '../../components/typography/BodyText';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
@@ -126,9 +127,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
             <TextsContainer>
               <Title children="Ready to scan" />
               <BodyText textAlign="center">
-              Hold your device near the NFC tag and stop moving when it
-              vibrates.
-            </BodyText>
+                Hold your device near the NFC tag and stop moving when it
+                vibrates.
+              </BodyText>
             </TextsContainer>
             <Image
               h="$8"
@@ -140,7 +141,12 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               }}
               margin={20}
             />
-            <Description alignSelf="center" children={scanningMessage} textAlign="center" marginBottom={20} />
+            <Description
+              alignSelf="center"
+              children={scanningMessage}
+              textAlign="center"
+              marginBottom={20}
+            />
           </>
         ) : (
           <>
