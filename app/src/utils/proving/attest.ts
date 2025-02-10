@@ -1,7 +1,5 @@
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
-//@ts-ignore
-import * as asn1js from 'asn1.js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
 import { Certificate } from 'pkijs';
@@ -9,6 +7,10 @@ import { Certificate } from 'pkijs';
 import { IMAGE_HASH } from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
+
+//@ts-ignore
+import * as asn1 from 'asn1.js';
+import * as asn1js from 'asn1js';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
@@ -36,7 +38,7 @@ interface ASN1Context {
 /**
  * @notice ASN.1 definition for an Elliptic Curve Public Key.
  */
-export const ECPublicKeyASN = asn1js.define(
+export const ECPublicKeyASN = asn1.define(
   'ECPublicKey',
   function (this: ASN1Context) {
     this.seq().obj(
