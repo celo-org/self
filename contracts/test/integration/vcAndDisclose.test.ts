@@ -14,6 +14,8 @@ import { SMT, ChildNodes } from "@openpassport/zk-kit-smt";
 import { getStartOfDayTimestamp } from "../utils/utils";
 import { Formatter, CircuitAttributeHandler } from "../utils/formatter";
 import { formatCountriesList, reverseBytes,reverseCountryBytes } from '../../../common/src/utils/circuits/formatInputs';
+import fs from 'fs';
+import path from 'path';
 
 describe("VC and Disclose", () => {
     let deployedActors: DeployedActors;
