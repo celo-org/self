@@ -121,7 +121,9 @@ function generateTeeInputsVCAndDisclose(passportData: PassportData) {
   return { inputs, circuitName: 'vc_and_disclose' };
 }
 
-export async function sendVcAndDisclosePayload(passportData: PassportData | null) {
+export async function sendVcAndDisclosePayload(
+  passportData: PassportData | null,
+) {
   if (!passportData) {
     return null;
   }

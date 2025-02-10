@@ -43,7 +43,9 @@ const ProveScreen: React.FC = () => {
 
   function onVerify() {
     buttonTap();
-    sendVcAndDisclosePayload(passportData).catch((e) => console.log('Error sending VC and disclose payload',e));
+    sendVcAndDisclosePayload(passportData).catch(e =>
+      console.log('Error sending VC and disclose payload', e),
+    );
   }
 
   function goToErrorScreen() {
