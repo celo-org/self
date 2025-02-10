@@ -38,9 +38,23 @@ describe('Disclose', function () {
     '000101',
     '300101'
   );
+  let sanctionedPassportData = genMockPassportData(
+    'sha256',
+    'sha256', 
+    'rsa_sha256_65537_2048',
+    'FRA',
+    '541007',
+    '300101',
+    '98lh90556',
+    'HENAO MONTOYA',
+    'ARCANGEL DE JESUS'
+  );
   passportData = initPassportDataParsing(passportData);
+  sanctionedPassportData = initPassportDataParsing(sanctionedPassportData);
   let tree: any;
   let forbidden_countries_list: any;
+  let sanctionedInputs: any;
+
   before(async () => {
     circuit = await wasm_tester(
       path.join(__dirname, '../../circuits/disclose/vc_and_disclose.circom'),
@@ -54,7 +68,6 @@ describe('Disclose', function () {
     );
 
     const secret = BigInt(Math.floor(Math.random() * Math.pow(2, 254))).toString();
-
     const majority = '18';
     const user_identifier = crypto.randomUUID();
     const selector_dg1 = Array(88).fill('1');
@@ -67,6 +80,11 @@ describe('Disclose', function () {
     console.log('commitment in js ', commitment);
     tree = new LeanIMT((a, b) => poseidon2([a, b]), []);
     tree.insert(BigInt(commitment));
+
+    // compute the commitment for the sanctioned person and insert it in the tree
+    const sanctionedCommitment = generateCommitment(secret, attestation_id, sanctionedPassportData);
+    console.log('sanctioned commitment in js ', sanctionedCommitment);
+    tree.insert(BigInt(sanctionedCommitment));
 
     let passportNo_smt = new SMT(poseidon2, true);
     passportNo_smt.import(passportNojson);
@@ -93,6 +111,24 @@ describe('Disclose', function () {
       nameAndDob_smt,
       nameAndYob_smt,
       selector_ofac,
+      forbidden_countries_list,
+      user_identifier
+    );
+
+    // Generate inputs with sanctioned passport data
+    sanctionedInputs = generateCircuitInputsVCandDisclose(
+      secret,
+      PASSPORT_ATTESTATION_ID,
+      sanctionedPassportData,
+      scope,
+      Array(88).fill('0'),  // selector_dg1
+      selector_older_than,
+      tree,
+      majority,
+      passportNo_smt,
+      nameAndDob_smt,
+      nameAndYob_smt,
+      '1', // selector_ofac
       forbidden_countries_list,
       user_identifier
     );
@@ -209,5 +245,57 @@ describe('Disclose', function () {
     const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
     expect(reveal_unpacked[88]).to.equal('\x00');
     expect(reveal_unpacked[89]).to.equal('\x00');
+  });
+
+  describe('OFAC disclosure', function () {
+    it('should allow disclosing OFAC check result when selector is 1', async function () {
+      w = await circuit.calculateWitness(inputs);
+
+      const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
+      const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
+      
+      console.log('reveal_unpacked', reveal_unpacked);
+      // OFAC result is stored at index 90 in the revealed data
+      const ofac_result = reveal_unpacked[90];
+
+      console.log('ofac_result', ofac_result);
+      const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0').split('').map(bit => parseInt(bit, 10));
+      console.log('ofac_result_bits', ofac_result_bits);
+      expect(ofac_result_bits).to.deep.equal([1, 1, 1], 'OFAC result bits should be [1, 1, 1]');
+      expect(ofac_result).to.not.equal('\x00', 'OFAC result should be revealed');
+    });
+
+    it('should not disclose OFAC check result when selector is 0', async function () {
+      w = await circuit.calculateWitness({
+        ...inputs,
+        selector_ofac: '0'
+      });
+
+      const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
+      const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
+      
+      console.log('reveal_unpacked', reveal_unpacked);
+
+      // OFAC result should be hidden (null byte)
+      const ofac_result = reveal_unpacked[90];
+      expect(ofac_result).to.equal('\x00', 'OFAC result should not be revealed');
+    });
+
+    it('should show OFAC failure for sanctioned passport data', async function () {
+      w = await circuit.calculateWitness(sanctionedInputs);
+
+      const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
+      const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
+      
+      console.log('reveal_unpacked for sanctioned data', reveal_unpacked);
+      const ofac_result = reveal_unpacked[90];
+      console.log('ofac_result for sanctioned data', ofac_result);
+      
+      const ofac_result_bits = ofac_result.charCodeAt(0).toString(2).padStart(3, '0').split('').map(bit => parseInt(bit, 10));
+      console.log('ofac_result_bits for sanctioned data', ofac_result_bits);
+      
+      // For a sanctioned person, we expect [0, 0, 0] indicating all OFAC checks failed
+      expect(ofac_result_bits).to.deep.equal([0, 0, 0], 'OFAC result bits should be [0, 0, 0] for sanctioned data');
+    });
   });
 });
