@@ -15,7 +15,7 @@ import {
 import { AttestationVerifier } from './AttestationVerifier';
 export class SelfVerifier extends AttestationVerifier {
 
-  constructor( 
+  constructor(
     scope: string, 
     devMode: boolean = false,
     rpcUrl: string = DEFAULT_RPC_URL,
