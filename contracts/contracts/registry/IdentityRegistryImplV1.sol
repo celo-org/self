@@ -67,8 +67,14 @@ abstract contract IdentityRegistryStorageV1 is
     /// @notice Mapping to determine if a DSC key commitment is registered.
     mapping(uint256 => bool) internal _isRegisteredDscKeyCommitment;
 
-    /// @notice Current OFAC SMT root.
-    uint256 internal _ofacRoot;
+    /// @notice Current OFAC passport number and nationality SMT root.
+    uint256 internal _ofacPassportNoRoot;
+
+    /// @notice Current OFAC name and date of birth SMT root.
+    uint256 internal _ofacNameDobRoot;
+
+    /// @notice Current OFAC name and year of birth SMT root.
+    uint256 internal _ofacNameYobRoot;
 
     /// @notice Current CSCA root.
     uint256 internal _cscaRoot;
@@ -95,8 +101,12 @@ contract IdentityRegistryImplV1 is
     event HubUpdated(address hub);
     /// @notice Emitted when the CSCA root is updated.
     event CscaRootUpdated(uint256 cscaRoot);
-    /// @notice Emitted when the OFAC root is updated.
-    event OfacRootUpdated(uint256 ofacRoot);
+    /// @notice Emitted when the OFAC passport number root is updated.
+    event OfacPassportNoRootUpdated(uint256 root);
+    /// @notice Emitted when the OFAC name and date of birth root is updated.
+    event OfacNameDobRootUpdated(uint256 root);
+    /// @notice Emitted when the OFAC name and year of birth root is updated.
+    event OfacNameYobRootUpdated(uint256 root);
     /// @notice Emitted when an identity commitment is successfully registered.
     event CommitmentRegistered(bytes32 indexed attestationId, uint256 indexed nullifier, uint256 indexed commitment, uint256 timestamp, uint256 imtRoot, uint256 imtIndex);
     /// @notice Emitted when a DSC key commitment is successfully registered.
@@ -304,24 +314,24 @@ contract IdentityRegistryImplV1 is
     }
 
     /**
-     * @notice Retrieves the current OFAC root.
-     * @return The stored OFAC root.
+     * @notice Retrieves the current OFAC passport number root.
+     * @return The stored OFAC passport number root.
      */
-    function getOfacRoot() 
+    function getOfacPassportNoRoot() 
         external
         onlyProxy
         view 
         returns (uint256) 
     {
-        return _ofacRoot;
+        return _ofacPassportNoRoot;
     }
 
     /**
-     * @notice Validates whether the provided OFAC root matches the stored value.
-     * @param root The OFAC root to validate.
-     * @return True if the provided root is equal to the stored OFAC root, false otherwise.
+     * @notice Validates whether the provided OFAC passport number root matches the stored value.
+     * @param root The OFAC passport number root to validate.
+     * @return True if the provided root is equal to the stored OFAC passport number root, false otherwise.
      */
-    function checkOfacRoot(
+    function checkOfacPassportNoRoot(
         uint256 root
     ) 
         external
@@ -329,7 +339,65 @@ contract IdentityRegistryImplV1 is
         view 
         returns (bool) 
     {
-        return _ofacRoot == root;
+        return _ofacPassportNoRoot == root;
+    }
+
+    /**
+     * @notice Retrieves the current OFAC name and date of birth root.
+     * @return The stored OFAC name and date of birth root.
+     */
+    function getOfacNameDobRoot() 
+        external
+        onlyProxy
+        view 
+        returns (uint256) 
+    {
+        return _ofacNameDobRoot;
+    }
+
+    /**
+     * @notice Validates whether the provided OFAC name and date of birth root matches the stored value.
+     * @param root The OFAC name and date of birth root to validate.
+     * @return True if the provided root is equal to the stored OFAC name and date of birth root, false otherwise.
+     */
+    function checkOfacNameDobRoot(
+        uint256 root
+    ) 
+        external
+        onlyProxy
+        view 
+        returns (bool) 
+    {
+        return _ofacNameDobRoot == root;
+    }
+
+    /**
+     * @notice Retrieves the current OFAC name and year of birth root.
+     * @return The stored OFAC name and year of birth root.
+     */
+    function getOfacNameYobRoot() 
+        external
+        onlyProxy
+        view 
+        returns (uint256) 
+    {
+        return _ofacNameYobRoot;
+    }
+
+    /**
+     * @notice Validates whether the provided OFAC name and year of birth root matches the stored value.
+     * @param root The OFAC name and year of birth root to validate.
+     * @return True if the provided root is equal to the stored OFAC name and year of birth root, false otherwise.
+     */
+    function checkOfacNameYobRoot(
+        uint256 root
+    ) 
+        external
+        onlyProxy
+        view 
+        returns (bool) 
+    {
+        return _ofacNameYobRoot == root;
     }
 
     /**
@@ -489,19 +557,51 @@ contract IdentityRegistryImplV1 is
     }
 
     /**
-     * @notice Updates the OFAC root.
+     * @notice Updates the OFAC passport number root.
      * @dev Callable only via a proxy and restricted to the contract owner.
-     * @param newOfacRoot The new OFAC root value.
+     * @param newRoot The new OFAC passport number root value.
      */
-    function updateOfacRoot(
-        uint256 newOfacRoot
-    ) 
+    function updateOfacPassportNoRoot(
+        uint256 newRoot
+    )
         external
         onlyProxy
         onlyOwner 
     {
-        _ofacRoot = newOfacRoot;
-        emit OfacRootUpdated(newOfacRoot);
+        _ofacPassportNoRoot = newRoot;
+        emit OfacPassportNoRootUpdated(newRoot);
+    }
+
+    /**
+     * @notice Updates the OFAC name and date of birth root.
+     * @dev Callable only via a proxy and restricted to the contract owner.
+     * @param newRoot The new OFAC name and DOB root value.
+     */
+    function updateOfacNameDobRoot(
+        uint256 newRoot
+    )
+        external
+        onlyProxy
+        onlyOwner 
+    {
+        _ofacNameDobRoot = newRoot;
+        emit OfacNameDobRootUpdated(newRoot);
+    }
+
+    /**
+     * @notice Updates the OFAC name and year of birth root.
+     * @dev Callable only via a proxy and restricted to the contract owner.
+     * @param newRoot The new OFAC name and YOB root value.
+     */
+    function updateOfacNameYobRoot(
+        uint256 newRoot
+    )
+        external
+        onlyProxy
+        onlyOwner 
+    {
+        _ofacNameYobRoot = newRoot;
+        emit OfacNameYobRootUpdated(newRoot);
     }
 
     /**
@@ -737,5 +837,22 @@ contract IdentityRegistryImplV1 is
         returns(uint256 imt_root)
     {
         imt_root = imt._remove(oldLeaf, siblingNodes);
+    }
+
+    /**
+     * @notice Checks if all three OFAC SMT roots match the provided roots.
+     * @param passportNoRoot The OFAC passport number root to check.
+     * @param nameDobRoot The OFAC name and date of birth root to check.
+     * @param nameYobRoot The OFAC name and year of birth root to check.
+     * @return True if all roots match, false otherwise.
+     */
+    function checkOfacRoots(
+        uint256 passportNoRoot,
+        uint256 nameDobRoot, 
+        uint256 nameYobRoot
+    ) external onlyProxy view returns (bool) {
+        return _ofacPassportNoRoot == passportNoRoot &&
+               _ofacNameDobRoot == nameDobRoot &&
+               _ofacNameYobRoot == nameYobRoot;
     }
 }

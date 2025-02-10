@@ -72,33 +72,70 @@ interface IIdentityRegistryV1 {
     ) external view returns (uint256);
 
     /**
-     * @notice Retrieves the current OFAC root.
-     * @return The current OFAC root value.
-     */
-    function getOfacRoot() external view returns (uint256);
-
-    /**
-     * @notice Checks if the provided OFAC root matches the stored OFAC root.
-     * @param root The OFAC root to verify.
-     * @return True if the given root equals the stored OFAC root, otherwise false.
-     */
-    function checkOfacRoot(
-        uint256 root
-    ) external view returns (bool);
-
-    /**
-     * @notice Retrieves the current CSCA root.
-     * @return The current CSCA root value.
-     */
-    function getCscaRoot() external view returns (uint256);
-
-    /**
      * @notice Checks if the provided CSCA root matches the stored CSCA root.
      * @param root The CSCA root to verify.
      * @return True if the given root equals the stored CSCA root, otherwise false.
      */
     function checkCscaRoot(
         uint256 root
+    ) external view returns (bool);
+
+    /**
+     * @notice Retrieves the current OFAC passport number root.
+     * @return The current OFAC passport number root value.
+     */
+    function getOfacPassportNoRoot() external view returns (uint256);
+
+    /**
+     * @notice Checks if the provided OFAC passport number root matches the stored value.
+     * @param root The OFAC passport number root to verify.
+     * @return True if the given root equals the stored OFAC passport number root, otherwise false.
+     */
+    function checkOfacPassportNoRoot(
+        uint256 root
+    ) external view returns (bool);
+
+    /**
+     * @notice Retrieves the current OFAC name and date of birth root.
+     * @return The current OFAC name and date of birth root value.
+     */
+    function getOfacNameDobRoot() external view returns (uint256);
+
+    /**
+     * @notice Checks if the provided OFAC name and date of birth root matches the stored value.
+     * @param root The OFAC name and date of birth root to verify.
+     * @return True if the given root equals the stored OFAC name and date of birth root, otherwise false.
+     */
+    function checkOfacNameDobRoot(
+        uint256 root
+    ) external view returns (bool);
+
+    /**
+     * @notice Retrieves the current OFAC name and year of birth root.
+     * @return The current OFAC name and year of birth root value.
+     */
+    function getOfacNameYobRoot() external view returns (uint256);
+
+    /**
+     * @notice Checks if the provided OFAC name and year of birth root matches the stored value.
+     * @param root The OFAC name and year of birth root to verify.
+     * @return True if the given root equals the stored OFAC name and year of birth root, otherwise false.
+     */
+    function checkOfacNameYobRoot(
+        uint256 root
+    ) external view returns (bool);
+
+    /**
+     * @notice Checks if all three OFAC SMT roots match the provided roots.
+     * @param passportNoRoot The OFAC passport number root to check.
+     * @param nameDobRoot The OFAC name and date of birth root to check.
+     * @param nameYobRoot The OFAC name and year of birth root to check.
+     * @return True if all roots match, false otherwise.
+     */
+    function checkOfacRoots(
+        uint256 passportNoRoot,
+        uint256 nameDobRoot,
+        uint256 nameYobRoot
     ) external view returns (bool);
 
     /**

@@ -69,7 +69,7 @@ interface IIdentityVerificationHubV1 {
         string gender;
         string expiryDate;
         uint256 olderThan;
-        uint256 ofac;
+        uint256[3] ofac;
     }
 
     /**

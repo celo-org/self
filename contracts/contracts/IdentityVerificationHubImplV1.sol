@@ -614,7 +614,11 @@ contract IdentityVerificationHubImplV1 is
             if (!CircuitAttributeHandler.compareOfac(Formatter.fieldElementsToBytes(revealedDataPacked))) {
                 revert INVALID_OFAC();
             }
-            if (!IIdentityRegistryV1(_registry).checkOfacRoot(proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_SMT_ROOT_INDEX])) {
+            if (!IIdentityRegistryV1(_registry).checkOfacRoots(
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_PASSPORT_NO_SMT_ROOT_INDEX],
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_NAME_DOB_SMT_ROOT_INDEX],
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_NAME_YOB_SMT_ROOT_INDEX]
+            )) {
                 revert INVALID_OFAC_ROOT();
             }
         }

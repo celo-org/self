@@ -132,13 +132,21 @@ export async function generateVcAndDiscloseProof(
     selectorOlderThan: string | number = "1",
     merkletree: LeanIMT<bigint>,
     majority: string = "20",
-    smt?: SMT,
+    passportNo_smt?: SMT,
+    nameAndDob_smt?: SMT,
+    nameAndYob_smt?: SMT,
     selectorOfac: string | number = "1",
     forbiddenCountriesList: string[] = ["AAA"],
     userIdentifier: string = "0000000000000000000000000000000000000000"
 ): Promise<VcAndDiscloseProof> {
 
-    smt = getSMT();
+    // Initialize all three SMTs if not provided
+    if (!passportNo_smt || !nameAndDob_smt || !nameAndYob_smt) {
+        const smts = getSMTs();
+        passportNo_smt = smts.passportNo_smt;
+        nameAndDob_smt = smts.nameAndDob_smt;
+        nameAndYob_smt = smts.nameAndYob_smt;
+    }
     
     const vcAndDiscloseCircuitInputs: CircuitSignals = generateCircuitInputsVCandDisclose(
         secret,
@@ -149,7 +157,9 @@ export async function generateVcAndDiscloseProof(
         selectorOlderThan,
         merkletree,
         majority,
-        smt,
+        passportNo_smt,
+        nameAndDob_smt,
+        nameAndYob_smt,
         selectorOfac,
         forbiddenCountriesList,
         userIdentifier
@@ -194,32 +204,21 @@ function parseSolidityCalldata<T>(rawCallData: string, _type: T): T {
     } as T;
 }
 
-export function getSMT() {
-    let name = fs.readFileSync("../common/ofacdata/inputs/names.json", "utf-8");
-    let name_list = JSON.parse(name);
-    let mockSmt;
-    if (fs.existsSync("./test/utils/smt.json")) {
-        mockSmt = importSMTFromJsonFile("./test/utils/smt.json") as SMT;
-    } else {
-        const builtSmt = buildSMT(name_list, "name");
-        exportSMTToJsonFile(builtSmt[0], builtSmt[1], builtSmt[2], "./test/utils/smt.json");
-        mockSmt = builtSmt[2] as SMT;
-    }
-    return mockSmt;
-}
+export function getSMTs() {    
+    let passportNo_smt: SMT;
+    let nameAndDob_smt: SMT;
+    let nameAndYob_smt: SMT;
 
-function exportSMTToJsonFile(count: number, time: number, smt: SMT, outputPath?: string) {
-    const serializedSMT = smt.export();
-    const data = {
-        count: count,
-        time: time,
-        smt: serializedSMT
+    // Read SMTs from the specified JSON files
+    passportNo_smt = importSMTFromJsonFile("./common/ofacdata/outputs/passportNoSMT.json") as SMT;
+    nameAndDob_smt = importSMTFromJsonFile("./common/ofacdata/outputs/nameAndDobSMT.json") as SMT;
+    nameAndYob_smt = importSMTFromJsonFile("./common/ofacdata/outputs/nameAndYobSMT.json") as SMT;
+
+    return {
+        passportNo_smt,
+        nameAndDob_smt,
+        nameAndYob_smt
     };
-    const jsonString = JSON.stringify(data, null, 2);
-    const defaultPath = path.join(process.cwd(), 'smt.json');
-    const finalPath = outputPath ? path.resolve(process.cwd(), outputPath) : defaultPath;
-  
-    fs.writeFileSync(finalPath, jsonString, 'utf8');
 }
 
 function importSMTFromJsonFile(filePath?: string): SMT | null {
@@ -230,7 +229,7 @@ function importSMTFromJsonFile(filePath?: string): SMT | null {
           
         const hash2 = (childNodes: ChildNodes) => (childNodes.length === 2 ? poseidon2(childNodes) : poseidon3(childNodes));
         const smt = new SMT(hash2, true);
-        smt.import(data.smt);
+        smt.import(data);
           
         return smt;
     } catch (error) {

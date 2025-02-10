@@ -36,7 +36,7 @@ contract TestCircuitAttributeHandler {
         return CircuitAttributeHandler.getOlderThan(charcodes);
     }
 
-    function testGetOfac(bytes memory charcodes) external pure returns (uint256) {
+    function testGetOfac(bytes memory charcodes) external pure returns (uint256[3] memory) {
         return CircuitAttributeHandler.getOfac(charcodes);
     }
 

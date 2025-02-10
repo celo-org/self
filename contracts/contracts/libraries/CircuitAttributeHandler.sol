@@ -124,8 +124,13 @@ library CircuitAttributeHandler {
      * @param charcodes The byte array containing passport attribute data.
      * @return The OFAC status as a uint256.
      */
-    function getOfac(bytes memory charcodes) internal pure returns (uint256) {
-        return uint8(charcodes[OFAC_START]);
+    function getOfac(bytes memory charcodes) internal pure returns (uint256[3] memory) {
+        uint256[3] memory ofacStatus;
+        uint8 ofacValue = uint8(charcodes[OFAC_START]);
+        ofacStatus[0] = (ofacValue & 0x01) != 0 ? 1 : 0;
+        ofacStatus[1] = (ofacValue & 0x02) != 0 ? 1 : 0;
+        ofacStatus[2] = (ofacValue & 0x04) != 0 ? 1 : 0;
+        return ofacStatus;
     }
 
     /**
@@ -149,7 +154,9 @@ library CircuitAttributeHandler {
     function compareOfac(
         bytes memory charcodes
     ) internal pure returns (bool) {
-        return getOfac(charcodes) == 1;
+        return getOfac(charcodes)[0] == 1 // Hardcoded all levels to 1.
+            && getOfac(charcodes)[1] == 1 // We will want to change that to have more granularity.
+            && getOfac(charcodes)[2] == 1;
     }
 
     /**
