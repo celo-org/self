@@ -1,9 +1,8 @@
 import {
   countryNames,
 } from '../../../common/src/constants/constants';
-
+import type { SelfAttestation } from '../../../common/src/utils/selfAttestation';
 import {
-  SelfAttestation,
   parsePublicSignalsDisclose,
 } from '../../../common/src/utils/selfAttestation';
 import {
@@ -22,9 +21,11 @@ import {
 import { ethers } from 'ethers';
 import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
 import {
-  groth16
+  groth16,
+  Groth16Proof,
+  PublicSignals
 } from 'snarkjs';
-import { CIRCUIT_CONSTANTS } from '../../../common/src/constants/constants';
+import { CIRCUIT_CONSTANTS, revealedDataTypes } from '../../../common/src/constants/constants';
 
 export class AttestationVerifier {
 
@@ -59,11 +60,11 @@ export class AttestationVerifier {
     this.targetRootTimestamp = targetRootTimestamp;
   }
 
-  public async verify(attestation: SelfAttestation): Promise<SelfVerifierReport> {
+  public async verify(proof: Groth16Proof, publicSignals: PublicSignals): Promise<SelfAttestation> {
 
     const solidityProof = await groth16.exportSolidityCallData(
-      attestation.proof.value.proof,
-      attestation.proof.value.publicSignals,
+      proof,
+      publicSignals,
     );
 
     const vcAndDiscloseHubProof: VcAndDiscloseHubProofStruct = {
@@ -75,63 +76,61 @@ export class AttestationVerifier {
       vcAndDiscloseProof: solidityProof
     }
 
+
     const result = await this.verifyAllContract.verifyAll(
-      attestation.credentialSubject.scope,
-      attestation.credentialSubject.attestation_id,
-      attestation.credentialSubject.targetRootTimestamp,
+      this.targetRootTimestamp,
       vcAndDiscloseHubProof,
-    )
-  }
-
-  private async verifyProof(
-    attestation: SelfAttestation
-   ) {
-
-    const unpackedReveal = unpackReveal(
       [
-        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX],
-        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX + 1],
-        attestation.proof.value.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_REVEALED_DATA_PACKED_INDEX + 2],
+        revealedDataTypes.issuing_state,
+        revealedDataTypes.name,
+        revealedDataTypes.passport_number,
+        revealedDataTypes.nationality,
+        revealedDataTypes.date_of_birth,
+        revealedDataTypes.gender,
+        revealedDataTypes.expiry_date,
       ]
     );
 
-    const solidityProof = await groth16.exportSolidityCallData(
-      attestation.proof.value.proof,
-      attestation.proof.value.publicSignals,
-    );
+    console.log(result);
 
-    const vcAndDiscloseHubProof: VcAndDiscloseHubProofStruct = {
-      olderThanEnabled: this.minimumAge.enabled,
-      olderThan: BigInt(this.minimumAge.value),
-      forbiddenCountriesEnabled: this.excludedCountries.enabled,
-      forbiddenCountriesListPacked: BigInt(this.excludedCountries.value.length),
-      ofacEnabled: this.ofac,
-      vcAndDiscloseProof: solidityProof
+    const credentialSubject = {
+      userId: publicSignals[CIRCUIT_CONSTANTS.REGISTER_USER_IDENTIFIER_INDEX],
+      application: publicSignals[CIRCUIT_CONSTANTS.REGISTER_APPLICATION_IDENTIFIER_INDEX],
+      scope: publicSignals[CIRCUIT_CONSTANTS.REGISTER_SCOPE_IDENTIFIER_INDEX],
+      merkle_root: publicSignals[CIRCUIT_CONSTANTS.REGISTER_MERKLE_ROOT_INDEX],
+      attestation_id: publicSignals[CIRCUIT_CONSTANTS.REGISTER_ATTENDATION_ID_INDEX],
+      current_date: publicSignals[CIRCUIT_CONSTANTS.REGISTER_CURRENT_DATE_INDEX],
+      issuing_state: result[0],
+      name: result[1],
+      passport_number: result[2],
+      nationality: result[3],
+      date_of_birth: result[4],
+      gender: result[5],
+      expiry_date: result[6],
+      older_than: result[7],
+      valid: result[8],
+      nullifier: publicSignals[CIRCUIT_CONSTANTS.REGISTER_NULLIFIER_INDEX],
     }
 
-    try {
-      await this.hubContract.verifyVcAndDisclose(vcAndDiscloseHubProof);
-    } catch (error: any) {
-      let errorName: string | undefined;
-      try {
-        const decodedError = this.hubContract.interface.parseError(error.data);
-        errorName = decodedError?.name;
-      } catch (e) {
-        console.error("Error decoding revert data:", e);
+    const attestation: SelfAttestation = {
+      '@context': ['https://www.w3.org/2018/credentials/v1'],
+      type: ['VerifiableCredential', 'SelfAttestation'],
+      issuer: 'https://selfattestation.com',
+      issuanceDate: new Date().toISOString(),
+      credentialSubject: credentialSubject,
+      proof: {
+        type: "Groth16Proof",
+        verificationMethod: "Vc and Disclose",
+        value: {
+          proof: proof,
+          publicSignals: publicSignals,
+        },
+        vkey: "",
       }
     }
-  }
 
-  private verifyAttribute(
-    attribute: keyof SelfVerifierReport,
-    value: string,
-    expectedValue: string
-  ) {
-    if (value !== expectedValue) {
-      this.report.exposeAttribute(attribute, value, expectedValue);
-    } else {
-      console.log('\x1b[32m%s\x1b[0m', `- attribute ${attribute} verified`);
-    }
+    return attestation;
+    
   }
 
 }
