@@ -1,29 +1,22 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { Anchor, Image, Text, YStack } from 'tamagui';
+import { Anchor, Text, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import useHapticNavigation from '../hooks/useHapticNavigation';
+import GetStartedCard from '../images/get-started-card.svg';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700 } from '../utils/colors';
 
-interface LaunchScreenProps {}
-
-const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
+const LaunchScreen: React.FC = () => {
   const onStartPress = useHapticNavigation('Start');
 
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
-        <Image
-          source={require('../images/texture.png')}
-          style={{
-            opacity: 0.1,
-            position: 'absolute',
-          }}
-        />
+        <GetStartedCard />
         <Logo />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
