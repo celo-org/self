@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 
+import { usePreventRemove } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
@@ -10,7 +11,6 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ValidProofScreen';
-import { usePreventRemove } from '@react-navigation/native';
 
 const ConfirmBelongingScreen: React.FC = () => {
   const onOkPress = useHapticNavigation('Home');

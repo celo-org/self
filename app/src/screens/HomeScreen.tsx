@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { usePreventRemove } from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
 
 import { BodyText } from '../components/typography/BodyText';
@@ -10,7 +11,6 @@ import WarnIcon from '../images/icons/warning.svg';
 import SelfCard from '../images/self-card.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { usePreventRemove } from '@react-navigation/native';
 
 const ScanButton = styled(Button, {
   borderRadius: 20,
