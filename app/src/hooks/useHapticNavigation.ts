@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-
+import type {RootStackParamList} from '../Navigation';
 import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
 
 type NavigationAction = 'default' | 'cancel' | 'confirm';
 
 const useHapticNavigation = (
-  screen: string,
+  screen: keyof RootStackParamList,
   action: NavigationAction = 'default',
 ) => {
   const navigation = useNavigation();
@@ -23,7 +23,7 @@ const useHapticNavigation = (
       default:
         impactLight();
     }
-    navigation.navigate(screen as any);
+    navigation.navigate(screen);
   }, [navigation, screen, action]);
 };
 
