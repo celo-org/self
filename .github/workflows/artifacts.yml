@@ -12,6 +12,8 @@ on:
       - main
     paths:
       - "circuits/circuits/**"
+      - ".github/workflows/artifacts.yml"
+
 jobs:
   build:
     runs-on: ['self-hosted', 'org', '8-cpu']
