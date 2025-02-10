@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
-import ReactNativeBiometrics from 'react-native-biometrics';
 import { findBestLanguageTag } from 'react-native-localize';
 
-import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
 import { YStack } from 'tamagui';
 
