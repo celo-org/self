@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "circuits/circuits/**"
+      - ".github/workflows/artifacts.yml"
   pull_request:
     branches:
       - main
