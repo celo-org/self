@@ -34,6 +34,7 @@ import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
+import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
@@ -252,6 +253,15 @@ const AppNavigation = createNativeStackNavigator({
       screen: AccountVerifiedSuccessScreen,
       options: {
         headerShown: false,
+      },
+    },
+    ShowRecoveryPhrase: {
+      screen: ShowRecoveryPhraseScreen,
+      options: {
+        title: 'Recovery Phrase',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
   },
