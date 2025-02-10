@@ -5,10 +5,9 @@ import {
   NativeModules,
   Platform,
   StyleSheet,
-  Text,
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
-
+import { BodyText} from '../../components/typography/BodyText';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
@@ -126,9 +125,11 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           <>
             <TextsContainer>
               <Title children="Ready to scan" />
-              <Description children={scanningMessage} />
+              <BodyText textAlign="center">
+              Hold your device near the NFC tag and stop moving when it
+              vibrates.
+            </BodyText>
             </TextsContainer>
-
             <Image
               h="$8"
               w="$8"
@@ -137,11 +138,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               source={{
                 uri: NFC_IMAGE,
               }}
+              margin={20}
             />
-            <Text>
-              Hold your device near the NFC tag and stop moving when it
-              vibrates.
-            </Text>
+            <Description alignSelf="center" children={scanningMessage} textAlign="center" marginBottom={20} />
           </>
         ) : (
           <>

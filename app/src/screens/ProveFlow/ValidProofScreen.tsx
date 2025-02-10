@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet,  View } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
@@ -11,6 +11,7 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useNavigationStore from '../../stores/navigationStore';
 import { notificationSuccess } from '../../utils/haptic';
+import { BodyText } from '../../components/typography/BodyText';
 
 const SuccessScreen: React.FC = () => {
   const { selectedApp } = useNavigationStore();
@@ -38,7 +39,7 @@ const SuccessScreen: React.FC = () => {
           <Title size="large">Identity Verified</Title>
           <Description>
             You've successfully proved your identity to{' '}
-            <Text style={typography.strong}>{appName}</Text>
+            <BodyText style={typography.strong}>{appName}</BodyText>
           </Description>
         </View>
         <PrimaryButton onPress={onOkPress}>OK</PrimaryButton>

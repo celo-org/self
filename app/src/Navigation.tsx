@@ -30,6 +30,7 @@ import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
+import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen';
 import AccountRecoveryScreen from './screens/Settings/AccountRecoveryScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -152,6 +153,12 @@ const RootStack = createStackNavigator({
         passportNumber: '',
         dateOfBirth: '',
         dateOfExpiry: '',
+      },
+    },
+    ConfirmBelongingScreen: {
+      screen: ConfirmBelongingScreen,
+      options: {
+        headerShown: false,
       },
     },
     CreateMock: {
