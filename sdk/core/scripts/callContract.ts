@@ -20,7 +20,6 @@ async function main() {
 
   const registerSecret = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-  const mockPassport = 
 
   const proof = await generateVcAndDiscloseProof(
     registerSecret,

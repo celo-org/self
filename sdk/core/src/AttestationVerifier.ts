@@ -19,7 +19,7 @@ import {
   verifyAllAbi
 } from "./abi/VerifyAll";
 import { ethers } from 'ethers';
-import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
+// import type { VcAndDiscloseHubProofStruct } from "../../../common/src/utils/contracts/typechain-types/contracts/IdentityVerificationHubImplV1.sol/IdentityVerificationHubImplV1";
 import {
   groth16,
   Groth16Proof,
@@ -67,7 +67,7 @@ export class AttestationVerifier {
       publicSignals,
     );
 
-    const vcAndDiscloseHubProof: VcAndDiscloseHubProofStruct = {
+    const vcAndDiscloseHubProof: any = {
       olderThanEnabled: this.minimumAge.enabled,
       olderThan: BigInt(this.minimumAge.value),
       forbiddenCountriesEnabled: this.excludedCountries.enabled,
