@@ -1,7 +1,8 @@
 import React from 'react';
 import Dialog from 'react-native-dialog';
 
-import { Eraser, IterationCw } from '@tamagui/lucide-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Bug, Eraser, IterationCw } from '@tamagui/lucide-icons';
 import { Button, Fieldset, Label, YStack } from 'tamagui';
 
 import { borderColor, textBlack, textColor2 } from '../utils/colors';
@@ -9,6 +10,7 @@ import { borderColor, textBlack, textColor2 } from '../utils/colors';
 interface SettingsScreenProps {}
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
+  const navigation = useNavigation();
   return (
     <YStack gap="$2" mt="$2" ai="center">
       <Fieldset gap="$4" horizontal>
@@ -52,6 +54,28 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
           //   onPress={clearPassportDataFromStorage}
         >
           <Eraser color={textBlack} />
+        </Button>
+      </Fieldset>
+
+      <Fieldset gap="$4" mt="$1" horizontal>
+        <Label
+          color={textBlack}
+          width={200}
+          justifyContent="flex-end"
+          htmlFor="skip"
+        >
+          Debug Screen
+        </Label>
+        <Button
+          bg="white"
+          jc="center"
+          borderColor={borderColor}
+          borderWidth={1.2}
+          size="$3.5"
+          ml="$2"
+          onPress={() => navigation.navigate('Debug')}
+        >
+          <Bug color={textBlack} />
         </Button>
       </Fieldset>
 

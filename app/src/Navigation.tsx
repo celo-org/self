@@ -22,6 +22,7 @@ import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
 import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
 import RecoverWithPhraseScreen from './screens/AccountFlow/RecoverWithPhraseScreen';
 import SaveRecoveryPhraseScreen from './screens/AccountFlow/SaveRecoveryPhraseScreen';
+import DebugScreen from './screens/DebugScreen';
 import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
@@ -269,6 +270,13 @@ const AppNavigation = createNativeStackNavigator({
         headerStyle: {
           backgroundColor: white,
         },
+      },
+    },
+    Debug: {
+      screen: DebugScreen,
+      options: {
+        title: 'Debug',
+        headerShown: false,
       },
     },
   },
