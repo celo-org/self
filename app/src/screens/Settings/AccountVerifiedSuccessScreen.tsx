@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import { YStack } from 'tamagui';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import Description from '../../components/typography/Description';
@@ -18,13 +18,21 @@ const AccountVerifiedSuccessScreen: React.FC = () => {
         {/* TODO: Animation goes here */}
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
-        <View style={styles.content}>
+        <YStack
+          pt={40}
+          px={10}
+          pb={20}
+          jc="center"
+          ai="center"
+          mb={20}
+          gap="10px"
+        >
           <Title size="large">ID Verified</Title>
           <Description>
             Your passport information is now protected by Self ID. Just scan a
             participating partner's QR code to prove your identity.
           </Description>
-        </View>
+        </YStack>
         <PrimaryButton
           onPress={() => {
             navigation.navigate('Home');
@@ -38,17 +46,3 @@ const AccountVerifiedSuccessScreen: React.FC = () => {
 };
 
 export default AccountVerifiedSuccessScreen;
-
-export const styles = StyleSheet.create({
-  content: {
-    paddingTop: 40,
-    paddingHorizontal: 10,
-    paddingBottom: 20,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    gap: 10,
-  },
-});
