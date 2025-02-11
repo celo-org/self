@@ -16,6 +16,7 @@ export class MerkleTreeService {
 
     private async initializeTree() {
         const treeFromDB = await getTreeFromDB(this.type);
+        console.log('treeFromDB', treeFromDB);
         if (treeFromDB) {
             const hashFunction = (a: any, b: any) => poseidon2([a, b]);
             const tree = LeanIMT.import(hashFunction, treeFromDB);
@@ -43,6 +44,7 @@ export class MerkleTreeService {
 
     private async checkForEvents() {
         let lastEventBlock: any = await getLastEventBlockFromDB(this.type);
+        console.log('lastEventBlock', lastEventBlock);
         if (!lastEventBlock) {
             lastEventBlock = DEPLOYMENT_BLOCK;
         }
