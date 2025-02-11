@@ -20,7 +20,12 @@ import { notificationError, notificationSuccess } from '../../utils/haptic';
 const SuccessScreen: React.FC = () => {
   const { selectedApp, proofVerificationResult, status } = useProofInfo();
   const appName = selectedApp?.appName;
-  const onOkPress = useHapticNavigation('Home');
+  const goHome = useHapticNavigation('Home');
+
+  function onOkPress() {
+    // TODO should we reset everything?
+    goHome();
+  }
 
   useEffect(() => {
     if (status === 'success') {

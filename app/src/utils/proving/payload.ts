@@ -1,7 +1,7 @@
 import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
 import { SMT } from '@openpassport/zk-kit-smt';
 import { poseidon2 } from 'poseidon-lite';
-
+import crypto from 'crypto';
 import namejson from '../../../../common/ofacdata/outputs/nameSMT.json';
 import { PASSPORT_ATTESTATION_ID } from '../../../../common/src/constants/constants';
 import { getCircuitNameFromPassportData } from '../../../../common/src/utils/circuits/circuitsName';

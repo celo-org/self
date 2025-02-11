@@ -3,6 +3,7 @@ import { CircuitName } from '../../../common/src/utils/appType';
 import { k_dsc, n_dsc, PASSPORT_ATTESTATION_ID } from '../../../common/src/constants/constants';
 import { generateCircuitInputsProve } from '../../../common/src/utils/generateInputs';
 import { majority, scope } from './testCases';
+import crypto from 'crypto';
 
 export const generateCircuitInputsInSdk = (
   passportData: PassportData,

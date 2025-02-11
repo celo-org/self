@@ -42,8 +42,15 @@ export function ProofProvider({ children }: PropsWithChildren) {
   const [status, setStatus] = useState<ProofStatus>(defaults.status);
   const [proofVerificationResult, setProofVerificationResult] =
     useState<unknown>(defaults.proofVerificationResult);
-  const [selectedApp, setSelectedApp] = useState<SelfApp>(defaults.selectedApp);
+  const [selectedApp, _setSelectedApp] = useState<SelfApp>(defaults.selectedApp);
   const [_, setSocket] = useState<Socket | null>(null);
+
+  // reset all the values so it not in wierd state
+  function setSelectedApp(app: SelfApp) {
+    setStatus('pending');
+    setProofVerificationResult(null);
+    _setSelectedApp(app);
+  }
 
   useWebsocket(selectedApp, setStatus, setProofVerificationResult, setSocket);
 

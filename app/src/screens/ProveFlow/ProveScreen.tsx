@@ -18,7 +18,7 @@ import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { passportData } = useUserStore();
-  const { selectedApp } = useProofInfo();
+  const { selectedApp, setStatus } = useProofInfo();
 
   const disclosureOptions =
     (selectedApp?.args as ArgumentsProveOffChain)?.disclosureOptions || {};
@@ -34,8 +34,10 @@ const ProveScreen: React.FC = () => {
   function onVerify() {
     buttonTap();
     navigate('ProofRequestStatusScreen');
-    sendVcAndDisclosePayload(passportData).catch(e =>
-      console.log('Error sending VC and disclose payload', e),
+    sendVcAndDisclosePayload(passportData).catch(e => {
+      console.log('Error sending VC and disclose payload', e)
+      setStatus('error')
+    }
     );
   }
 
