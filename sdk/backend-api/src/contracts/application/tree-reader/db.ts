@@ -70,11 +70,17 @@ export async function getLastEventBlockFromDB(type: string) {
 
 /// @notice add the events to the db, be careful this app will could try to overwrite the events
 export async function addEventsInDB(type: string, events: EventsData[]) {
+    console.log('\n=== Adding Events to DB ===');
+    console.log('Type:', type);
+    console.log('Number of events:', events.length);
+
     try {
-        // Start a transaction
         const client = await pool.connect();
+        console.log('DB Client connected');
+
         try {
             await client.query('BEGIN');
+            console.log('Transaction started');
 
             for (const event of events) {
                 const query = `
@@ -82,24 +88,24 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
                     VALUES ($1, $2, $3)
                     ON CONFLICT (type, event_index) DO NOTHING
                 `;
-                const result = await client.query(query, [
-                    type,
-                    event.index,
-                    event
-                ]);
-                console.log('event result', result);
+                console.log('Inserting event index:', event.index);
+                const result = await client.query(query, [type, event.index, event]);
+                console.log('Event insert result:', result.rowCount);
             }
 
             await client.query('COMMIT');
+            console.log('Transaction committed');
             return true;
         } catch (error) {
+            console.error('Error in transaction:', error);
             await client.query('ROLLBACK');
             throw error;
         } finally {
             client.release();
+            console.log('Client released');
         }
     } catch (error) {
-        console.error('Error adding events:', error);
+        console.error('Error in addEventsInDB:', error);
         return false;
     }
 }
