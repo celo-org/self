@@ -4,13 +4,12 @@ import { DeployedActors } from "../utils/types";
 import { ethers } from "hardhat";
 import { CIRCUIT_CONSTANTS } from "../utils/constants";
 import { ATTESTATION_ID } from "../utils/constants";
-import { generateVcAndDiscloseProof } from "../utils/generateProof";
+import { generateVcAndDiscloseProof, getSMTs } from "../utils/generateProof";
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
 import { generateCommitment } from "../../../common/src/utils/passports/passport";
 import { BigNumberish } from "ethers";
 import { generateRandomFieldElement } from "../utils/utils";
-import { SMT, ChildNodes } from "@openpassport/zk-kit-smt";
 import { getStartOfDayTimestamp } from "../utils/utils";
 import { Formatter, CircuitAttributeHandler } from "../utils/formatter";
 import { formatCountriesList, reverseBytes,reverseCountryBytes } from '../../../common/src/utils/circuits/formatInputs';
@@ -56,6 +55,8 @@ describe("VC and Disclose", () => {
             "20",
             undefined,
             undefined,
+            undefined,
+            undefined,
             forbiddenCountriesList,
             (await deployedActors.user1.getAddress()).slice(2)
         );
@@ -87,7 +88,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -116,7 +117,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -139,7 +140,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -156,14 +157,14 @@ describe("VC and Disclose", () => {
                 nullifier,
                 commitment
             );
-            vcAndDiscloseProof.pubSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SMT_ROOT_INDEX] = generateRandomFieldElement();
+            vcAndDiscloseProof.pubSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_PASSPORT_NO_SMT_ROOT_INDEX] = generateRandomFieldElement();
 
             const vcAndDiscloseHubProof = {
                 olderThanEnabled: true,
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -202,7 +203,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -242,7 +243,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -266,7 +267,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -322,7 +323,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -345,7 +346,7 @@ describe("VC and Disclose", () => {
                 olderThan: "18",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -368,7 +369,7 @@ describe("VC and Disclose", () => {
                 olderThan: "21",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -384,14 +385,17 @@ describe("VC and Disclose", () => {
                 ATTESTATION_ID.E_PASSPORT,
                 nullifier,
                 commitment
-                );
+            );
 
             const hashFunction = (a: bigint, b: bigint) => poseidon2([a, b]);
             const imt = new LeanIMT<bigint>(hashFunction);
-            await imt.insert(BigInt(commitment));
+            imt.insert(BigInt(commitment));
     
-            const hash2 = (childNodes: ChildNodes) => poseidon2(childNodes);
-            const smt = new SMT(hash2, true);
+            const {
+                passportNo_smt,
+                nameAndDob_smt,
+                nameAndYob_smt
+            } = getSMTs();
 
             const vcAndDiscloseProof = await generateVcAndDiscloseProof(
                 registerSecret,
@@ -402,7 +406,9 @@ describe("VC and Disclose", () => {
                 "1",
                 imt,
                 "20",
-                smt,
+                passportNo_smt,
+                nameAndDob_smt,
+                nameAndYob_smt,
                 "0",
             );
 
@@ -411,7 +417,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -434,7 +440,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: invalidForbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -457,7 +463,7 @@ describe("VC and Disclose", () => {
                 olderThan: "40",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: invalidForbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -482,7 +488,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -526,8 +532,8 @@ describe("VC and Disclose", () => {
         });
 
         it("formatter and CircuitAttributeHandler are working fine", async () => {
-            const { readableData, bytes } = await setupVcAndDiscloseTest(['0', '1', '2', '3', '4', '5', '6', '7', '8']);
-            
+            const { readableData, bytes } = await setupVcAndDiscloseTest(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
+
             expect(CircuitAttributeHandler.getIssuingState(bytes)).to.equal(readableData[0]);
             expect(CircuitAttributeHandler.getName(bytes)).to.deep.equal(readableData[1]);
             expect(CircuitAttributeHandler.getPassportNumber(bytes)).to.equal(readableData[2]);
@@ -536,7 +542,9 @@ describe("VC and Disclose", () => {
             expect(CircuitAttributeHandler.getGender(bytes)).to.equal(readableData[5]);
             expect(CircuitAttributeHandler.getExpiryDate(bytes)).to.equal(readableData[6]);
             expect(CircuitAttributeHandler.getOlderThan(bytes)).to.equal(readableData[7]);
-            expect(CircuitAttributeHandler.getOfac(bytes)).to.equal(readableData[8]);
+            expect(CircuitAttributeHandler.getPassportNoOfac(bytes)).to.equal(readableData[8]);
+            expect(CircuitAttributeHandler.getNameAndDobOfac(bytes)).to.equal(readableData[9]);
+            expect(CircuitAttributeHandler.getNameAndYobOfac(bytes)).to.equal(readableData[10]);
         });
 
         it("should return all data", async () => {
@@ -657,7 +665,7 @@ describe("VC and Disclose", () => {
         });
    
         it("should only return ofac", async () => {
-            const { readableData } = await setupVcAndDiscloseTest(['8']);
+            const { readableData } = await setupVcAndDiscloseTest(['8', '9', '10']);
             expect(readableData[0]).to.equal('');
             expect(readableData[1]).to.deep.equal([]);
             expect(readableData[2]).to.equal('');
@@ -667,6 +675,8 @@ describe("VC and Disclose", () => {
             expect(readableData[6]).to.equal('');
             expect(readableData[7]).to.equal(0n);
             expect(readableData[8]).to.equal(1n);
+            expect(readableData[9]).to.equal(1n);
+            expect(readableData[10]).to.equal(1n);
         });
 
         it("should fail when revealed data type is invalid", async () => {
@@ -678,7 +688,7 @@ describe("VC and Disclose", () => {
             await expect(
                 hub.getReadableRevealedData(
                     revealedDataPacked as [BigNumberish, BigNumberish, BigNumberish],
-                    ["9"]
+                    ["11"]
                 )
             ).to.be.reverted;
         });
