@@ -1,7 +1,7 @@
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
 import { getContractInstanceRoot } from "./getTree";
-import { addEventsInDB, setTreeInDB, getLastEventBlockFromDB, getTreeFromDB } from "./db";
+import { addEventsInDB, setTreeInDB, getLastEventFromDB, getTreeFromDB } from "./db";
 import { getDscCommitmentEvents } from "../getEvents";
 import { DEPLOYMENT_BLOCK, EventsData } from "./constants";
 
@@ -16,7 +16,6 @@ export class MerkleTreeService {
 
     private async initializeTree() {
         const treeFromDB = await getTreeFromDB(this.type);
-        console.log('treeFromDB', treeFromDB);
         if (treeFromDB) {
             const hashFunction = (a: any, b: any) => poseidon2([a, b]);
             const tree = LeanIMT.import(hashFunction, treeFromDB);
@@ -43,22 +42,14 @@ export class MerkleTreeService {
     }
 
     private async checkForEvents() {
-        const lastEventData = await getLastEventBlockFromDB(this.type);
-        console.log('Last event data:', lastEventData);
-
+        const lastEventData = await getLastEventFromDB(this.type);
         const lastEventBlock = lastEventData?.blockNumber || DEPLOYMENT_BLOCK;
         const lastEventIndex = lastEventData?.index || -1;
 
-        console.log('\n=== Processing Events ===');
         const events: EventsData[] = await getDscCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
-        console.log('Total events to process:', events.length);
+        console.log('Total events to process:', events.length - 1);
 
         for (const event of events) {
-            console.log('Processing commitment:', event.commitment);
-            console.log('Event index:', event.index);
-            console.log('Last stored index:', lastEventIndex);
-
-            // Only process events with indices greater than our last stored index
             if (event.index > lastEventIndex) {
                 this.insertCommitment(event.commitment);
             }
@@ -66,24 +57,12 @@ export class MerkleTreeService {
 
         const contractRoot = await getContractInstanceRoot(this.type);
         const localRoot = this.getRoot().toString();
-        console.log('\n=== Root Comparison ===');
-        console.log('Contract Root:', contractRoot);
-        console.log('Local Root:', localRoot);
 
         if (contractRoot === localRoot) {
-            console.log('\n=== Starting DB Updates ===');
             try {
-                console.log('Adding events to DB...');
                 const eventsAdded = await addEventsInDB(this.type, events);
-                console.log('Events added successfully:', eventsAdded);
-
-                console.log('Serializing tree...');
                 const serializedTree = this.serializeTree();
-                console.log('Tree serialized, length:', serializedTree.length);
-
-                console.log('Setting tree in DB...');
                 const treeSet = await setTreeInDB(this.type, serializedTree);
-                console.log('Tree set in DB:', treeSet);
             } catch (error) {
                 console.error('Error during DB updates:', error);
                 throw error;

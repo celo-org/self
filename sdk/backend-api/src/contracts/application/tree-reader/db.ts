@@ -54,11 +54,8 @@ interface LastEventData {
 }
 
 /// @notice retrieve the event with the highest index from the db and return the block number
-export async function getLastEventBlockFromDB(type: string): Promise<LastEventData | null> {
+export async function getLastEventFromDB(type: string): Promise<LastEventData | null> {
     try {
-        console.log("\n=== Getting Last Event Data from DB ===");
-        console.log("Type:", type);
-
         const query = `
             SELECT 
                 (event_data->>'blockNumber')::integer as block_number,
@@ -70,8 +67,6 @@ export async function getLastEventBlockFromDB(type: string): Promise<LastEventDa
         `;
 
         const result = await queryWithRetry(query, [type]);
-        console.log("Last event query result:", result.rows[0]);
-
         if (result.rows.length === 0) return null;
 
         return {
@@ -86,10 +81,6 @@ export async function getLastEventBlockFromDB(type: string): Promise<LastEventDa
 
 /// @notice add the events to the db, be careful this app will could try to overwrite the events
 export async function addEventsInDB(type: string, events: EventsData[]) {
-    console.log('\n=== Adding Events to DB ===');
-    console.log('Type:', type);
-    console.log('Number of events:', events.length);
-
     try {
         const client = await pool.connect();
         console.log('DB Client connected');
@@ -113,7 +104,6 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
                 `;
                 console.log('Inserting event index:', event.index);
                 const result = await client.query(query, [type, event.index, eventData]);
-                console.log('Event insert result:', result.rowCount);
             }
 
             await client.query('COMMIT');
@@ -136,16 +126,8 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
 /// @notice retrieve the tree from the db
 export async function getTreeFromDB(type: string) {
     try {
-        console.log("\n=== Reading Tree from DB ===");
-        console.log("Type:", type);
-
         const query = 'SELECT tree_data FROM trees WHERE type = $1';
         const result = await queryWithRetry(query, [type]);
-
-        console.log("DB Read Result:", {
-            rowCount: result.rowCount,
-            hasData: result.rows.length > 0
-        });
 
         if (result.rows.length === 0) return null;
         return result.rows[0].tree_data;
@@ -160,10 +142,7 @@ export async function getTreeFromDB(type: string) {
 /// @notice set the tree in the db, we only need to store the latest tree in the db and update it's value
 export async function setTreeInDB(type: string, tree: string) {
     try {
-        console.log("\n=== Writing Tree to DB ===");
-        console.log("Type:", type);
-        console.log("Tree length:", tree?.length || 0);
-        console.log("Tree preview:", tree?.substring(0, 100) + "...");
+        console.log("Writing ${type} Tree to DB");
 
         const query = `
             INSERT INTO trees (type, tree_data)
@@ -175,11 +154,7 @@ export async function setTreeInDB(type: string, tree: string) {
             RETURNING *
         `;
 
-        const result = await queryWithRetry(query, [type, tree]);
-        console.log("DB Write Result:", {
-            rowCount: result.rowCount,
-            rows: result.rows
-        });
+        await queryWithRetry(query, [type, tree]);
         return true;
     } catch (error) {
         console.error("\n=== Error Writing Tree to DB ===");
