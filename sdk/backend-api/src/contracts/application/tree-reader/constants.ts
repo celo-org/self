@@ -2,8 +2,8 @@ export const DEPLOYMENT_BLOCK = 7649934;
 
 export interface EventsData {
     index: number;
-    commitment: bigint;
-    merkleRoot: bigint;
+    commitment: string;
+    merkleRoot: string;
     blockNumber: number;
     timestamp: number;
 };

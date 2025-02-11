@@ -54,8 +54,8 @@ export class MerkleTreeService {
         console.log('Total events to process:', events.length);
 
         for (const event of events) {
-            console.log('Processing commitment:', event.commitment.toString());
-            this.insertCommitment(event.commitment.toString());
+            console.log('Processing commitment:', event.commitment);
+            this.insertCommitment(event.commitment);
         }
 
         const contractRoot = await getContractInstanceRoot(this.type);

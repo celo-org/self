@@ -83,13 +83,20 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
             console.log('Transaction started');
 
             for (const event of events) {
+                // Convert BigInt values to strings
+                const eventData = {
+                    ...event,
+                    commitment: event.commitment.toString(),
+                    merkleRoot: event.merkleRoot.toString()
+                };
+
                 const query = `
                     INSERT INTO events (type, event_index, event_data)
                     VALUES ($1, $2, $3)
                     ON CONFLICT (type, event_index) DO NOTHING
                 `;
                 console.log('Inserting event index:', event.index);
-                const result = await client.query(query, [type, event.index, event]);
+                const result = await client.query(query, [type, event.index, eventData]);
                 console.log('Event insert result:', result.rowCount);
             }
 
