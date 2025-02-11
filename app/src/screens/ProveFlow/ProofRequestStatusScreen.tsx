@@ -11,8 +11,8 @@ import { typography } from '../../components/typography/styles';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useNavigationStore from '../../stores/navigationStore';
-import { notificationSuccess,notificationError } from '../../utils/haptic';
 import useUserStore from '../../stores/userStore';
+import { notificationError, notificationSuccess } from '../../utils/haptic';
 
 type ProofStatus = 'success' | 'failure' | 'pending';
 
@@ -29,7 +29,6 @@ const SuccessScreen: React.FC = () => {
       notificationError();
     }
   }, [status]);
-
 
   // im not sure this is the best way to do this yet but its a good start until we move the websockets to a provider
   useEffect(() => {
@@ -64,7 +63,7 @@ const SuccessScreen: React.FC = () => {
       <ExpandableBottomLayout.BottomSection>
         <View style={styles.content}>
           <Title size="large">{getTitle(status)}</Title>
-          <Info status={status} appName={appName}/>
+          <Info status={status} appName={appName} />
         </View>
         <PrimaryButton onPress={onOkPress}>OK</PrimaryButton>
       </ExpandableBottomLayout.BottomSection>
@@ -72,7 +71,7 @@ const SuccessScreen: React.FC = () => {
   );
 };
 
-function getAnimation(status: ProofStatus)  {
+function getAnimation(status: ProofStatus) {
   switch (status) {
     case 'success':
       return require('../../assets/animations/proof_success.json');
@@ -95,23 +94,25 @@ function getTitle(status: ProofStatus) {
 }
 
 // Dont deduplicate this until we know what the pending state will look like
-function Info({status, appName}: {status: ProofStatus, appName: string}) {
+function Info({ status, appName }: { status: ProofStatus; appName: string }) {
   if (status === 'success') {
     return (
       <Description>
-            You've successfully proved your identity to{' '}
-            <BodyText style={typography.strong}>{appName}</BodyText>
-          </Description>);
+        You've successfully proved your identity to{' '}
+        <BodyText style={typography.strong}>{appName}</BodyText>
+      </Description>
+    );
   } else if (status === 'failure') {
-    return (<Description>
-      Unable to prove your identity to{' '}
-      <BodyText style={typography.strong}>{appName}</BodyText>
-    </Description>);
+    return (
+      <Description>
+        Unable to prove your identity to{' '}
+        <BodyText style={typography.strong}>{appName}</BodyText>
+      </Description>
+    );
   } else {
     return null;
   }
 }
-
 
 const formatFieldName = (field: string) => {
   return field
@@ -143,7 +144,6 @@ const fieldsToCheck = [
   'ofac',
   'forbidden_countries_list',
 ];
-
 
 export default SuccessScreen;
 
