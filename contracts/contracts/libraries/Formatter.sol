@@ -12,7 +12,7 @@ library Formatter {
     error InvalidDayRange();
     error InvalidFieldElement();
     error InvalidDateDigit();
-    
+
     uint256 constant MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
     uint256 constant SNARK_SCALAR_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
@@ -211,8 +211,23 @@ library Formatter {
     function dateToUnixTimestamp(
         string memory date
     ) internal pure returns (uint256) {
-        if (bytes(date).length != 6) {
+        bytes memory dateBytes = bytes(date);
+        if (dateBytes.length != 6) {
             revert InvalidDateLength();
+        }
+
+        if (dateBytes[2] > '1' || (dateBytes[2] == '1' && dateBytes[3] > '2')) {
+            revert InvalidMonthRange();
+        }
+
+        if (dateBytes[4] > '3' || (dateBytes[4] == '3' && dateBytes[5] > '1')) {
+            revert InvalidDayRange();
+        }
+
+        for (uint i = 0; i < 6; i++) {
+            if (dateBytes[i] < '0' || dateBytes[i] > '9') {
+                revert InvalidAsciiCode();
+            }
         }
 
         uint256 year = parseDatePart(substring(date, 0, 2)) + 2000;
@@ -260,7 +275,10 @@ library Formatter {
         uint digit;
         uint result;
         for (uint i = 0; i < tempEmptyStringTest.length; i++) {
-            digit = uint(uint8(tempEmptyStringTest[i])) - 48; // '0' is 48 in ASCII
+            if (uint8(tempEmptyStringTest[i]) < 48 || uint8(tempEmptyStringTest[i]) > 57) {
+                revert InvalidAsciiCode();
+            }
+            digit = uint8(tempEmptyStringTest[i]) - 48;
             result = result * 10 + digit;
         }
         return result;

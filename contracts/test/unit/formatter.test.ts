@@ -218,6 +218,37 @@ describe("Formatter", function () {
             expect(() => Formatter.dateToUnixTimestamp(input))
                 .to.throw("InvalidDateLength");
         });
+
+        it("should revert when month is out of range (more than 12)", async function () {
+            const input = "941331";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+        });
+
+        it("should revert when month is out of range (more than 20)", async function () {
+            const input = "942031";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+        });
+
+        it("should revert when day is out of range (more than 31)", async function () {
+            const input = "940132";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+        });
+
+        it("should revert when day is out of range (more than 40)", async function () {
+            const input = "940140";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+        });
+        
+        it("should revert when date digit is out of range", async function () {
+            const input = "94012a";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
+        });
+        
     });
 
     describe("substring", function () {
@@ -260,6 +291,12 @@ describe("Formatter", function () {
                 expect(contractResult).to.equal(tsResult);
                 expect(contractResult).to.equal(testCase.expected);
             }
+        });
+
+        it("should revert when input is not a number", async function () {
+            const input = "12a";
+            await expect(testFormatter.testParseDatePart(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
         });
     });
 
