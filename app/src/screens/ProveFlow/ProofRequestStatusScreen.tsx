@@ -25,7 +25,7 @@ const SuccessScreen: React.FC = () => {
   useEffect(() => {
     if (status === 'success') {
       notificationSuccess();
-    } else if (status === 'failure') {
+    } else if (status === 'failure' || status === 'error') {
       notificationError();
     }
   }, [status]);
@@ -79,6 +79,7 @@ function getAnimation(status: ProofStatus) {
     case 'success':
       return succesAnimation;
     case 'failure':
+    case 'error':
       return failAnimation;
     default:
       return loadingAnimation;
@@ -90,6 +91,7 @@ function getTitle(status: ProofStatus) {
     case 'success':
       return 'Identity Verified';
     case 'failure':
+    case 'error':
       return 'Proof Failed';
     default:
       return 'Proving';
@@ -105,11 +107,12 @@ function Info({ status, appName }: { status: ProofStatus; appName: string }) {
         <BodyText style={typography.strong}>{appName}</BodyText>
       </Description>
     );
-  } else if (status === 'failure') {
+  } else if (status === 'failure' || status === 'error') {
     return (
       <Description>
         Unable to prove your identity to{' '}
         <BodyText style={typography.strong}>{appName}</BodyText>
+        {status === 'error' && '. Due to technical issues.'}
       </Description>
     );
   } else {

@@ -10,7 +10,8 @@ import io, { Socket } from 'socket.io-client';
 import { SelfApp } from '../../../common/src/utils/appType';
 import { setupUniversalLinkListener } from '../utils/qrCodeNew';
 
-export type ProofStatus = 'success' | 'failure' | 'pending';
+// failure means that one of the requirements was not met, error means we fucked up. 
+export type ProofStatus = 'success' | 'failure' | 'pending' | 'error';
 
 interface IProofContext {
   status: ProofStatus;
@@ -69,6 +70,9 @@ export const useProofInfo = () => {
   return React.useContext(ProofContext);
 };
 
+// TODO store sockon on a ref? 
+// handle it unmounting in progress?
+//  
 function useWebsocket(
   selectedApp: SelfApp,
   setStatus: React.Dispatch<React.SetStateAction<ProofStatus>>,
@@ -81,6 +85,7 @@ function useWebsocket(
     if (!selectedApp.websocketUrl || !selectedApp.sessionId) {
       return;
     }
+    console.log('creating ws', selectedApp.websocketUrl, selectedApp.sessionId)
 
     try {
       newSocket = io(selectedApp.websocketUrl, {
@@ -105,13 +110,14 @@ function useWebsocket(
             type: 'error',
           },
         });
-        setStatus('failure');
+        setStatus('error');
       });
 
       newSocket.on('proof_verification_result', result => {
-        setProofVerificationResult(JSON.parse(result));
-        console.log('result', result);
-        if (JSON.parse(result).valid) {
+        const data = JSON.parse(result);
+        setProofVerificationResult(data);
+        console.log('result', result, data);
+        if (data.valid) {
           setStatus('success');
           console.log('✅', {
             message: 'Identity verified',
@@ -133,6 +139,7 @@ function useWebsocket(
       setSocket(newSocket);
     } catch (error) {
       console.error('Error setting up WebSocket:', error);
+      setStatus('error');
       console.log('❌', {
         message: 'Failed to set up connection',
         customData: {

@@ -39,8 +39,6 @@ const ProveScreen: React.FC = () => {
     );
   }
 
-  console.log('options', disclosureOptions);
-
   return (
     <ExpandableBottomLayout.Layout unsafeArea flex={1}>
       <ExpandableBottomLayout.TopSection>
