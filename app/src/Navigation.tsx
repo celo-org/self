@@ -53,7 +53,10 @@ const DefaultNavBar = (props: NativeStackHeaderProps) => {
       paddingBottom={20}
       backgroundColor={headerStyle.backgroundColor as string}
       barStyle={
-        options.headerTintColor === white || (options.headerTitleStyle as TextStyle)?.color === white ? 'light-content' : 'dark-content'
+        options.headerTintColor === white ||
+        (options.headerTitleStyle as TextStyle)?.color === white
+          ? 'light-content'
+          : 'dark-content'
       }
     >
       <NavBar.LeftAction

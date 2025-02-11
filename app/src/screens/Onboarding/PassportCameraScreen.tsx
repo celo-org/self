@@ -42,7 +42,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   const onCancelPress = useHapticNavigation('PassportOnboarding', 'cancel');
 
   return (
-    <ExpandableBottomLayout.Layout  backgroundColor={black}>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
       <ExpandableBottomLayout.TopSection roundTop>
         <StatusBar barStyle="light-content" backgroundColor={black} />
         <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
