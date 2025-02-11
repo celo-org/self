@@ -48,10 +48,7 @@ describe('OFAC - Passport number and Nationality match', function () {
 
   before(async () => {
     circuit = await wasm_tester(
-      path.join(
-        __dirname,
-        '../../circuits/tests/ofac/ofac_passport_number_tester.circom'
-      ),
+      path.join(__dirname, '../../circuits/tests/ofac/ofac_passport_number_tester.circom'),
       {
         include: [
           'node_modules',
@@ -63,7 +60,11 @@ describe('OFAC - Passport number and Nationality match', function () {
 
     const proofLevel = 3;
     passNoAndNationality_smt.import(passportNoAndNationalityjson);
-    memSmtInputs = generateCircuitInputsOfac(passportDataInOfac, passNoAndNationality_smt, proofLevel);
+    memSmtInputs = generateCircuitInputsOfac(
+      passportDataInOfac,
+      passNoAndNationality_smt,
+      proofLevel
+    );
     // console.log('memSmtInputs', memSmtInputs);
 
     nonMemSmtInputs = generateCircuitInputsOfac(passportData, passNoAndNationality_smt, proofLevel);
@@ -262,9 +263,11 @@ describe.only('OFAC - SMT Security Tests', function () {
   it('should reject proof with invalid siblings length', async function () {
     const overflowInputs = {
       ...baseInputs,
-      smt_siblings: Array(65).fill('0').map(x => x.toString()) // More siblings than tree depth
+      smt_siblings: Array(65)
+        .fill('0')
+        .map((x) => x.toString()), // More siblings than tree depth
     };
-    
+
     try {
       await circuit.calculateWitness(overflowInputs);
       expect.fail('Should have thrown error');
@@ -277,9 +280,9 @@ describe.only('OFAC - SMT Security Tests', function () {
     const malformedPathInputs = {
       ...baseInputs,
       // Modify one of the siblings to be an invalid value
-      smt_siblings: baseInputs.smt_siblings.map((x: string, i: number) => 
+      smt_siblings: baseInputs.smt_siblings.map((x: string, i: number) =>
         i === 0 ? '2'.repeat(254) : x
-      )
+      ),
     };
 
     try {
@@ -294,7 +297,9 @@ describe.only('OFAC - SMT Security Tests', function () {
   it('should handle zero values in siblings array correctly', async function () {
     const zeroSiblingsInputs = {
       ...baseInputs,
-      smt_siblings: Array(64).fill('0').map(x => x.toString())
+      smt_siblings: Array(64)
+        .fill('0')
+        .map((x) => x.toString()),
     };
 
     let w = await circuit.calculateWitness(zeroSiblingsInputs);
@@ -306,7 +311,7 @@ describe.only('OFAC - SMT Security Tests', function () {
   it('should reject proof with incorrect number of siblings', async function () {
     const wrongHeightInputs = {
       ...baseInputs,
-      smt_siblings: baseInputs.smt_siblings.slice(0, 32) // Only half the siblings
+      smt_siblings: baseInputs.smt_siblings.slice(0, 32), // Only half the siblings
     };
 
     try {
@@ -321,7 +326,7 @@ describe.only('OFAC - SMT Security Tests', function () {
   it('should reject proof with invalid merkle root', async function () {
     const invalidRootInputs = {
       ...baseInputs,
-      smt_root: (BigInt(baseInputs.smt_root) ^ 1n).toString() // Modify smt_root by one bit
+      smt_root: (BigInt(baseInputs.smt_root) ^ 1n).toString(), // Modify smt_root by one bit
     };
 
     let w = await circuit.calculateWitness(invalidRootInputs);

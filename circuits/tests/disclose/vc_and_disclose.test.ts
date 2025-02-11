@@ -65,7 +65,6 @@ describe('Disclose', function () {
   nameAndYob_smt.import(nameAndYobjson);
 
   const selector_ofac = 1;
-  
 
   before(async () => {
     circuit = await wasm_tester(
@@ -216,26 +215,29 @@ describe('Disclose', function () {
 
       const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
       const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
-      
+
       console.log('reveal_unpacked', reveal_unpacked);
       // OFAC result is stored at index 90 in the revealed data
       const ofac_results = reveal_unpacked.slice(90, 93);
 
       console.log('ofac_results', ofac_results);
 
-      expect(ofac_results).to.deep.equal(['\x01', '\x01', '\x01'], 'OFAC result bits should be [1, 1, 1]');
+      expect(ofac_results).to.deep.equal(
+        ['\x01', '\x01', '\x01'],
+        'OFAC result bits should be [1, 1, 1]'
+      );
       expect(ofac_results).to.not.equal(['\x00', '\x00', '\x00'], 'OFAC result should be revealed');
     });
 
     it('should not disclose OFAC check result when selector is 0', async function () {
       w = await circuit.calculateWitness({
         ...inputs,
-        selector_ofac: '0'
+        selector_ofac: '0',
       });
 
       const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
       const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
-      
+
       // OFAC result should be hidden (null byte)
       const ofac_result = reveal_unpacked[90];
       expect(ofac_result).to.equal('\x00', 'OFAC result should not be revealed');
@@ -247,81 +249,119 @@ describe('Disclose', function () {
         {
           desc: 'No details match',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'USA', '010101', '300101',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'USA',
+            '010101',
+            '300101',
             'DIF123456',
-            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+            'DIFFERENT NAME',
+            'DIFFERENT SURNAME'
           ),
-          expectedBits: ['\x01', '\x01', '\x01']
+          expectedBits: ['\x01', '\x01', '\x01'],
         },
         {
           desc: 'Only passport number matches',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
             'ESP', // different nationality
-            '000101', '300101',
+            '000101',
+            '300101',
             '98lh90556', // Matching passport number
-            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+            'DIFFERENT NAME',
+            'DIFFERENT SURNAME'
           ),
-          expectedBits: ['\x01', '\x01', '\x01']
+          expectedBits: ['\x01', '\x01', '\x01'],
         },
         {
           desc: 'Only nationality matches',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'FRA', '991231', '300101',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'FRA',
+            '991231',
+            '300101',
             'DIF123456', // different passport number
-            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+            'DIFFERENT NAME',
+            'DIFFERENT SURNAME'
           ),
-          expectedBits: ['\x01', '\x01', '\x01']
+          expectedBits: ['\x01', '\x01', '\x01'],
         },
         {
           desc: 'Only passport number and nationality matches',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'FRA', '991231', '300101',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'FRA',
+            '991231',
+            '300101',
             '98lh90556',
-            'DIFFERENT NAME', 'DIFFERENT SURNAME'
+            'DIFFERENT NAME',
+            'DIFFERENT SURNAME'
           ),
-          expectedBits: ['\x00', '\x01', '\x01']
+          expectedBits: ['\x00', '\x01', '\x01'],
         },
         {
           desc: 'Name and DOB matches (so YOB matches too)',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'FRA', '541007', '300101',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'FRA',
+            '541007',
+            '300101',
             'DIF123456',
-            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+            'HENAO MONTOYA',
+            'ARCANGEL DE JESUS'
           ),
-          expectedBits: ['\x01', '\x00', '\x00']
+          expectedBits: ['\x01', '\x00', '\x00'],
         },
         {
           desc: 'Only name and YOB match',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'FRA', '541299', '300101', // Same year (54) different month/day
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'FRA',
+            '541299',
+            '300101', // Same year (54) different month/day
             'DIF123456',
-            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+            'HENAO MONTOYA',
+            'ARCANGEL DE JESUS'
           ),
-          expectedBits: ['\x01', '\x01', '\x00']
+          expectedBits: ['\x01', '\x01', '\x00'],
         },
         {
           desc: 'All details match',
           data: genMockPassportData(
-            'sha256', 'sha256', 'rsa_sha256_65537_2048',
-            'FRA', '541007', '300101',
+            'sha256',
+            'sha256',
+            'rsa_sha256_65537_2048',
+            'FRA',
+            '541007',
+            '300101',
             '98lh90556',
-            'HENAO MONTOYA', 'ARCANGEL DE JESUS'
+            'HENAO MONTOYA',
+            'ARCANGEL DE JESUS'
           ),
-          expectedBits: ['\x00', '\x00', '\x00']
+          expectedBits: ['\x00', '\x00', '\x00'],
         },
       ];
 
       for (const testCase of testCases) {
         console.log(`Testing: ${testCase.desc}`);
-        
+
         const passportData = initPassportDataParsing(testCase.data);
-        const sanctionedCommitment = generateCommitment(secret, PASSPORT_ATTESTATION_ID, passportData);
+        const sanctionedCommitment = generateCommitment(
+          secret,
+          PASSPORT_ATTESTATION_ID,
+          passportData
+        );
         tree.insert(BigInt(sanctionedCommitment));
 
         const testInputs = generateCircuitInputsVCandDisclose(
@@ -329,7 +369,7 @@ describe('Disclose', function () {
           PASSPORT_ATTESTATION_ID,
           passportData,
           scope,
-          Array(88).fill('0'),  // selector_dg1
+          Array(88).fill('0'), // selector_dg1
           selector_older_than,
           tree,
           majority,
@@ -345,7 +385,7 @@ describe('Disclose', function () {
         const revealedData_packed = await circuit.getOutput(w, ['revealedData_packed[3]']);
         const reveal_unpacked = formatAndUnpackReveal(revealedData_packed);
         const ofac_results = reveal_unpacked.slice(90, 93);
-        
+
         console.log(`${testCase.desc} - OFAC bits:`, ofac_results);
         expect(ofac_results).to.deep.equal(
           testCase.expectedBits,
