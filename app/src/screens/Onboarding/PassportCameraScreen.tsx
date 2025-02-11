@@ -18,7 +18,7 @@ import Bulb from '../../images/icons/passport_camera_bulb.svg';
 import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { slate800 } from '../../utils/colors';
+import { black, slate800 } from '../../utils/colors';
 
 interface PassportNFCScanScreen {}
 
@@ -42,9 +42,9 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   const onCancelPress = useHapticNavigation('PassportOnboarding', 'cancel');
 
   return (
-    <ExpandableBottomLayout.Layout>
+    <ExpandableBottomLayout.Layout  backgroundColor={black}>
       <ExpandableBottomLayout.TopSection roundTop>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle="light-content" backgroundColor={black} />
         <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
         <LottieView
           autoPlay
