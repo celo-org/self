@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -18,7 +18,7 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { slate800 } from '../../utils/colors';
+import { black, slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
 // TODO: replace this with proper tested lib
@@ -97,10 +97,11 @@ const QRCodeViewFinderScreen = ({}) => {
             </XStack>
           </YStack>
 
-          <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
-        </YStack>
-      </ExpandableBottomLayout.BottomSection>
-    </ExpandableBottomLayout.Layout>
+            <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
+          </YStack>
+        </ExpandableBottomLayout.BottomSection>
+      </ExpandableBottomLayout.Layout>
+    </>
   );
 };
 
