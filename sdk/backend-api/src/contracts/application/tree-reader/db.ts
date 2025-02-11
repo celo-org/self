@@ -48,22 +48,36 @@ async function queryWithRetry(
     }
 }
 
+interface LastEventData {
+    blockNumber: number;
+    index: number;
+}
+
 /// @notice retrieve the event with the highest index from the db and return the block number
-export async function getLastEventBlockFromDB(type: string) {
+export async function getLastEventBlockFromDB(type: string): Promise<LastEventData | null> {
     try {
+        console.log("\n=== Getting Last Event Data from DB ===");
+        console.log("Type:", type);
+
         const query = `
-            SELECT event_data->>'blockNumber' as block_number 
+            SELECT 
+                (event_data->>'blockNumber')::integer as block_number,
+                (event_data->>'index')::integer as event_index
             FROM events 
             WHERE type = $1 
             ORDER BY event_index DESC 
             LIMIT 1
         `;
+
         const result = await queryWithRetry(query, [type]);
+        console.log("Last event query result:", result.rows[0]);
 
         if (result.rows.length === 0) return null;
-        const blockNumber = parseInt(result.rows[0].block_number);
-        const index = parseInt(result.rows[0].index);
-        return { blockNumber, index };
+
+        return {
+            blockNumber: result.rows[0].block_number,
+            index: result.rows[0].event_index
+        };
     } catch (error) {
         console.error('Error getting last event block:', error);
         return null;

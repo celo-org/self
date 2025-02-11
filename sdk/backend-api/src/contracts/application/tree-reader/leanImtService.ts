@@ -43,21 +43,23 @@ export class MerkleTreeService {
     }
 
     private async checkForEvents() {
-        let { blockNumber, index }: any = await getLastEventBlockFromDB(this.type);
-        console.log('lastEventBlock', blockNumber, index);
-        if (!blockNumber) {
-            blockNumber = DEPLOYMENT_BLOCK;
-        }
+        const lastEventData = await getLastEventBlockFromDB(this.type);
+        console.log('Last event data:', lastEventData);
+
+        const lastEventBlock = lastEventData?.blockNumber || DEPLOYMENT_BLOCK;
+        const lastEventIndex = lastEventData?.index || -1;
 
         console.log('\n=== Processing Events ===');
-        const events: EventsData[] = await getDscCommitmentEvents(blockNumber, process.env.RPC_URL as string, process.env.NETWORK as string);
+        const events: EventsData[] = await getDscCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
         console.log('Total events to process:', events.length);
 
         for (const event of events) {
             console.log('Processing commitment:', event.commitment);
             console.log('Event index:', event.index);
-            console.log('Last index:', index);
-            if (event.index > parseInt(index)) {
+            console.log('Last stored index:', lastEventIndex);
+
+            // Only process events with indices greater than our last stored index
+            if (event.index > lastEventIndex) {
                 this.insertCommitment(event.commitment);
             }
         }
