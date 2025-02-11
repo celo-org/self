@@ -90,6 +90,14 @@ describe("Formatter", function () {
             expect(() => Formatter.formatDate(input))
                 .to.throw("InvalidAsciiCode");
         });
+
+        it("should handle errors consistently when input is not a number", async function () {
+            const input = "94012.";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidAsciiCode");
+        });
     });
 
     describe("numAsciiToUint", function () {
@@ -134,6 +142,26 @@ describe("Formatter", function () {
                 21888242871839275222246405745257275088548364400416034343698204186575808495617n,
                 0n,
                 0n
+            ] as [bigint, bigint, bigint];
+            await expect(testFormatter.testFieldElementsToBytes(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidFieldElement");
+        });
+
+        it("should revert when field element is out of range", async function () {
+            const input = [
+                0n,
+                21888242871839275222246405745257275088548364400416034343698204186575808495617n,
+                0n
+            ] as [bigint, bigint, bigint];
+            await expect(testFormatter.testFieldElementsToBytes(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidFieldElement");
+        });
+
+        it("should revert when field element is out of range", async function () {
+            const input = [
+                0n,
+                0n,
+                21888242871839275222246405745257275088548364400416034343698204186575808495617n
             ] as [bigint, bigint, bigint];
             await expect(testFormatter.testFieldElementsToBytes(input))
                 .to.be.revertedWithCustomError(testFormatter, "InvalidFieldElement");
@@ -248,6 +276,12 @@ describe("Formatter", function () {
             await expect(testFormatter.testDateToUnixTimestamp(input))
                 .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
         });
+
+        it("should revert when date digit is out of range", async function () {
+            const input = "94012.";
+            await expect(testFormatter.testDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
+        });
         
     });
 
@@ -298,6 +332,13 @@ describe("Formatter", function () {
             await expect(testFormatter.testParseDatePart(input))
                 .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
         });
+
+        
+        it("should revert when input is not a number", async function () {
+            const input = "12.";
+            await expect(testFormatter.testParseDatePart(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
+        });
     });
 
     describe("toTimestamp", function () {
@@ -340,7 +381,7 @@ describe("Formatter", function () {
         });
 
         it("should revert when year is out of range", async function () {
-            const input = 2100;
+            const input = 2101;
             await expect(testFormatter.testToTimestamp(input, 1, 1))
                 .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
         });
@@ -378,8 +419,8 @@ describe("Formatter", function () {
                 { year: 2020, expected: true },
                 { year: 2001, expected: false },
                 { year: 2042, expected: false },
+                { year: 2100, expected: false },
                 { year: 1970, expected: false },
-                { year: 2099, expected: false },
             ];
 
             for (const testCase of testCases) {
@@ -397,7 +438,7 @@ describe("Formatter", function () {
         });
 
         it("should revert when year is out of range", async function () {
-            const input = 2100;
+            const input = 2101;
             await expect(testFormatter.testIsLeapYear(input))
                 .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
         });

@@ -301,7 +301,7 @@ library Formatter {
     ) internal pure returns (uint timestamp) {
         uint16 i;
 
-        if (year < 1970 || year > 2099) {
+        if (year < 1970 || year > 2100) {
             revert InvalidYearRange();
         }
 
@@ -357,7 +357,7 @@ library Formatter {
      * @return True if the year is a leap year, otherwise false.
      */
     function isLeapYear(uint256 year) internal pure returns (bool) {
-        if (year < 1970 || year > 2099) {
+        if (year < 1970 || year > 2100) {
             revert InvalidYearRange();
         }
 
