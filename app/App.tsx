@@ -13,7 +13,6 @@ import { AuthProvider } from './src/stores/authProvider';
 import { ProofProvider } from './src/stores/proofProvider';
 import useUserStore from './src/stores/userStore';
 import { bgWhite } from './src/utils/colors';
-import { setupUniversalLinkListener } from './src/utils/qrCodeNew';
 
 global.Buffer = Buffer;
 
@@ -37,14 +36,10 @@ function App(): React.JSX.Element {
   useEffect(() => {
     // init
     initUserStore();
-    // @ts-expect-error TODO need to be able to pass in a function that can set items on the proof store
-    const universalLinkCleanup = setupUniversalLinkListener();
     segmentClient = createSegmentClient();
     Orientation.lockToPortrait();
-
     // cleanup
     return () => {
-      universalLinkCleanup();
       Orientation.unlockAllOrientations();
     };
   }, [initUserStore]);

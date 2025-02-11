@@ -8,6 +8,7 @@ import React, {
 import io, { Socket } from 'socket.io-client';
 
 import { SelfApp } from '../../../common/src/utils/appType';
+import { setupUniversalLinkListener } from '../utils/qrCodeNew';
 
 export type ProofStatus = 'success' | 'failure' | 'pending';
 
@@ -43,6 +44,37 @@ export function ProofProvider({ children }: PropsWithChildren) {
   const [selectedApp, setSelectedApp] = useState<SelfApp>(defaults.selectedApp);
   const [_, setSocket] = useState<Socket | null>(null);
 
+  useWebsocket(selectedApp, setStatus, setProofVerificationResult, setSocket);
+
+  useEffect(() => {
+    const universalLinkCleanup = setupUniversalLinkListener(setSelectedApp);
+    return () => {
+      universalLinkCleanup();
+    };
+  }, []);
+
+  const publicApi: IProofContext = {
+    status,
+    proofVerificationResult,
+    selectedApp,
+    setStatus,
+    setSelectedApp,
+    setProofVerificationResult,
+  };
+
+  return <Provider value={publicApi}>{children}</Provider>;
+}
+
+export const useProofInfo = () => {
+  return React.useContext(ProofContext);
+};
+
+function useWebsocket(
+  selectedApp: SelfApp,
+  setStatus: React.Dispatch<React.SetStateAction<ProofStatus>>,
+  setProofVerificationResult: React.Dispatch<unknown>,
+  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>,
+) {
   useEffect(() => {
     let newSocket: Socket | null = null;
 
@@ -108,7 +140,6 @@ export function ProofProvider({ children }: PropsWithChildren) {
         },
       });
     }
-
     return () => {
       if (newSocket) {
         newSocket.disconnect();
@@ -116,19 +147,4 @@ export function ProofProvider({ children }: PropsWithChildren) {
       }
     };
   }, [selectedApp.websocketUrl, selectedApp.sessionId]);
-
-  const publicApi: IProofContext = {
-    status,
-    proofVerificationResult,
-    selectedApp,
-    setStatus,
-    setSelectedApp,
-    setProofVerificationResult,
-  };
-
-  return <Provider value={publicApi}>{children}</Provider>;
 }
-
-export const useProofInfo = () => {
-  return React.useContext(ProofContext);
-};
