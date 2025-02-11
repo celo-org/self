@@ -53,6 +53,7 @@ export class MerkleTreeService {
             this.insertCommitment(event.commitment.toString());
         }
         if (await getContractInstanceRoot(this.type) === this.getRoot().toString()) {
+            console.log('Root matches, adding events to db');
             await addEventsInDB(this.type, events);
             await setTreeInDB(this.type, this.serializeTree());
         }

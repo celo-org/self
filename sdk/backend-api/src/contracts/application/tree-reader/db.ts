@@ -82,11 +82,12 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
                     VALUES ($1, $2, $3)
                     ON CONFLICT (type, event_index) DO NOTHING
                 `;
-                await client.query(query, [
+                const result = await client.query(query, [
                     type,
                     event.index,
                     event
                 ]);
+                console.log('event result', result);
             }
 
             await client.query('COMMIT');
