@@ -13,6 +13,15 @@ const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
   const { userLoaded } = useUserStore();
 
+  // TODO: Uncomment when we are done testing
+  // const redirect = useCallback(() => {
+  //   if (passportData) {
+  //     navigation.navigate('Home');
+  //   } else {
+  //     navigation.navigate('Launch');
+  //   }
+  // }, [passportData, userLoaded]);
+
   const handleAnimationFinish = useCallback(() => {
     setTimeout(() => {
       impactLight();
