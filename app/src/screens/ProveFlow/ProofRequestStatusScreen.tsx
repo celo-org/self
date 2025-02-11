@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
@@ -10,18 +10,15 @@ import { Title } from '../../components/typography/Title';
 import { typography } from '../../components/typography/styles';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import useNavigationStore from '../../stores/navigationStore';
-import useUserStore from '../../stores/userStore';
+import { ProofStatus, useProofInfo } from '../../stores/proofProvider';
 import { notificationError, notificationSuccess } from '../../utils/haptic';
-
-type ProofStatus = 'success' | 'failure' | 'pending';
+import { white } from '../../utils/colors';
 
 const SuccessScreen: React.FC = () => {
-  const { proofVerificationResult } = useUserStore();
-  const { selectedApp } = useNavigationStore();
+  const { selectedApp, proofVerificationResult, status } = useProofInfo();
   const appName = selectedApp?.appName;
   const onOkPress = useHapticNavigation('Home');
-  const [status, setStatus] = React.useState<ProofStatus>('pending');
+
   useEffect(() => {
     if (status === 'success') {
       notificationSuccess();
@@ -32,6 +29,9 @@ const SuccessScreen: React.FC = () => {
 
   // im not sure this is the best way to do this yet but its a good start until we move the websockets to a provider
   useEffect(() => {
+    if (!proofVerificationResult) {
+      return
+    }
     const failedConditions = [];
     for (const field of fieldsToCheck) {
       console.log(
@@ -44,13 +44,13 @@ const SuccessScreen: React.FC = () => {
       }
     }
     console.log('Failed conditions:', JSON.stringify(failedConditions));
-
-    failedConditions.length > 0 ? setStatus('failure') : setStatus('success');
+    // failedConditions.length > 0 ? setStatus('failure') : setStatus('success');
   }, [proofVerificationResult]);
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout backgroundColor={white} >
+      <StatusBar barStyle="dark-content" backgroundColor={white} />
+      <ExpandableBottomLayout.TopSection roundTop marginTop={20}>
         <LottieView
           autoPlay
           loop={status === 'pending'}
@@ -60,7 +60,7 @@ const SuccessScreen: React.FC = () => {
           renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection>
+      <ExpandableBottomLayout.BottomSection paddingBottom={20}>
         <View style={styles.content}>
           <Title size="large">{getTitle(status)}</Title>
           <Info status={status} appName={appName} />
@@ -110,7 +110,8 @@ function Info({ status, appName }: { status: ProofStatus; appName: string }) {
       </Description>
     );
   } else {
-    return null;
+    // TODO what?
+    return  <Description> Proving minimum viable identity </Description>
   }
 }
 
