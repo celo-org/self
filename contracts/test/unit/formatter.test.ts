@@ -332,6 +332,45 @@ describe("Formatter", function () {
                 expect(contractResult).to.equal(testCase.expected);
             }
         });
+
+        it("should revert when year is out of range", async function () {
+            const input = 1969;
+            await expect(testFormatter.testToTimestamp(input, 1, 1))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
+        });
+
+        it("should revert when year is out of range", async function () {
+            const input = 2100;
+            await expect(testFormatter.testToTimestamp(input, 1, 1))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
+        });
+        
+        it("should revert when month is out of range", async function () {
+            const input = 13;
+            await expect(testFormatter.testToTimestamp(2000, input, 1))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+        });
+
+        it("should revert when month is out of range", async function () {
+            const input = 0;
+            await expect(testFormatter.testToTimestamp(2000, input, 1))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+        });
+        
+        it("should revert when day is out of range", async function () {
+            const input = 32;
+            await expect(testFormatter.testToTimestamp(2000, 1, input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+        });
+        
+        it("should revert when day is out of range", async function () {
+            const input = 0;
+            await expect(testFormatter.testToTimestamp(2000, 1, input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+        });
+        
+        
+        
     });
 
     describe("isLeapYear", function () {

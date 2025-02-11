@@ -8,6 +8,7 @@ pragma solidity ^0.8.28;
 library Formatter {
     error InvalidDateLength();
     error InvalidAsciiCode();
+    error InvalidYearRange();
     error InvalidMonthRange();
     error InvalidDayRange();
     error InvalidFieldElement();
@@ -300,6 +301,14 @@ library Formatter {
     ) internal pure returns (uint timestamp) {
         uint16 i;
 
+        if (year < 1970 || year > 2099) {
+            revert InvalidYearRange();
+        }
+
+        if (month < 1 || month > 12) {
+            revert InvalidMonthRange();
+        }
+
         // Year.
         for (i = 1970; i < year; i++) {
             if (isLeapYear(i)) {
@@ -327,6 +336,10 @@ library Formatter {
         monthDayCounts[9] = 31;
         monthDayCounts[10] = 30;
         monthDayCounts[11] = 31;
+
+        if (day < 1 || day > monthDayCounts[month - 1]) {
+            revert InvalidDayRange();
+        }
 
         for (i = 1; i < month; i++) {
             timestamp += monthDayCounts[i - 1] * 1 days;
