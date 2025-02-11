@@ -96,6 +96,7 @@ export const ExpandableBottomLayout = {
 
 const styles = StyleSheet.create({
   roundTop: {
+    marginTop: 12,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     borderTopStartRadius: 20,
