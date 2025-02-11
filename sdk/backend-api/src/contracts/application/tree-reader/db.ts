@@ -136,7 +136,7 @@ export async function getTreeFromDB(type: TreeType) {
         if (result.rows.length === 0) return null;
         return result.rows[0].tree_data;
     } catch (error) {
-        console.error('Error getting tree:', error);
+        console.error(`Error getting ${type} tree:`, error);
         return null;
     }
 }
@@ -153,7 +153,7 @@ export async function setTreeInDB(type: TreeType, tree: string) {
         await queryWithRetry(query, [tree]);
         return true;
     } catch (error) {
-        console.error('Error setting tree:', error);
+        console.error(`Error setting ${type} tree:`, error);
         return false;
     }
 }

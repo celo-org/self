@@ -5,6 +5,7 @@ import { getChain } from '../../contracts/application/chains';
 import { getDscCommitmentEvents } from '../application/getEvents';
 import { MerkleTreeService } from '../application/tree-reader/leanImtService';
 import { getContractInstanceRoot } from '../application/tree-reader/getTree';
+import { getCscaTree } from '../application/tree-reader/cscaTreeService';
 
 const dscTree = new MerkleTreeService('dsc');
 const commitmentTree = new MerkleTreeService('identity');
@@ -43,6 +44,49 @@ export const ContractsController = new Elysia()
         description: 'Retrieve the identity commitment root in registry contract',
       },
     },
+  ).post(
+    'update-csca-root',
+    async (request) => {
+      try {
+        const { root } = request.body;
+        const registryContract = new RegistryContract(
+          getChain(process.env.NETWORK as string),
+          process.env.PRIVATE_KEY as `0x${string}`,
+          process.env.RPC_URL as string
+        );
+        const tx = await registryContract.updateCscaRoot(BigInt(root));
+        return {
+          status: "success",
+          data: [tx.hash],
+        };
+      } catch (error) {
+        return {
+          status: "error",
+          message: error instanceof Error ? error.message : "Unknown error",
+        };
+      }
+    },
+    {
+      body: t.Object({
+        root: t.String(),
+      }),
+      response: {
+        200: t.Object({
+          status: t.String(),
+          data: t.Array(t.String()),
+        }),
+        500: t.Object({
+          status: t.String(),
+          message: t.String(),
+        }),
+      },
+      detail: {
+        tags: ['Contracts'],
+        summary: 'Update CSCA root in registry contract',
+        description: 'Update the CSCA root in registry contract',
+      },
+    }
+
   )
   .get(
     'dsc-key-commitment-root',
@@ -350,6 +394,34 @@ export const ContractsController = new Elysia()
         tags: ['Contracts'],
         summary: 'Get identity commitment Merkle tree',
         description: 'Retrieve the current state of the identity commitment Merkle tree'
+      }
+    }
+  )
+  .get(
+    'csca-tree',
+    async () => {
+      const tree = getCscaTree();
+      return {
+        status: 'success',
+        data: tree
+      };
+    },
+    {
+      response: {
+        200: t.Object({
+          status: t.String(),
+          data: t.Any()
+        }),
+        500: t.Object({
+          status: t.String(),
+          message: t.String(),
+          data: t.Any()
+        })
+      },
+      detail: {
+        tags: ['Contracts'],
+        summary: 'Get CSCA tree',
+        description: 'Retrieve the current state of the CSCA tree'
       }
     }
   );
