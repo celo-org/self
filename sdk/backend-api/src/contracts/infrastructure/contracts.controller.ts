@@ -39,7 +39,7 @@ export const ContractsController = new Elysia()
         }),
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['Identity'],
         summary: 'Get identity commitment root in registry contract',
         description: 'Retrieve the identity commitment root in registry contract',
       },
@@ -81,7 +81,7 @@ export const ContractsController = new Elysia()
         }),
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['CSCA'],
         summary: 'Update CSCA root in registry contract',
         description: 'Update the CSCA root in registry contract',
       },
@@ -114,7 +114,7 @@ export const ContractsController = new Elysia()
         }),
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['DSC'],
         summary: 'Get DSC key commitment root in registry contract',
         description: 'Retrieve the DSC key commitment root in registry contract',
       },
@@ -219,7 +219,7 @@ export const ContractsController = new Elysia()
         }),
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['DSC'],
         summary: 'Add DSC key commitment to registry contract as a dev role',
         description: 'Add DSC key commitment to registry contract as a dev role',
       },
@@ -258,7 +258,7 @@ export const ContractsController = new Elysia()
         }),
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['Identity'],
         summary: 'Add identity commitment to registry contract as a dev role',
         description: 'Add identity commitment to registry contract as a dev role',
       },
@@ -355,7 +355,7 @@ export const ContractsController = new Elysia()
         })
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['DSC'],
         summary: 'Get DSC commitment Merkle tree',
         description: 'Retrieve the current state of the DSC commitment Merkle tree'
       }
@@ -391,7 +391,7 @@ export const ContractsController = new Elysia()
         })
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['Identity'],
         summary: 'Get identity commitment Merkle tree',
         description: 'Retrieve the current state of the identity commitment Merkle tree'
       }
@@ -419,7 +419,7 @@ export const ContractsController = new Elysia()
         })
       },
       detail: {
-        tags: ['Contracts'],
+        tags: ['CSCA'],
         summary: 'Get CSCA tree',
         description: 'Retrieve the current state of the CSCA tree'
       }
