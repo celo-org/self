@@ -1,0 +1,166 @@
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import LottieView from 'lottie-react-native';
+
+import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { BodyText } from '../../components/typography/BodyText';
+import Description from '../../components/typography/Description';
+import { Title } from '../../components/typography/Title';
+import { typography } from '../../components/typography/styles';
+import useHapticNavigation from '../../hooks/useHapticNavigation';
+import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import useNavigationStore from '../../stores/navigationStore';
+import { notificationSuccess,notificationError } from '../../utils/haptic';
+import useUserStore from '../../stores/userStore';
+
+type ProofStatus = 'success' | 'failure' | 'pending';
+
+const SuccessScreen: React.FC = () => {
+  const { proofVerificationResult } = useUserStore();
+  const { selectedApp } = useNavigationStore();
+  const appName = selectedApp?.appName;
+  const onOkPress = useHapticNavigation('Home');
+  const [status, setStatus] = React.useState<ProofStatus>('pending');
+  useEffect(() => {
+    if (status === 'success') {
+      notificationSuccess();
+    } else if (status === 'failure') {
+      notificationError();
+    }
+  }, [status]);
+
+
+  // im not sure this is the best way to do this yet but its a good start until we move the websockets to a provider
+  useEffect(() => {
+    const failedConditions = [];
+    for (const field of fieldsToCheck) {
+      console.log(
+        `Checking field ${field}: ${JSON.stringify(
+          (proofVerificationResult as any)[field],
+        )}`,
+      );
+      if ((proofVerificationResult as any)[field] === false) {
+        failedConditions.push(formatFieldName(field));
+      }
+    }
+    console.log('Failed conditions:', JSON.stringify(failedConditions));
+
+    failedConditions.length > 0 ? setStatus('failure') : setStatus('success');
+  }, [proofVerificationResult]);
+
+  return (
+    <ExpandableBottomLayout.Layout>
+      <ExpandableBottomLayout.TopSection>
+        <LottieView
+          autoPlay
+          loop={status === 'pending'}
+          source={getAnimation(status)}
+          style={styles.animation}
+          cacheComposition={false}
+          renderMode="HARDWARE"
+        />
+      </ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.BottomSection>
+        <View style={styles.content}>
+          <Title size="large">{getTitle(status)}</Title>
+          <Info status={status} appName={appName}/>
+        </View>
+        <PrimaryButton onPress={onOkPress}>OK</PrimaryButton>
+      </ExpandableBottomLayout.BottomSection>
+    </ExpandableBottomLayout.Layout>
+  );
+};
+
+function getAnimation(status: ProofStatus)  {
+  switch (status) {
+    case 'success':
+      return require('../../assets/animations/proof_success.json');
+    case 'failure':
+      return require('../../assets/animations/proof_failed.json');
+    default:
+      return require('../../assets/animations/loading/misc.json');
+  }
+}
+
+function getTitle(status: ProofStatus) {
+  switch (status) {
+    case 'success':
+      return 'Identity Verified';
+    case 'failure':
+      return 'Proof Failed';
+    default:
+      return 'Proving';
+  }
+}
+
+// Dont deduplicate this until we know what the pending state will look like
+function Info({status, appName}: {status: ProofStatus, appName: string}) {
+  if (status === 'success') {
+    return (
+      <Description>
+            You've successfully proved your identity to{' '}
+            <BodyText style={typography.strong}>{appName}</BodyText>
+          </Description>);
+  } else if (status === 'failure') {
+    return (<Description>
+      Unable to prove your identity to{' '}
+      <BodyText style={typography.strong}>{appName}</BodyText>
+    </Description>);
+  } else {
+    return null;
+  }
+}
+
+
+const formatFieldName = (field: string) => {
+  return field
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+const fieldsToCheck = [
+  'scope',
+  'merkle_root_commitment',
+  'merkle_root_csca',
+  'attestation_id',
+  'current_date',
+  'issuing_state',
+  'name',
+  'passport_number',
+  'nationality',
+  'date_of_birth',
+  'gender',
+  'expiry_date',
+  'older_than',
+  'owner_of',
+  'blinded_dsc_commitment',
+  'proof',
+  'dscProof',
+  'dsc',
+  'pubKey',
+  'ofac',
+  'forbidden_countries_list',
+];
+
+
+export default SuccessScreen;
+
+export const styles = StyleSheet.create({
+  animation: {
+    width: '125%',
+    height: '125%',
+  },
+  content: {
+    paddingTop: 40,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 10,
+  },
+});

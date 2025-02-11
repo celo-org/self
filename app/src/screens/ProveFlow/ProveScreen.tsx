@@ -46,10 +46,11 @@ const ProveScreen: React.FC = () => {
     sendVcAndDisclosePayload(passportData).catch(e =>
       console.log('Error sending VC and disclose payload', e),
     );
+    navigate('ProofRequestStatusScreen');
   }
 
   function goToErrorScreen() {
-    navigate('WrongProofScreen');
+    navigate('ProofRequestStatusScreen');
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -93,7 +94,7 @@ const ProveScreen: React.FC = () => {
             },
           });
           setTimeout(() => {
-            navigate('ValidProofScreen');
+            navigate('ProofRequestStatusScreen');
           }, 700);
         } else {
           console.log('❌', {

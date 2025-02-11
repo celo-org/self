@@ -37,8 +37,8 @@ interface UserState {
   setRegistered: (registered: boolean) => void;
   setDscSecret: (dscSecret: string) => void;
   setUserLoaded: (userLoaded: boolean) => void;
-  proofVerificationResult: string;
-  setProofVerificationResult: (proofVerificationResult: string) => void;
+  proofVerificationResult: unknown;
+  setProofVerificationResult: (proofVerificationResult: any) => void;
   setPassportMetadata: (metadata: PassportMetadata) => void;
   clearPassportMetadataFromStorage: () => void;
 }
