@@ -35,7 +35,6 @@ import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
-import DebugScreen from './screens/Settings/DebugRoutesScreen';
 import DevSettingsScreen from './screens/Settings/DevSettingsScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
