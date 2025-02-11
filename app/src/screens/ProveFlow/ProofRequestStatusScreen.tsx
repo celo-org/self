@@ -14,6 +14,10 @@ import { ProofStatus, useProofInfo } from '../../stores/proofProvider';
 import { notificationError, notificationSuccess } from '../../utils/haptic';
 import { white } from '../../utils/colors';
 
+import succesAnimation from  '../../assets/animations/proof_success.json'
+import failAnimation from '../../assets/animations/proof_failed.json'
+import loadingAnimation from '../../assets/animations/loading/misc.json'
+
 const SuccessScreen: React.FC = () => {
   const { selectedApp, proofVerificationResult, status } = useProofInfo();
   const appName = selectedApp?.appName;
@@ -74,11 +78,11 @@ const SuccessScreen: React.FC = () => {
 function getAnimation(status: ProofStatus) {
   switch (status) {
     case 'success':
-      return require('../../assets/animations/proof_success.json');
+      return succesAnimation
     case 'failure':
-      return require('../../assets/animations/proof_failed.json');
-    default:
-      return require('../../assets/animations/loading/misc.json');
+      return failAnimation
+    default: 
+      return loadingAnimation
   }
 }
 
