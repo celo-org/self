@@ -42,7 +42,7 @@ const ProveScreen: React.FC = () => {
   console.log('options', disclosureOptions);
 
   return (
-    <ExpandableBottomLayout.Layout backgroundColor="red" unsafeArea flex={1}>
+    <ExpandableBottomLayout.Layout unsafeArea flex={1}>
       <ExpandableBottomLayout.TopSection>
         <YStack alignItems="center">
           <Text>Check</Text>
