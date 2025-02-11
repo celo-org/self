@@ -614,8 +614,13 @@ contract IdentityVerificationHubImplV1 is
                 revert INVALID_OLDER_THAN();
             }
         }
-        if (proof.ofacEnabled) {
-            if (!CircuitAttributeHandler.compareOfac(Formatter.fieldElementsToBytes(revealedDataPacked))) {
+        if (proof.ofacEnabled[0] || proof.ofacEnabled[1] || proof.ofacEnabled[2]) {
+            if (!CircuitAttributeHandler.compareOfac(
+                Formatter.fieldElementsToBytes(revealedDataPacked),
+                proof.ofacEnabled[0],
+                proof.ofacEnabled[1],
+                proof.ofacEnabled[2]
+            )) {
                 revert INVALID_OFAC();
             }
             if (!IIdentityRegistryV1(_registry).checkOfacRoots(

@@ -84,7 +84,7 @@ interface IIdentityVerificationHubV1 {
      * @param olderThan Threshold age for verification.
      * @param forbiddenCountriesEnabled Flag indicating if forbidden countries verification is required.
      * @param forbiddenCountriesListPacked Packed forbidden countries list.
-     * @param ofacEnabled Flag indicating if the OFAC check is required.
+     * @param ofacEnabled Array of flags indicating which OFAC checks are enabled. [passportNo, nameAndDob, nameAndYob]
      * @param vcAndDiscloseProof The underlying VC and Disclose proof.
      */
     struct VcAndDiscloseHubProof {
@@ -92,7 +92,7 @@ interface IIdentityVerificationHubV1 {
         uint256 olderThan;
         bool forbiddenCountriesEnabled;
         uint256 forbiddenCountriesListPacked;
-        bool ofacEnabled;
+        bool[3] ofacEnabled;
         IVcAndDiscloseCircuitVerifier.VcAndDiscloseProof vcAndDiscloseProof;
     }
 

@@ -88,7 +88,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -117,7 +117,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -140,7 +140,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -164,7 +164,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -203,7 +203,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -243,7 +243,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -267,7 +267,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -323,7 +323,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
@@ -346,7 +346,7 @@ describe("VC and Disclose", () => {
                 olderThan: "18",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -369,7 +369,7 @@ describe("VC and Disclose", () => {
                 olderThan: "21",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -417,7 +417,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -440,7 +440,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: invalidForbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -463,7 +463,7 @@ describe("VC and Disclose", () => {
                 olderThan: "40",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: invalidForbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -488,7 +488,7 @@ describe("VC and Disclose", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: false,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: false,
+                ofacEnabled: [false, false, false] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
@@ -533,7 +533,7 @@ describe("VC and Disclose", () => {
 
         it("formatter and CircuitAttributeHandler are working fine", async () => {
             const { readableData, bytes } = await setupVcAndDiscloseTest(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
-            
+
             expect(CircuitAttributeHandler.getIssuingState(bytes)).to.equal(readableData[0]);
             expect(CircuitAttributeHandler.getName(bytes)).to.deep.equal(readableData[1]);
             expect(CircuitAttributeHandler.getPassportNumber(bytes)).to.equal(readableData[2]);

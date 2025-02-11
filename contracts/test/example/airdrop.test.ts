@@ -85,7 +85,7 @@ describe("Airdrop", () => {
             20,
             true,
             countriesListPacked,
-            true,
+            [true, true, true],
         );
         await airdrop.waitForDeployment();
         
@@ -344,7 +344,7 @@ describe("Airdrop", () => {
             20,
             true,
             countriesListPacked,
-            true,
+            [true, true, true],
         );
         console.log()
         await newAirdrop.waitForDeployment();
@@ -369,7 +369,7 @@ describe("Airdrop", () => {
             20,
             true,
             countriesListPacked,
-            true,
+            [true, true, true],
         );
         await newAirdrop.waitForDeployment();
 
@@ -557,7 +557,7 @@ describe("Airdrop", () => {
             olderThan: 25,
             forbiddenCountriesEnabled: false,
             forbiddenCountriesListPacked: countriesListPacked,
-            ofacEnabled: false
+            ofacEnabled: [false, false, false]
         };
 
         await airdrop.connect(owner).setVerificationConfig(newVerificationConfig);
@@ -567,7 +567,7 @@ describe("Airdrop", () => {
         expect(storedConfig.olderThan).to.equal(newVerificationConfig.olderThan);
         expect(storedConfig.forbiddenCountriesEnabled).to.equal(newVerificationConfig.forbiddenCountriesEnabled);
         expect(storedConfig.forbiddenCountriesListPacked).to.equal(newVerificationConfig.forbiddenCountriesListPacked);
-        expect(storedConfig.ofacEnabled).to.equal(newVerificationConfig.ofacEnabled);
+        expect(storedConfig.ofacEnabled).to.deep.equal(newVerificationConfig.ofacEnabled);
     });
 
     it("should not able to set verification config by non-owner", async () => {
@@ -577,7 +577,7 @@ describe("Airdrop", () => {
             olderThan: 25,
             forbiddenCountriesEnabled: false,
             forbiddenCountriesListPacked: countriesListPacked,
-            ofacEnabled: false
+            ofacEnabled: [false, false, false]
         };
 
         await expect(airdrop.connect(user1).setVerificationConfig(newVerificationConfig))
@@ -591,7 +591,7 @@ describe("Airdrop", () => {
         expect(config.olderThan).to.equal(20);
         expect(config.forbiddenCountriesEnabled).to.equal(true);
         expect(config.forbiddenCountriesListPacked).to.equal(countriesListPacked);
-        expect(config.ofacEnabled).to.equal(true);
+        expect(config.ofacEnabled).to.deep.equal([true, true, true]);
     });
 
 });

@@ -157,7 +157,7 @@ describe("End to End Tests", function () {
             olderThan: "20",
             forbiddenCountriesEnabled: true,
             forbiddenCountriesListPacked: countriesListPacked,
-            ofacEnabled: true,
+            ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
             vcAndDiscloseProof: vcAndDiscloseProof
         }
 
@@ -187,7 +187,7 @@ describe("End to End Tests", function () {
             20,
             true,
             countriesListPacked,
-            true,
+            [true, true, true],
         );
         await airdrop.waitForDeployment();
 

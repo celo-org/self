@@ -147,14 +147,24 @@ library CircuitAttributeHandler {
     }
 
     /**
-     * @notice Compares all OFAC check values to ensure they all pass.
+     * @notice Performs selective OFAC checks based on provided flags.
      * @param charcodes The byte array containing passport attribute data.
-     * @return True if all OFAC checks pass (equal 1), false otherwise.
+     * @param checkPassportNo Whether to check the passport number OFAC status.
+     * @param checkNameAndDob Whether to check the name and date of birth OFAC status.
+     * @param checkNameAndYob Whether to check the name and year of birth OFAC status.
+     * @return True if all enabled checks pass (equal 1), false if any enabled check fails.
+     * @dev Checks are only performed for flags that are set to true. If a flag is false,
+     * that particular check is considered to have passed regardless of its actual value.
      */
-    function compareOfac(bytes memory charcodes) internal pure returns (bool) {
-        return getPassportNoOfac(charcodes) == 1 &&
-               getNameAndDobOfac(charcodes) == 1 &&
-               getNameAndYobOfac(charcodes) == 1;
+    function compareOfac(
+        bytes memory charcodes,
+        bool checkPassportNo,
+        bool checkNameAndDob,
+        bool checkNameAndYob
+    ) internal pure returns (bool) {
+        return (!checkPassportNo || getPassportNoOfac(charcodes) == 1) &&
+               (!checkNameAndDob || getNameAndDobOfac(charcodes) == 1) &&
+               (!checkNameAndYob || getNameAndYobOfac(charcodes) == 1);
     }
 
     /**
