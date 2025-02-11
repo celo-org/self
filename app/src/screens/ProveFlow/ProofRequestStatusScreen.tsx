@@ -73,7 +73,9 @@ const SuccessScreen: React.FC = () => {
           <Title size="large">{getTitle(status)}</Title>
           <Info status={status} appName={appName} />
         </View>
-        <PrimaryButton disabled={status==='pending'} onPress={onOkPress}>OK</PrimaryButton>
+        <PrimaryButton disabled={status === 'pending'} onPress={onOkPress}>
+          OK
+        </PrimaryButton>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
