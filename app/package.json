@@ -18,8 +18,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "nice": "yarn fmt:fix && yarn lint:fix",
-    "start": "watchman watch-del-all && react-native start",
     "reinstall": "yarn clean && yarn install && yarn install-app",
+    "start": "watchman watch-del-all && react-native start",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
