@@ -11,7 +11,9 @@ import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700, white } from '../utils/colors';
 import { advercase, dinot } from '../utils/fonts';
 
-const LaunchScreen: React.FC = () => {
+interface LaunchScreenProps {}
+
+const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
   const onStartPress = useHapticNavigation('Start');
 
   return (

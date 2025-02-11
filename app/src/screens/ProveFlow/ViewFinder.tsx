@@ -21,6 +21,8 @@ import useUserStore from '../../stores/userStore';
 import { black, slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
+interface QRCodeViewFinderScreenProps {}
+
 // TODO: replace this with proper tested lib
 // or react-native-url-polyfill -> new URL(uri)
 const parseUrlParams = (url: string): Map<string, string> => {
@@ -35,7 +37,7 @@ const parseUrlParams = (url: string): Map<string, string> => {
   return params;
 };
 
-const QRCodeViewFinderScreen = ({}) => {
+const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const store = useUserStore();
@@ -60,42 +62,44 @@ const QRCodeViewFinderScreen = ({}) => {
   const onCancelPress = useHapticNavigation('Home', 'cancel');
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
-        {!doneScanningQR && (
-          <>
-            <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
-            <LottieView
-              autoPlay
-              loop
-              source={qrScanAnimation}
-              style={styles.animation}
-              cacheComposition={true}
-              renderMode="HARDWARE"
-            />
-          </>
-        )}
-        {null}
-      </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection>
-        <YStack alignItems="center" gap="$2.5" paddingBottom={20}>
-          <YStack alignItems="center" gap="$6" pb="$2.5">
-            <Title>Verify your ID</Title>
-            <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
-              <View pt="$2">
-                <QRScan height={40} width={40} color={slate800} />
-              </View>
-              <View maxWidth="75%">
-                <Description style={styles.subheader}>
-                  Scan a partner's QR code
-                </Description>
-                <Additional style={styles.description}>
-                  Look for a QR code from a Self partner and position it in the
-                  camera frame above.
-                </Additional>
-              </View>
-            </XStack>
-          </YStack>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor={black} />
+      <ExpandableBottomLayout.Layout>
+        <ExpandableBottomLayout.TopSection roundTop>
+          {!doneScanningQR && (
+            <>
+              <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
+              <LottieView
+                autoPlay
+                loop
+                source={qrScanAnimation}
+                style={styles.animation}
+                cacheComposition={true}
+                renderMode="HARDWARE"
+              />
+            </>
+          )}
+          {null}
+        </ExpandableBottomLayout.TopSection>
+        <ExpandableBottomLayout.BottomSection>
+          <YStack alignItems="center" gap="$2.5" paddingBottom={20}>
+            <YStack alignItems="center" gap="$6" pb="$2.5">
+              <Title>Verify your ID</Title>
+              <XStack gap="$6" alignSelf="flex-start" alignItems="flex-start">
+                <View pt="$2">
+                  <QRScan height={40} width={40} color={slate800} />
+                </View>
+                <View maxWidth="75%">
+                  <Description style={styles.subheader}>
+                    Scan a partner's QR code
+                  </Description>
+                  <Additional style={styles.description}>
+                    Look for a QR code from a Self partner and position it in
+                    the camera frame above.
+                  </Additional>
+                </View>
+              </XStack>
+            </YStack>
 
             <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
           </YStack>
