@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import "../libraries/Formatter.sol";
+import {Formatter} from "../libraries/Formatter.sol";
 
 contract TestFormatter {
     // tested
