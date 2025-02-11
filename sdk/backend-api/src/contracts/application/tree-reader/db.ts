@@ -120,6 +120,7 @@ export async function getTreeFromDB(type: string) {
 /// @notice set the tree in the db, we only need to store the latest tree in the db and update it's value
 export async function setTreeInDB(type: string, tree: string) {
     try {
+        console.log("Attempting to write tree for type:", type, "with tree:", tree);
         const query = `
             INSERT INTO trees (type, tree_data)
             VALUES ($1, $2)
@@ -128,10 +129,11 @@ export async function setTreeInDB(type: string, tree: string) {
                 tree_data = $2,
                 updated_at = CURRENT_TIMESTAMP
         `;
-        await queryWithRetry(query, [type, tree]);
+        const result = await queryWithRetry(query, [type, tree]);
+        console.log("setTreeInDB result:", result);
         return true;
     } catch (error) {
-        console.error('Error setting tree:', error);
+        console.error("Error setting tree:", error);
         return false;
     }
 }
