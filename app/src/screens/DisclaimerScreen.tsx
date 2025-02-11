@@ -3,17 +3,16 @@ import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Text, YStack } from 'tamagui';
+import { YStack } from 'tamagui';
 
 import warningAnimation from '../assets/animations/warning.json';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
+import Caution from '../components/typography/Caution';
+import { SubHeader } from '../components/typography/SubHeader';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
 import { white } from '../utils/colors';
 import { confirmTap, notificationWarning } from '../utils/haptic';
-import { BodyText } from '../components/typography/BodyText';
-import Caution from '../components/typography/Caution';
-import { dinot } from '../utils/fonts';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -35,7 +34,7 @@ const DisclaimerScreen: React.FC = () => {
           renderMode="HARDWARE"
         />
         <YStack f={1} jc="flex-end" pb="$4">
-          <Text style={styles.subheader}>Caution</Text>
+          <SubHeader style={{ color: white }}>Caution</SubHeader>
         </YStack>
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -71,15 +70,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '125%',
     height: '125%',
-  },
-  subheader: {
-    fontFamily: dinot,
-    color: white,
-    fontSize: 15,
-    fontWeight: '500',
-    lineHeight: 18,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-    textAlign: 'center',
   },
 });
