@@ -10,8 +10,9 @@ library Formatter {
     error InvalidAsciiCode();
     error InvalidMonthRange();
     error InvalidDayRange();
-
+    error InvalidFieldElement();
     uint256 constant MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
+    uint256 constant SNARK_SCALAR_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
     /**
      * @notice Formats a full name string into first name(s) and last name.
@@ -118,6 +119,13 @@ library Formatter {
     function fieldElementsToBytes(
         uint256[3] memory publicSignals
     ) internal pure returns (bytes memory) {
+        if (
+            publicSignals[0] >= SNARK_SCALAR_FIELD ||
+            publicSignals[1] >= SNARK_SCALAR_FIELD ||
+            publicSignals[2] >= SNARK_SCALAR_FIELD
+        ) {
+            revert InvalidFieldElement();
+        }
         uint8[3] memory bytesCount = [31, 31, 29];
         bytes memory bytesArray = new bytes(91);
 
@@ -148,6 +156,10 @@ library Formatter {
             string[MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH] memory forbiddenCountries
         )
     {
+        if (publicSignal >= SNARK_SCALAR_FIELD) {
+            revert InvalidFieldElement();
+        }
+        
         for (uint256 j = 0; j < MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH; j++) {
             uint256 byteIndex = j * 3;
 

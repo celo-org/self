@@ -128,6 +128,16 @@ describe("Formatter", function () {
             const tsResult =toHexString(Formatter.fieldElementsToBytes(input as [bigint, bigint, bigint]));
             expect(contractResult).to.deep.equal(tsResult);
         });
+
+        it("should revert when field element is out of range", async function () {
+            const input = [
+                21888242871839275222246405745257275088548364400416034343698204186575808495617n,
+                0n,
+                0n
+            ] as [bigint, bigint, bigint];
+            await expect(testFormatter.testFieldElementsToBytes(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidFieldElement");
+        });
     });
 
     describe("extractForbiddenCountriesFromPacked", function () {
@@ -139,6 +149,12 @@ describe("Formatter", function () {
             expect(contractResult[0]).to.equal("CCC");
             expect(contractResult[1]).to.equal("BBB");
             expect(contractResult[2]).to.equal("AAA");
+        });
+
+        it("should revert when field element is out of range", async function () {
+            const input = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+            await expect(testFormatter.testExtractForbiddenCountriesFromPacked(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidFieldElement");
         });
     });
 
