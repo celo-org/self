@@ -1,12 +1,12 @@
 {
   "name": "openpassport-common",
   "version": "0.0.1",
-  "author": "",
   "license": "MIT",
+  "author": "",
   "scripts": {
-    "test": "yarn ts-mocha tests/**/*.test.ts --exit",
     "format": "prettier --write .",
-    "lint": "prettier --check ."
+    "lint": "prettier --check .",
+    "test": "yarn ts-mocha tests/**/*.test.ts --exit"
   },
   "dependencies": {
     "@babel/runtime": "^7.23.4",
@@ -33,6 +33,7 @@
     "path": "^0.12.7",
     "pkijs": "^3.2.4",
     "poseidon-lite": "^0.2.0",
+    "snarkjs": "^0.7.5",
     "ts-mocha": "^10.0.0",
     "typescript-parser": "^2.6.1"
   },

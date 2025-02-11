@@ -1,31 +1,73 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { View, ViewProps } from 'tamagui';
 
 import { black, white } from '../utils/colors';
 
-interface ExpandableBottomLayoutProps {
+interface ExpandableBottomLayoutProps extends ViewProps {
+  children: React.ReactNode;
+  backgroundColor?: string;
+  unsafeArea?: boolean;
+}
+
+interface TopSectionProps extends ViewProps {
+  children: React.ReactNode;
+  roundTop?: boolean;
+}
+
+interface BottomSectionProps extends ViewProps {
   children: React.ReactNode;
 }
 
-interface TopSectionProps {
-  children: React.ReactNode;
-}
-
-interface BottomSectionProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<ExpandableBottomLayoutProps> = ({ children }) => {
-  return <SafeAreaView style={styles.layout}>{children}</SafeAreaView>;
+const Layout: React.FC<ExpandableBottomLayoutProps> = ({
+  children,
+  backgroundColor,
+  unsafeArea,
+}) => {
+  if (unsafeArea) {
+    return (
+      <View flex={1} flexDirection="column">
+        {children}
+      </View>
+    );
+  }
+  return (
+    <SafeAreaView style={[styles.layout, { backgroundColor }]}>
+      {children}
+    </SafeAreaView>
+  );
 };
 
-const TopSection: React.FC<TopSectionProps> = ({ children }) => {
-  return <View style={styles.topSection}>{children}</View>;
+const TopSection: React.FC<TopSectionProps> = ({
+  children,
+  backgroundColor,
+  ...props
+}) => {
+  return (
+    <View
+      {...props}
+      style={[
+        styles.topSection,
+        props.roundTop && styles.roundTop,
+        backgroundColor && { backgroundColor: backgroundColor as string },
+      ]}
+    >
+      {children}
+    </View>
+  );
 };
 
-const BottomSection: React.FC<BottomSectionProps> = ({ children }) => {
-  return <View style={styles.bottomSection}>{children}</View>;
+const BottomSection: React.FC<BottomSectionProps> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <View {...props} style={styles.bottomSection}>
+      {children}
+    </View>
+  );
 };
 
 /**
@@ -53,6 +95,13 @@ export const ExpandableBottomLayout = {
 };
 
 const styles = StyleSheet.create({
+  roundTop: {
+    marginTop: 12,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopStartRadius: 20,
+    borderTopEndRadius: 20,
+  },
   layout: {
     height: '100%',
     flexDirection: 'column',

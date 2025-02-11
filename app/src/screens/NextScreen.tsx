@@ -9,7 +9,8 @@ import CustomButton from '../components/CustomButton';
 import USER_PROFILE from '../images/user_profile.png';
 import useUserStore from '../stores/userStore';
 import { bgGreen, textBlack } from '../utils/colors';
-import { sendRegisterPayload } from '../utils/proving/payload';
+import { confirmTap } from '../utils/haptic';
+import { sendDscPayload, sendRegisterPayload } from '../utils/proving/payload';
 import { formatAttribute, getFirstName, maskString } from '../utils/utils';
 
 const NextScreen: React.FC = () => {
@@ -18,7 +19,7 @@ const NextScreen: React.FC = () => {
   const navigation = useNavigation();
   const handleNext = () => {
     setRegistered(true);
-    navigation.navigate('Home');
+    navigation.navigate('ConfirmBelongingScreen');
   };
   const dataHidden = false;
   const disclosureOptions: any = {
@@ -130,10 +131,19 @@ const NextScreen: React.FC = () => {
 
       <YStack f={1} />
       <CustomButton
-        onPress={async () =>
-          passportData && (await sendRegisterPayload(passportData))
-        }
-        text="TEE PROVING"
+        onPress={async () => {
+          confirmTap();
+          passportData && (await sendRegisterPayload(passportData));
+        }}
+        text="TEE PROVING REGISTER"
+        Icon={<Cpu color={textBlack} />}
+      />
+      <CustomButton
+        onPress={async () => {
+          confirmTap();
+          passportData && (await sendDscPayload(passportData));
+        }}
+        text="TEE PROVING DSC"
         Icon={<Cpu color={textBlack} />}
       />
 

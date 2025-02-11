@@ -1,19 +1,37 @@
 {
   "name": "@openpassport/core",
   "version": "0.0.12",
-  "main": "dist/sdk/core/index.js",
-  "types": "dist/sdk/core/index.d.ts",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/zk-passport/openpassport"
   },
+  "license": "MIT",
   "author": "turnoffthiscomputer",
+  "main": "dist/sdk/core/index.js",
+  "types": "dist/sdk/core/index.d.ts",
+  "files": [
+    "dist",
+    "common",
+    "circuits/**/*.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "download-circuits": "cd ../circuits && ./scripts/download_circuits_from_aws.sh && cd ../sdk",
+    "format": "prettier --write .",
+    "install-sdk": "cd ../common && yarn && cd ../sdk && yarn",
+    "lint": "prettier --check .",
+    "prepublishOnly": "npm run build",
+    "test": "yarn ts-mocha -p ./tsconfig.json tests/openPassportVerifier.test.ts --exit"
+  },
   "dependencies": {
+    "@openpassport/zk-kit-imt": "^0.0.5",
+    "@openpassport/zk-kit-lean-imt": "^0.0.6",
+    "@openpassport/zk-kit-smt": "^0.0.1",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
     "@types/uuid": "^10.0.0",
     "elliptic": "^6.5.7",
+    "ethers": "^6.13.5",
     "fs": "^0.0.1-security",
     "js-sha1": "^0.7.0",
     "js-sha256": "^0.11.0",
@@ -26,10 +44,7 @@
     "poseidon-lite": "^0.2.0",
     "snarkjs": "^0.7.4",
     "uuid": "^10.0.0",
-    "zlib": "^1.0.5",
-    "@openpassport/zk-kit-imt": "^0.0.5",
-    "@openpassport/zk-kit-lean-imt": "^0.0.6",
-    "@openpassport/zk-kit-smt": "^0.0.1"
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@types/chai": "^4.3.6",
@@ -53,25 +68,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build",
-    "test": "yarn ts-mocha -p ./tsconfig.json tests/openPassportVerifier.test.ts --exit",
-    "install-sdk": "cd ../common && yarn && cd ../sdk && yarn",
-    "download-circuits": "cd ../circuits && ./scripts/download_circuits_from_aws.sh && cd ../sdk",
-    "format": "prettier --write .",
-    "lint": "prettier --check ."
-  },
-  "files": [
-    "dist",
-    "common",
-    "circuits/**/*.json"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

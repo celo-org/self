@@ -4,24 +4,32 @@ import {
   NativeEventEmitter,
   NativeModules,
   Platform,
-  Text,
+  StyleSheet,
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
 
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  usePreventRemove,
+} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
 
+import passportVerifyAnimation from '../../assets/animations/passport_verify.json';
 import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
+import { BodyText } from '../../components/typography/BodyText';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
+import useHapticNavigation from '../../hooks/useHapticNavigation';
 import NFC_IMAGE from '../../images/nfc.png';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { slate100 } from '../../utils/colors';
+import { black, slate100 } from '../../utils/colors';
+import { buttonTap } from '../../utils/haptic';
 import { scan } from '../../utils/nfcScannerNew';
 
 interface PassportNFCScanScreenProps {}
@@ -38,7 +46,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   const [isNfcSupported, setIsNfcSupported] = useState(true);
   const [isNfcEnabled, setIsNfcEnabled] = useState(true);
   const [isNfcSheetOpen, setIsNfcSheetOpen] = useState(false);
-  const [scanningMessage, setScanningMessage] = useState('');
+
+  usePreventRemove(true, () => {});
 
   const checkNfcSupport = useCallback(async () => {
     const isSupported = await NfcManager.isSupported();
@@ -59,14 +68,15 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
     }
   }, []);
 
-  const onPress = useCallback(async () => {
+  const onVerifyPress = useCallback(async () => {
+    buttonTap();
     if (isNfcEnabled) {
       try {
         setIsNfcSheetOpen(true);
         await scan({ passportNumber, dateOfBirth, dateOfExpiry });
         // Feels better somehow
         await new Promise(resolve => setTimeout(resolve, 1000));
-        navigation.navigate('NextScreen');
+        navigation.navigate('ConfirmBelongingScreen');
       } catch (e) {
         console.log(e);
       } finally {
@@ -80,6 +90,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       }
     }
   }, [isNfcSupported, isNfcEnabled, passportNumber, dateOfBirth, dateOfExpiry]);
+  const onCancelPress = useHapticNavigation('PassportCamera', 'cancel');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _cancelScanIfRunning = useCallback(async () => {
@@ -94,7 +105,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       if (Platform.OS === 'android' && emitter) {
         const subscription = emitter.addListener(
           'NativeEvent',
-          (event: string) => setScanningMessage(event),
+          (event: string) => console.info(event),
         );
 
         return () => {
@@ -105,17 +116,15 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   );
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection roundTop backgroundColor={slate100}>
         <LottieView
           autoPlay
           loop={false}
-          source={require('../../assets/animations/passport_verify.json')}
-          style={{
-            backgroundColor: slate100,
-            width: '115%',
-            height: '115%',
-          }}
+          source={passportVerifyAnimation}
+          style={styles.animation}
+          cacheComposition={true}
+          renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
@@ -123,9 +132,11 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           <>
             <TextsContainer>
               <Title children="Ready to scan" />
-              <Description children={scanningMessage} />
+              <BodyText textAlign="center">
+                Hold your device near the NFC tag and stop moving when it
+                vibrates.
+              </BodyText>
             </TextsContainer>
-
             <Image
               h="$8"
               w="$8"
@@ -134,11 +145,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               source={{
                 uri: NFC_IMAGE,
               }}
+              margin={20}
             />
-            <Text>
-              Hold your device near the NFC tag and stop moving when it
-              vibrates.
-            </Text>
           </>
         ) : (
           <>
@@ -153,16 +161,12 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
               />
             </TextsContainer>
             <ButtonsContainer>
-              <PrimaryButton onPress={onPress} disabled={!isNfcSupported}>
+              <PrimaryButton onPress={onVerifyPress} disabled={!isNfcSupported}>
                 {isNfcEnabled || !isNfcSupported
                   ? 'Start Scan'
                   : 'Open settings'}
               </PrimaryButton>
-              <SecondaryButton
-                onPress={() => navigation.navigate('PassportCamera')}
-              >
-                Cancel
-              </SecondaryButton>
+              <SecondaryButton onPress={onCancelPress}>Cancel</SecondaryButton>
             </ButtonsContainer>
           </>
         )}
@@ -172,3 +176,11 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
 };
 
 export default PassportNFCScanScreen;
+
+const styles = StyleSheet.create({
+  animation: {
+    color: slate100,
+    width: '115%',
+    height: '115%',
+  },
+});
