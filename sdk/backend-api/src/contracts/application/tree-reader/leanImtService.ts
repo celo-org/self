@@ -55,7 +55,9 @@ export class MerkleTreeService {
 
         for (const event of events) {
             console.log('Processing commitment:', event.commitment);
-            if (event.index > index) {
+            console.log('Event index:', event.index);
+            console.log('Last index:', index);
+            if (event.index > parseInt(index)) {
                 this.insertCommitment(event.commitment);
             }
         }
