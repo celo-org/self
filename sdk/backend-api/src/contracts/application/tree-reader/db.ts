@@ -107,13 +107,23 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
 /// @notice retrieve the tree from the db
 export async function getTreeFromDB(type: string) {
     try {
+        console.log("\n=== Reading Tree from DB ===");
+        console.log("Type:", type);
+
         const query = 'SELECT tree_data FROM trees WHERE type = $1';
         const result = await queryWithRetry(query, [type]);
+
+        console.log("DB Read Result:", {
+            rowCount: result.rowCount,
+            hasData: result.rows.length > 0
+        });
 
         if (result.rows.length === 0) return null;
         return result.rows[0].tree_data;
     } catch (error) {
-        console.error('Error getting tree:', error);
+        console.error("\n=== Error Reading Tree from DB ===");
+        console.error("Type:", type);
+        console.error("Error:", error);
         return null;
     }
 }
@@ -121,7 +131,11 @@ export async function getTreeFromDB(type: string) {
 /// @notice set the tree in the db, we only need to store the latest tree in the db and update it's value
 export async function setTreeInDB(type: string, tree: string) {
     try {
-        console.log("Attempting to write tree for type:", type, "with tree:", tree);
+        console.log("\n=== Writing Tree to DB ===");
+        console.log("Type:", type);
+        console.log("Tree length:", tree?.length || 0);
+        console.log("Tree preview:", tree?.substring(0, 100) + "...");
+
         const query = `
             INSERT INTO trees (type, tree_data)
             VALUES ($1, $2)
@@ -129,12 +143,19 @@ export async function setTreeInDB(type: string, tree: string) {
             DO UPDATE SET 
                 tree_data = $2,
                 updated_at = CURRENT_TIMESTAMP
+            RETURNING *
         `;
+
         const result = await queryWithRetry(query, [type, tree]);
-        console.log("setTreeInDB result:", result);
+        console.log("DB Write Result:", {
+            rowCount: result.rowCount,
+            rows: result.rows
+        });
         return true;
     } catch (error) {
-        console.error("Error setting tree:", error);
+        console.error("\n=== Error Writing Tree to DB ===");
+        console.error("Type:", type);
+        console.error("Error:", error);
         return false;
     }
 }
