@@ -6,6 +6,7 @@ import {
   Text,
   ViewStyle,
 } from 'react-native';
+
 import { dinot } from '../../utils/fonts';
 
 export interface ButtonProps extends PressableProps {
