@@ -14,7 +14,7 @@ import { advercase, dinot } from '../utils/fonts';
 interface LaunchScreenProps {}
 
 const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
-  const onStartPress = useHapticNavigation('Start');
+  const onStartPress = useHapticNavigation('PassportCamera');
 
   return (
     <ExpandableBottomLayout.Layout>
