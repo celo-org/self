@@ -8,14 +8,9 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432'),
+    ssl: { rejectUnauthorized: false },
 });
-console.log({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || '5432'),
-});
+
 /// @notice retrieve the event with the highest index from the db and return the block number
 export async function getLastEventBlockFromDB(type: string) {
     try {
