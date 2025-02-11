@@ -16,7 +16,7 @@ describe("CircuitAttributeHandler", function () {
         "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<" +
         "L898902C36UTO7408122F1204159ZE184226B<<<<<1018"
     );
-    const sampleMRZ = new Uint8Array([...mrz, 1]);
+    const sampleMRZ = new Uint8Array([...mrz, 1, 1, 1]);
 
     describe("getIssuingState", function () {
         it("should match contract and ts implementation", async function () {
@@ -104,12 +104,22 @@ describe("CircuitAttributeHandler", function () {
         });
     });
 
-    describe("getOfac and compareOfac", function () {
-        it("should match contract and ts implementation for getOfac", async function () {
-            const contractResult = await testHandler.testGetOfac(sampleMRZ);
-            const tsResult = CircuitAttributeHandler.getOfac(sampleMRZ);
+    describe("getPassportNoOfac, getNameAndDobOfac, getNameAndYobOfac and compareOfac", function () {
+        it("should match contract and ts implementation for getPassportNoOfac, getNameAndDobOfac, getNameAndYobOfac", async function () {
+            const contractResult = await testHandler.testGetPassportNoOfac(sampleMRZ);
+            const tsResult = CircuitAttributeHandler.getPassportNoOfac(sampleMRZ);
             expect(contractResult).to.equal(tsResult);
             expect(contractResult).to.equal(1);
+
+            const contractResult2 = await testHandler.testGetNameAndDobOfac(sampleMRZ);
+            const tsResult2 = CircuitAttributeHandler.getNameAndDobOfac(sampleMRZ);
+            expect(contractResult2).to.equal(tsResult2);
+            expect(contractResult2).to.equal(1);
+
+            const contractResult3 = await testHandler.testGetNameAndYobOfac(sampleMRZ);
+            const tsResult3 = CircuitAttributeHandler.getNameAndYobOfac(sampleMRZ);
+            expect(contractResult3).to.equal(tsResult3);
+            expect(contractResult3).to.equal(1);
         });
 
         it("should match contract and ts implementation for compareOfac", async function () {

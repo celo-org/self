@@ -52,6 +52,8 @@ describe("Airdrop", () => {
             "20",
             undefined,
             undefined,
+            undefined,
+            undefined,
             forbiddenCountriesList,
             (await deployedActors.user1.getAddress()).slice(2)
         );
@@ -302,8 +304,8 @@ describe("Airdrop", () => {
 
         const hashFunction = (a: bigint, b: bigint) => poseidon2([a, b]);
         const invalidImt = new LeanIMT<bigint>(hashFunction);
-        await invalidImt.insert(BigInt(commitment));
-        await invalidImt.insert(BigInt(secondCommitment));
+        invalidImt.insert(BigInt(commitment));
+        invalidImt.insert(BigInt(secondCommitment));
 
         vcAndDiscloseProof = await generateVcAndDiscloseProof(
             registerSecret,
@@ -314,6 +316,8 @@ describe("Airdrop", () => {
             "1",
             invalidImt,
             "20",
+            undefined,
+            undefined,
             undefined,
             undefined,
             forbiddenCountriesList,

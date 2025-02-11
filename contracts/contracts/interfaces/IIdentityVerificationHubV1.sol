@@ -25,7 +25,9 @@ interface IIdentityVerificationHubV1 {
         GENDER,            // The gender.
         EXPIRY_DATE,       // The passport expiry date.
         OLDER_THAN,        // The "older than" age verification value.
-        OFAC               // The OFAC status (e.g., designated persons/entities).
+        PASSPORT_NO_OFAC,  // The passport number OFAC status.
+        NAME_AND_DOB_OFAC, // The name and date of birth OFAC status.
+        NAME_AND_YOB_OFAC  // The name and year of birth OFAC status.
     }
 
     /**
@@ -58,7 +60,9 @@ interface IIdentityVerificationHubV1 {
      * @param gender The gender.
      * @param expiryDate Formatted expiration date.
      * @param olderThan The verified "older than" age.
-     * @param ofac The OFAC verification result.
+     * @param passportNoOfac The passport number OFAC verification result.
+     * @param nameAndDobOfac The name and date of birth OFAC verification result.
+     * @param nameAndYobOfac The name and year of birth OFAC verification result.
      */
     struct ReadableRevealedData {
         string issuingState;
@@ -69,7 +73,9 @@ interface IIdentityVerificationHubV1 {
         string gender;
         string expiryDate;
         uint256 olderThan;
-        uint256 ofac;
+        uint256 passportNoOfac;
+        uint256 nameAndDobOfac;
+        uint256 nameAndYobOfac;
     }
 
     /**
