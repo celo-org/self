@@ -69,6 +69,7 @@ export default LaunchScreen;
 
 const styles = StyleSheet.create({
   subheader: {
+    fontFamily: 'DINOT-Medium',
     color: slate700,
     fontWeight: '500',
     fontSize: 20,
