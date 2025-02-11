@@ -63,6 +63,8 @@ abstract contract PassportAirdropRoot is
     error InvalidScope();
     /// @dev Reverts if the identity root timestamp is not valid.
     error InvalidTimestamp();
+    /// @dev Reverts if the user identifier is not valid.
+    error InvalidUserIdentifier();
 
     /**
      * @notice Initializes the PassportAirdropRoot contract.
@@ -126,6 +128,10 @@ abstract contract PassportAirdropRoot is
 
         if (_attestationId != proof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX]) {
             revert InvalidAttestationId();
+        }
+        
+        if (proof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_USER_IDENTIFIER_INDEX] == 0) {
+            revert InvalidUserIdentifier();
         }
 
         IIdentityVerificationHubV1.VcAndDiscloseVerificationResult memory result = _identityVerificationHub.verifyVcAndDisclose(
