@@ -6,7 +6,7 @@ import { View, ViewProps } from 'tamagui';
 
 import { black, white } from '../utils/colors';
 
-interface ExpandableBottomLayoutProps extends ViewProps  {
+interface ExpandableBottomLayoutProps extends ViewProps {
   children: React.ReactNode;
   backgroundColor?: string;
 }
