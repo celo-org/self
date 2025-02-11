@@ -15,11 +15,16 @@ export class MerkleTreeService {
     }
 
     private async initializeTree() {
+        console.log(`Initializing ${this.type} tree`);
         const treeFromDB = await getTreeFromDB(this.type);
         if (treeFromDB) {
+            console.log(`${this.type} tree found in DB, importing`);
             const hashFunction = (a: any, b: any) => poseidon2([a, b]);
             const tree = LeanIMT.import(hashFunction, treeFromDB);
             this.imt = tree;
+        }
+        else {
+            console.log(`${this.type} tree not found in DB, initializing from contract`);
         }
         await this.checkForUpdates();
     }
@@ -58,8 +63,6 @@ export class MerkleTreeService {
                 throw new Error('Invalid tree type');
         }
 
-        console.log('Total events to process:', events.length - 1);
-
         for (const event of events) {
             if (event.index > lastEventIndex) {
                 this.insertCommitment(event.commitment);
@@ -86,8 +89,11 @@ export class MerkleTreeService {
     private async checkForUpdates() {
         const contractRoot = await getContractInstanceRoot(this.type);
         if (contractRoot !== this.getRoot()) {
-            console.log('Root are different, checking for events');
+            console.log(`${this.type} root are different, checking for events`);
             await this.checkForEvents();
+        }
+        else {
+            console.log(`${this.type} root match, no events to check`);
         }
     }
 
