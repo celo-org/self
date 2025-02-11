@@ -8,6 +8,8 @@ pragma solidity ^0.8.28;
 library Formatter {
     error InvalidDateLength();
     error InvalidAsciiCode();
+    error InvalidMonthRange();
+    error InvalidDayRange();
 
     uint256 constant MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
 
@@ -67,9 +69,23 @@ library Formatter {
     function formatDate(
         string memory date
     ) internal pure returns (string memory) {
-        // Ensure the date string is the correct length.
-        if (bytes(date).length != 6) {
+        bytes memory dateBytes = bytes(date);
+        if (dateBytes.length != 6) {
             revert InvalidDateLength();
+        }
+
+        if (dateBytes[2] > '1' || (dateBytes[2] == '1' && dateBytes[3] > '2')) {
+            revert InvalidMonthRange();
+        }
+
+        if (dateBytes[4] > '3' || (dateBytes[4] == '3' && dateBytes[5] > '1')) {
+            revert InvalidDayRange();
+        }
+
+        for (uint i = 0; i < 6; i++) {
+            if (dateBytes[i] < '0' || dateBytes[i] > '9') {
+                revert InvalidAsciiCode();
+            }
         }
 
         string memory year = substring(date, 0, 2);

@@ -50,6 +50,46 @@ describe("Formatter", function () {
             expect(() => Formatter.formatDate(input))
                 .to.throw("InvalidDateLength");
         });
+
+        it("should handle errors consistently when month is out of range", async function () {
+            const input = "941331";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidMonthRange");
+        });
+
+        it("should handle errors consistently when month is out of range (more than 20)", async function () {
+            const input = "942032";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidMonthRange");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidMonthRange");
+        });
+
+        it("should handle errors consistently when day is out of range (more than 31)", async function () {
+            const input = "940132";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidDayRange");
+        });
+
+        it("should handle errors consistently when day is out of range (more than 40)", async function () {
+            const input = "940140";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidDayRange");
+        });
+
+        it("should handle errors consistently when input is not a number", async function () {
+            const input = "94012a";
+            await expect(testFormatter.testFormatDate(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidAsciiCode");
+            expect(() => Formatter.formatDate(input))
+                .to.throw("InvalidAsciiCode");
+        });
     });
 
     describe("numAsciiToUint", function () {
