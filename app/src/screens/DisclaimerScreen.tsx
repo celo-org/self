@@ -10,6 +10,7 @@ import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
 import { slate700, white } from '../utils/colors';
 import { confirmTap, notificationWarning } from '../utils/haptic';
+import { dinot } from '../utils/fonts';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
   subheader: {
     color: white,
-    fontFamily: 'DINOT-Medium',
+    fontFamily: dinot,
     fontSize: 15,
     fontWeight: '500',
     lineHeight: 18,
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   },
   disclaimer: {
     color: slate700,
-    fontFamily: 'DINOT-Medium',
+    fontFamily: dinot,
     fontSize: 18,
     fontWeight: '500',
   },
