@@ -1,10 +1,12 @@
 import React, { PropsWithChildren, useCallback } from 'react';
-import { Linking, Share } from 'react-native';
+import { Linking, Platform, Share } from 'react-native';
+import { getCountry, getLocales, getTimeZone } from 'react-native-localize';
 import { SvgProps } from 'react-native-svg';
 
 import { useNavigation } from '@react-navigation/native';
 import { Button, XStack, YStack } from 'tamagui';
 
+import { version } from '../../package.json';
 import { BodyText } from '../components/typography/BodyText';
 import Github from '../images/icons/github.svg';
 import Cloud from '../images/icons/settings_cloud_backup.svg';
@@ -31,19 +33,24 @@ interface SocialButtonProps {
   href: string;
 }
 
-type RouteOption = keyof ReactNavigation.RootParamList | 'share';
+const emailFeedback = 'feedback@self.xyz';
+type RouteOption =
+  | keyof ReactNavigation.RootParamList
+  | 'share'
+  | 'email_feedback';
 
+const storeURL = Platform.OS === 'ios' ? 'TODO: ios URL' : 'TODO: android URL';
 const routes = [
   [Data, 'View passport info', 'TODO: passportinfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Enable cloud back up', 'TODO: backup'],
-  [Feedback, 'Send feeback', 'TODO: feedback'],
+  [Cloud, 'Enable cloud back up', 'CloudBackupSettingsScreen'],
+  [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];
 
 const social = [
-  [Github, 'http://github.com/celo-org/self'],
-  [Web, 'https://www.openpassport.app/'],
+  [Github, 'https://github.com/selfxyz/self'],
+  [Web, 'https://www.self.xyz/'],
   [Telegram, 'TODO: Telegram URL?'],
 ] as [React.FC<SvgProps>, string][];
 
@@ -82,11 +89,47 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
   const navigation = useNavigation();
   const onMenuPress = useCallback(
     (menuRoute: RouteOption) => {
-      return () => {
-        if (menuRoute === 'share') {
-          Share.share('TODO: WHAT ARE WE SHARING?');
-        } else {
-          navigation.navigate(menuRoute);
+      return async () => {
+        switch (menuRoute) {
+          case 'share':
+            await Share.share(
+              Platform.OS === 'android'
+                ? { message: `Install Self App ${storeURL}` }
+                : { url: storeURL, message: 'Install Self App' },
+            );
+            break;
+
+          case 'email_feedback':
+            const subject = 'SELF App Feedback';
+            const deviceInfo = [
+              ['device', `${Platform.OS}@${Platform.Version}`],
+              ['app', `v${version}`],
+              [
+                'locales',
+                getLocales()
+                  .map(locale => `${locale.languageCode}-${locale.countryCode}`)
+                  .join(','),
+              ],
+              ['country', getCountry()],
+              ['tz', getTimeZone()],
+              ['ts', new Date()],
+              ['origin', 'settings/feedback'],
+            ] as [string, string][];
+
+            const body = `
+---
+${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
+---`;
+            await Linking.openURL(
+              `mailto:${emailFeedback}?subject=${encodeURIComponent(
+                subject,
+              )}&body=${encodeURIComponent(body)}`,
+            );
+            break;
+
+          default:
+            navigation.navigate(menuRoute);
+            break;
         }
       };
     },
