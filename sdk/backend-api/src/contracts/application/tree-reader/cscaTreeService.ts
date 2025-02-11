@@ -9,10 +9,8 @@ export async function getCscaTree() {
     tree.setNodes(serialized_csca_tree);
     const localRoot = tree.root;
     const contractRoot = await getContractInstanceRoot('csca');
-    console.log('localRoot', localRoot);
-    console.log('contractRoot', contractRoot);
     if (localRoot !== contractRoot) {
         throw new Error('CSCA tree root is different from contract root');
     }
-    return serialized_csca_tree;
+    return serialized_csca_tree.toString();
 }

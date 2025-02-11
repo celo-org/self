@@ -400,7 +400,7 @@ export const ContractsController = new Elysia()
   .get(
     'csca-tree',
     async () => {
-      const tree = getCscaTree();
+      const tree = await getCscaTree();
       return {
         status: 'success',
         data: tree
