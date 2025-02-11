@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -17,7 +17,7 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import useUserStore from '../../stores/userStore';
-import { slate800 } from '../../utils/colors';
+import { black, slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
 interface QRCodeViewFinderScreenProps {}
@@ -61,8 +61,10 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
   const onCancelPress = useHapticNavigation('Home', 'cancel');
 
   return (
+    <>
+    <StatusBar barStyle="light-content" backgroundColor={black} />
     <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.TopSection roundTop>
         {!doneScanningQR && (
           <>
             <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
@@ -102,6 +104,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
         </YStack>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
+    </>
   );
 };
 

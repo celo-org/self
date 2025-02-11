@@ -116,7 +116,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
 
   return (
     <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.TopSection roundTop>
         <LottieView
           autoPlay
           loop={false}

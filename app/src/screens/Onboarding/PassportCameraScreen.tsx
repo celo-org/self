@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -43,7 +43,8 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
 
   return (
     <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.TopSection roundTop>
+        <StatusBar barStyle="dark-content" />
         <PassportCamera onPassportRead={onPassportRead} isMounted={isFocused} />
         <LottieView
           autoPlay

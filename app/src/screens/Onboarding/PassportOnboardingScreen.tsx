@@ -24,7 +24,7 @@ const PassportOnboardingScreen: React.FC<
 
   return (
     <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+      <ExpandableBottomLayout.TopSection roundTop>
         <LottieView
           autoPlay
           loop={false}

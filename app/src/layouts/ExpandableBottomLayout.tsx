@@ -12,6 +12,7 @@ interface ExpandableBottomLayoutProps {
 
 interface TopSectionProps extends ViewProps {
   children: React.ReactNode;
+  roundTop?: boolean;
 }
 
 interface BottomSectionProps extends ViewProps {
@@ -24,7 +25,7 @@ const Layout: React.FC<ExpandableBottomLayoutProps> = ({ children }) => {
 
 const TopSection: React.FC<TopSectionProps> = ({ children, ...props }) => {
   return (
-    <View {...props} style={styles.topSection}>
+    <View {...props} style={[styles.topSection, props.roundTop && styles.roundTop]}>
       {children}
     </View>
   );
@@ -66,6 +67,10 @@ export const ExpandableBottomLayout = {
 };
 
 const styles = StyleSheet.create({
+  roundTop: {
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+  },
   layout: {
     height: '100%',
     flexDirection: 'column',
