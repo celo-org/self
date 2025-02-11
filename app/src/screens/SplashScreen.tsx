@@ -11,7 +11,7 @@ import { impactLight } from '../utils/haptic';
 
 const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
-  const { userLoaded,passportData } = useUserStore();
+  const { userLoaded, passportData } = useUserStore();
   // TODO: Uncomment when we are done testing
   const redirect = useCallback(() => {
     if (userLoaded && passportData) {
@@ -24,7 +24,7 @@ const SplashScreen: React.FC = ({}) => {
   const handleAnimationFinish = useCallback(() => {
     setTimeout(() => {
       impactLight();
-      redirect()  
+      redirect();
     }, 1000);
   }, [userLoaded]);
 

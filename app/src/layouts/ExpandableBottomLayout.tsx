@@ -9,7 +9,7 @@ import { black, white } from '../utils/colors';
 interface ExpandableBottomLayoutProps extends ViewProps {
   children: React.ReactNode;
   backgroundColor?: string;
-  unsafeArea?: boolean
+  unsafeArea?: boolean;
 }
 
 interface TopSectionProps extends ViewProps {

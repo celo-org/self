@@ -3,6 +3,9 @@ import { StatusBar, StyleSheet, View } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
+import loadingAnimation from '../../assets/animations/loading/misc.json';
+import failAnimation from '../../assets/animations/proof_failed.json';
+import succesAnimation from '../../assets/animations/proof_success.json';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { BodyText } from '../../components/typography/BodyText';
 import Description from '../../components/typography/Description';
@@ -11,12 +14,8 @@ import { typography } from '../../components/typography/styles';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { ProofStatus, useProofInfo } from '../../stores/proofProvider';
-import { notificationError, notificationSuccess } from '../../utils/haptic';
 import { white } from '../../utils/colors';
-
-import succesAnimation from  '../../assets/animations/proof_success.json'
-import failAnimation from '../../assets/animations/proof_failed.json'
-import loadingAnimation from '../../assets/animations/loading/misc.json'
+import { notificationError, notificationSuccess } from '../../utils/haptic';
 
 const SuccessScreen: React.FC = () => {
   const { selectedApp, proofVerificationResult, status } = useProofInfo();
@@ -34,7 +33,7 @@ const SuccessScreen: React.FC = () => {
   // im not sure this is the best way to do this yet but its a good start until we move the websockets to a provider
   useEffect(() => {
     if (!proofVerificationResult) {
-      return
+      return;
     }
     const failedConditions = [];
     for (const field of fieldsToCheck) {
@@ -52,7 +51,7 @@ const SuccessScreen: React.FC = () => {
   }, [proofVerificationResult]);
 
   return (
-    <ExpandableBottomLayout.Layout backgroundColor={white} >
+    <ExpandableBottomLayout.Layout backgroundColor={white}>
       <StatusBar barStyle="dark-content" backgroundColor={white} />
       <ExpandableBottomLayout.TopSection roundTop marginTop={20}>
         <LottieView
@@ -78,11 +77,11 @@ const SuccessScreen: React.FC = () => {
 function getAnimation(status: ProofStatus) {
   switch (status) {
     case 'success':
-      return succesAnimation
+      return succesAnimation;
     case 'failure':
-      return failAnimation
-    default: 
-      return loadingAnimation
+      return failAnimation;
+    default:
+      return loadingAnimation;
   }
 }
 
@@ -115,7 +114,7 @@ function Info({ status, appName }: { status: ProofStatus; appName: string }) {
     );
   } else {
     // TODO what?
-    return  <Description> Proving minimum viable identity </Description>
+    return <Description> Proving minimum viable identity </Description>;
   }
 }
 

@@ -20,8 +20,8 @@ const ProveScreen: React.FC = () => {
   const { passportData } = useUserStore();
   const { selectedApp } = useProofInfo();
 
-  const disclosureOptions = (selectedApp?.args as ArgumentsProveOffChain)
-    ?.disclosureOptions || {};
+  const disclosureOptions =
+    (selectedApp?.args as ArgumentsProveOffChain)?.disclosureOptions || {};
 
   if (!passportData) {
     return (
@@ -40,7 +40,6 @@ const ProveScreen: React.FC = () => {
   }
 
   console.log('options', disclosureOptions);
-
 
   return (
     <ExpandableBottomLayout.Layout backgroundColor="red" unsafeArea flex={1}>

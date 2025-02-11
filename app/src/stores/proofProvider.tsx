@@ -33,7 +33,6 @@ const ProofContext = createContext<IProofContext>(defaults);
 
 const Provider = ProofContext.Provider;
 
-
 /*
  store to manage the proof verification process, including app the is requesting, intemidiate status and final result
  */
@@ -129,7 +128,6 @@ export function ProofProvider({ children }: PropsWithChildren) {
 
   return <Provider value={publicApi}>{children}</Provider>;
 }
-
 
 export const useProofInfo = () => {
   return React.useContext(ProofContext);
