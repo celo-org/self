@@ -182,6 +182,12 @@ describe("Formatter", function () {
                 expect(contractResult).to.equal(testCase.expected);
             }
         });
+
+        it("should revert when date digit is out of range", async function () {
+            const input = [9, 4, 0, 1, 2, 10];
+            await expect(testFormatter.testProofDateToUnixTimestamp(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidDateDigit");
+        });
     });
 
     describe("dateToUnixTimestamp", function () {

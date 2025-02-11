@@ -11,6 +11,8 @@ library Formatter {
     error InvalidMonthRange();
     error InvalidDayRange();
     error InvalidFieldElement();
+    error InvalidDateDigit();
+    
     uint256 constant MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
     uint256 constant SNARK_SCALAR_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
@@ -159,7 +161,7 @@ library Formatter {
         if (publicSignal >= SNARK_SCALAR_FIELD) {
             revert InvalidFieldElement();
         }
-        
+
         for (uint256 j = 0; j < MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH; j++) {
             uint256 byteIndex = j * 3;
 
@@ -183,6 +185,11 @@ library Formatter {
     function proofDateToUnixTimestamp(
         uint256[6] memory dateNum
     ) internal pure returns (uint256) {
+        for (uint256 i = 0; i < 6; i++) {
+        if (dateNum[i] > 9) {
+            revert InvalidDateDigit();
+            }
+        }
         string memory date = "";
         for (uint256 i = 0; i < 6; i++) {
             date = string(
