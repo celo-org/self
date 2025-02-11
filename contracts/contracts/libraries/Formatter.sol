@@ -357,6 +357,10 @@ library Formatter {
      * @return True if the year is a leap year, otherwise false.
      */
     function isLeapYear(uint256 year) internal pure returns (bool) {
+        if (year < 1970 || year > 2099) {
+            revert InvalidYearRange();
+        }
+
         if (year % 4 != 0) {
             return false;
         } else if (year % 100 != 0) {

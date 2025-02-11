@@ -369,8 +369,6 @@ describe("Formatter", function () {
                 .to.be.revertedWithCustomError(testFormatter, "InvalidDayRange");
         });
         
-        
-        
     });
 
     describe("isLeapYear", function () {
@@ -378,8 +376,10 @@ describe("Formatter", function () {
             const testCases = [
                 { year: 2000, expected: true },
                 { year: 2020, expected: true },
-                { year: 2100, expected: false },
-                { year: 2023, expected: false }
+                { year: 2001, expected: false },
+                { year: 2042, expected: false },
+                { year: 1970, expected: false },
+                { year: 2099, expected: false },
             ];
 
             for (const testCase of testCases) {
@@ -389,6 +389,20 @@ describe("Formatter", function () {
                 expect(contractResult).to.equal(testCase.expected);
             }
         });
+
+        it("should revert when year is out of range", async function () {
+            const input = 1969;
+            await expect(testFormatter.testIsLeapYear(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
+        });
+
+        it("should revert when year is out of range", async function () {
+            const input = 2100;
+            await expect(testFormatter.testIsLeapYear(input))
+                .to.be.revertedWithCustomError(testFormatter, "InvalidYearRange");
+        });
+        
+        
     });
 });
 
