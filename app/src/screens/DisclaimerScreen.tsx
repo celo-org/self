@@ -9,9 +9,11 @@ import warningAnimation from '../assets/animations/warning.json';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
-import { slate700, white } from '../utils/colors';
-import { dinot } from '../utils/fonts';
+import { white } from '../utils/colors';
 import { confirmTap, notificationWarning } from '../utils/haptic';
+import { BodyText } from '../components/typography/BodyText';
+import Caution from '../components/typography/Caution';
+import { dinot } from '../utils/fonts';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -38,14 +40,14 @@ const DisclaimerScreen: React.FC = () => {
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection>
         <YStack gap="$2.5">
-          <Text style={styles.disclaimer}>
+          <Caution>
             Apps that request sensitive or personally identifiable information
             (like passwords, Social Security numbers, or financial details)
             should be trusted only if they're secure and necessary.
-          </Text>
-          <Text style={{ ...styles.disclaimer, marginTop: 10 }}>
+          </Caution>
+          <Caution style={{ marginTop: 10 }}>
             Always verify an app's legitimacy before sharing your data.
-          </Text>
+          </Caution>
           <PrimaryButton
             style={{ marginVertical: 30 }}
             onPress={() => {
@@ -71,19 +73,13 @@ const styles = StyleSheet.create({
     height: '125%',
   },
   subheader: {
-    color: white,
     fontFamily: dinot,
+    color: white,
     fontSize: 15,
     fontWeight: '500',
     lineHeight: 18,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     textAlign: 'center',
-  },
-  disclaimer: {
-    color: slate700,
-    fontFamily: dinot,
-    fontSize: 18,
-    fontWeight: '500',
   },
 });
