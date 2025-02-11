@@ -35,10 +35,9 @@ const ProveScreen: React.FC = () => {
     buttonTap();
     navigate('ProofRequestStatusScreen');
     sendVcAndDisclosePayload(passportData).catch(e => {
-      console.log('Error sending VC and disclose payload', e)
-      setStatus('error')
-    }
-    );
+      console.log('Error sending VC and disclose payload', e);
+      setStatus('error');
+    });
   }
 
   return (
