@@ -1,15 +1,52 @@
 import { Pool } from 'pg';
 import { EventsData } from "./constants";
 
-// Create a new pool instance
+// Create a new pool instance with persistent settings
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432'),
-    ssl: { rejectUnauthorized: false },
+    ssl: {
+        // For encrypted connections—if you want full TLS verification, uncomment these lines:
+        // rejectUnauthorized: true,
+        // ca: fs.readFileSync("path/to/rds-ca-2019-root.pem").toString(),
+        rejectUnauthorized: false,
+    },
+    keepAlive: true,                // Keep the underlying TCP connection alive
+    idleTimeoutMillis: 30000,       // Close idle clients after 30 seconds
+    connectionTimeoutMillis: 2000,  // Fail if a new connection isn't established within 2000ms
 });
+
+// Listen for unexpected errors on idle clients and log them
+pool.on("error", (err, client) => {
+    console.error("Unexpected error on idle client", err);
+});
+
+// Helper function that will retry queries if they fail transiently
+async function queryWithRetry(
+    query: string,
+    params: any[] = [],
+    retries = 3,
+    delayMs = 1000
+) {
+    try {
+        return await pool.query(query, params);
+    } catch (error) {
+        if (retries > 0) {
+            console.error(
+                `Query failed. Retrying in ${delayMs}ms... Attempts left: ${retries}`,
+                error
+            );
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            return queryWithRetry(query, params, retries - 1, delayMs);
+        } else {
+            console.error("Query failed after retries.", error);
+            throw error;
+        }
+    }
+}
 
 /// @notice retrieve the event with the highest index from the db and return the block number
 export async function getLastEventBlockFromDB(type: string) {
@@ -21,7 +58,7 @@ export async function getLastEventBlockFromDB(type: string) {
             ORDER BY event_index DESC 
             LIMIT 1
         `;
-        const result = await pool.query(query, [type]);
+        const result = await queryWithRetry(query, [type]);
 
         if (result.rows.length === 0) return null;
         return parseInt(result.rows[0].block_number);
@@ -70,7 +107,7 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
 export async function getTreeFromDB(type: string) {
     try {
         const query = 'SELECT tree_data FROM trees WHERE type = $1';
-        const result = await pool.query(query, [type]);
+        const result = await queryWithRetry(query, [type]);
 
         if (result.rows.length === 0) return null;
         return result.rows[0].tree_data;
@@ -91,11 +128,26 @@ export async function setTreeInDB(type: string, tree: string) {
                 tree_data = $2,
                 updated_at = CURRENT_TIMESTAMP
         `;
-        await pool.query(query, [type, tree]);
+        await queryWithRetry(query, [type, tree]);
         return true;
     } catch (error) {
         console.error('Error setting tree:', error);
         return false;
     }
 }
+
+// Add this function to periodically ping the DB
+function startKeepAlive(intervalMs: number = 5 * 60 * 1000) { // default every 5 minutes
+    setInterval(async () => {
+        try {
+            await queryWithRetry("SELECT 1");
+            console.log('Database ping successful');
+        } catch (error) {
+            console.error('Database ping failed', error);
+        }
+    }, intervalMs);
+}
+
+// Start the keep-alive when your module initializes
+startKeepAlive();
 
