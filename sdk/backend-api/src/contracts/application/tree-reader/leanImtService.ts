@@ -2,13 +2,13 @@ import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
 import { getContractInstanceRoot } from "./getTree";
 import { addEventsInDB, setTreeInDB, getLastEventFromDB, getTreeFromDB } from "./db";
-import { getDscCommitmentEvents } from "../getEvents";
-import { DEPLOYMENT_BLOCK, EventsData } from "./constants";
+import { getDscCommitmentEvents, getIdentityCommitmentEvents } from "../getEvents";
+import { DEPLOYMENT_BLOCK, EventsData, TreeType } from "./constants";
 
 export class MerkleTreeService {
     private imt: LeanIMT;
-    private type: string;
-    constructor(type: 'dscKeyCommitment' | 'dscKeyCommitment') {
+    private type: TreeType;
+    constructor(type: TreeType) {
         this.type = type;
         this.imt = new LeanIMT((a, b) => poseidon2([a, b]));
         this.initializeTree();
@@ -46,7 +46,18 @@ export class MerkleTreeService {
         const lastEventBlock = lastEventData?.blockNumber || DEPLOYMENT_BLOCK;
         const lastEventIndex = lastEventData?.index || -1;
 
-        const events: EventsData[] = await getDscCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
+        let events: EventsData[];
+        switch (this.type) {
+            case 'dsc':
+                events = await getDscCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
+                break;
+            case 'identity':
+                events = await getIdentityCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
+                break;
+            default:
+                throw new Error('Invalid tree type');
+        }
+
         console.log('Total events to process:', events.length - 1);
 
         for (const event of events) {
@@ -83,5 +94,16 @@ export class MerkleTreeService {
     public async getTree() {
         await this.checkForUpdates();
         return this.serializeTree();
+    }
+
+    private getTablePrefix(): string {
+        switch (this.type) {
+            case 'dsc':
+                return 'dsc_key_commitment';
+            case 'identity':
+                return 'identity_commitment';
+            default:
+                throw new Error('Invalid tree type');
+        }
     }
 }

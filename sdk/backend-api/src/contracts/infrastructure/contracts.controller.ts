@@ -4,20 +4,17 @@ import { RegistryContract } from '../../contracts/application/registryContract';
 import { getChain } from '../../contracts/application/chains';
 import { getDscCommitmentEvents } from '../application/getEvents';
 import { MerkleTreeService } from '../application/tree-reader/leanImtService';
+import { getContractInstanceRoot } from '../application/tree-reader/getTree';
 
-const dscTree = new MerkleTreeService('dscKeyCommitment');
+const dscTree = new MerkleTreeService('dsc');
+const commitmentTree = new MerkleTreeService('identity');
 
 export const ContractsController = new Elysia()
   .get(
     'identity-commitment-root',
     async () => {
       try {
-        const registryContract = new RegistryContract(
-          getChain(process.env.NETWORK as string),
-          process.env.PRIVATE_KEY as `0x${string}`,
-          process.env.RPC_URL as string
-        );
-        const identityCommitmentRoot = await registryContract.getIdentityCommitmentMerkleRoot();
+        const identityCommitmentRoot = await getContractInstanceRoot('identity');
         return {
           status: 'success',
           data: [identityCommitmentRoot.toString()],
@@ -88,7 +85,7 @@ export const ContractsController = new Elysia()
         process.env.PRIVATE_KEY as `0x${string}`,
         process.env.RPC_URL as string
       );
-      const tx = await registryContract.transferOwnership(newOwner);
+      const tx = await registryContract.transferOwnership(newOwner as `0x${string}`);
       return {
         status: "success",
         data: [tx.hash],
@@ -285,64 +282,6 @@ export const ContractsController = new Elysia()
     },
   )
   .get(
-    'dsc-commitment-events',
-    async ({ query }) => {
-      try {
-        const startBlock = query.startBlock ? parseInt(query.startBlock as string) : 0;
-        const events = await getDscCommitmentEvents(
-          startBlock,
-          process.env.RPC_URL as string,
-          process.env.NETWORK as string
-        );
-
-        return {
-          status: 'success',
-          data: events.map(event => ({
-            ...event,
-            commitment: event.commitment.toString(),
-            merkleRoot: event.merkleRoot.toString()
-          }))
-        };
-      } catch (error) {
-        return {
-          status: 'error',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          data: []
-        };
-      }
-    },
-    {
-      query: t.Object({
-        startBlock: t.Optional(t.String({
-          description: 'Block number to start fetching events from (default: 7649934)',
-          default: '7649934'
-        }))
-      }),
-      response: {
-        200: t.Object({
-          status: t.String(),
-          data: t.Array(t.Object({
-            index: t.Number(),
-            commitment: t.String(),
-            merkleRoot: t.String(),
-            blockNumber: t.Number(),
-            timestamp: t.Number()
-          }))
-        }),
-        500: t.Object({
-          status: t.String(),
-          message: t.String(),
-          data: t.Array(t.Any())
-        })
-      },
-      detail: {
-        tags: ['Contracts'],
-        summary: 'Get DSC commitment events from registry contract',
-        description: 'Retrieve all DSC commitment registration events from a given block number (default: 7649934)'
-      }
-    }
-  )
-  .get(
     'dsc-commitment-tree',
     async () => {
       try {
@@ -375,6 +314,42 @@ export const ContractsController = new Elysia()
         tags: ['Contracts'],
         summary: 'Get DSC commitment Merkle tree',
         description: 'Retrieve the current state of the DSC commitment Merkle tree'
+      }
+    }
+  )
+  .get(
+    'identity-commitment-tree',
+    async () => {
+      try {
+        const tree = await commitmentTree.getTree();
+        return {
+          status: 'success',
+          data: tree
+        };
+      } catch (error) {
+        return {
+          status: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          data: null
+        };
+      }
+    },
+    {
+      response: {
+        200: t.Object({
+          status: t.String(),
+          data: t.Any()
+        }),
+        500: t.Object({
+          status: t.String(),
+          message: t.String(),
+          data: t.Any()
+        })
+      },
+      detail: {
+        tags: ['Contracts'],
+        summary: 'Get identity commitment Merkle tree',
+        description: 'Retrieve the current state of the identity commitment Merkle tree'
       }
     }
   );

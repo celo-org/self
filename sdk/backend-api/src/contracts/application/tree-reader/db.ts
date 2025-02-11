@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { EventsData } from "./constants";
+import { TreeType } from "./constants";
 
 // Create a new pool instance with persistent settings
 const pool = new Pool({
@@ -54,19 +55,19 @@ interface LastEventData {
 }
 
 /// @notice retrieve the event with the highest index from the db and return the block number
-export async function getLastEventFromDB(type: string): Promise<LastEventData | null> {
+export async function getLastEventFromDB(type: TreeType): Promise<LastEventData | null> {
     try {
+        const tableName = type === 'dsc' ? 'dsc_key_commitment_events' : 'identity_commitment_events';
         const query = `
             SELECT 
-                (event_data->>'blockNumber')::integer as block_number,
-                (event_data->>'index')::integer as event_index
-            FROM events 
-            WHERE type = $1 
+                block_number,
+                event_index
+            FROM ${tableName}
             ORDER BY event_index DESC 
             LIMIT 1
         `;
 
-        const result = await queryWithRetry(query, [type]);
+        const result = await queryWithRetry(query);
         if (result.rows.length === 0) return null;
 
         return {
@@ -74,40 +75,43 @@ export async function getLastEventFromDB(type: string): Promise<LastEventData | 
             index: result.rows[0].event_index
         };
     } catch (error) {
-        console.error('Error getting last event block:', error);
+        console.error('Error getting last event:', error);
         return null;
     }
 }
 
 /// @notice add the events to the db, be careful this app will could try to overwrite the events
-export async function addEventsInDB(type: string, events: EventsData[]) {
+export async function addEventsInDB(type: TreeType, events: EventsData[]) {
     try {
+        const tableName = type === 'dsc' ? 'dsc_key_commitment_events' : 'identity_commitment_events';
         const client = await pool.connect();
-        console.log('DB Client connected');
 
         try {
             await client.query('BEGIN');
-            console.log('Transaction started');
 
             for (const event of events) {
-                // Convert BigInt values to strings
-                const eventData = {
-                    ...event,
-                    commitment: event.commitment.toString(),
-                    merkleRoot: event.merkleRoot.toString()
-                };
-
                 const query = `
-                    INSERT INTO events (type, event_index, event_data)
-                    VALUES ($1, $2, $3)
-                    ON CONFLICT (type, event_index) DO NOTHING
+                    INSERT INTO ${tableName} (
+                        event_index,
+                        commitment,
+                        merkle_root,
+                        block_number,
+                        timestamp
+                    )
+                    VALUES ($1, $2, $3, $4, $5)
+                    ON CONFLICT (event_index) DO NOTHING
                 `;
-                console.log('Inserting event index:', event.index);
-                const result = await client.query(query, [type, event.index, eventData]);
+
+                await client.query(query, [
+                    event.index,
+                    event.commitment,
+                    event.merkleRoot,
+                    event.blockNumber,
+                    event.timestamp
+                ]);
             }
 
             await client.query('COMMIT');
-            console.log('Transaction committed');
             return true;
         } catch (error) {
             console.error('Error in transaction:', error);
@@ -115,7 +119,6 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
             throw error;
         } finally {
             client.release();
-            console.log('Client released');
         }
     } catch (error) {
         console.error('Error in addEventsInDB:', error);
@@ -124,42 +127,33 @@ export async function addEventsInDB(type: string, events: EventsData[]) {
 }
 
 /// @notice retrieve the tree from the db
-export async function getTreeFromDB(type: string) {
+export async function getTreeFromDB(type: TreeType) {
     try {
-        const query = 'SELECT tree_data FROM trees WHERE type = $1';
-        const result = await queryWithRetry(query, [type]);
+        const tableName = type === 'dsc' ? 'dsc_key_commitment_tree' : 'identity_commitment_tree';
+        const query = `SELECT tree_data FROM ${tableName} ORDER BY id DESC LIMIT 1`;
+        const result = await queryWithRetry(query);
 
         if (result.rows.length === 0) return null;
         return result.rows[0].tree_data;
     } catch (error) {
-        console.error("\n=== Error Reading Tree from DB ===");
-        console.error("Type:", type);
-        console.error("Error:", error);
+        console.error('Error getting tree:', error);
         return null;
     }
 }
 
 /// @notice set the tree in the db, we only need to store the latest tree in the db and update it's value
-export async function setTreeInDB(type: string, tree: string) {
+export async function setTreeInDB(type: TreeType, tree: string) {
     try {
-        console.log("Writing ${type} Tree to DB");
-
+        const tableName = type === 'dsc' ? 'dsc_key_commitment_tree' : 'identity_commitment_tree';
         const query = `
-            INSERT INTO trees (type, tree_data)
-            VALUES ($1, $2)
-            ON CONFLICT (type) 
-            DO UPDATE SET 
-                tree_data = $2,
-                updated_at = CURRENT_TIMESTAMP
-            RETURNING *
+            INSERT INTO ${tableName} (tree_data)
+            VALUES ($1)
         `;
 
-        await queryWithRetry(query, [type, tree]);
+        await queryWithRetry(query, [tree]);
         return true;
     } catch (error) {
-        console.error("\n=== Error Writing Tree to DB ===");
-        console.error("Type:", type);
-        console.error("Error:", error);
+        console.error('Error setting tree:', error);
         return false;
     }
 }

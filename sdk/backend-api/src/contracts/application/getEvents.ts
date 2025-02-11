@@ -1,6 +1,5 @@
 import { getContractInstance } from "./getContracts";
 import { getChain } from "./chains";
-import { createPublicClient, http, Log, decodeEventLog } from "viem";
 import { EventsData } from "./tree-reader/constants";
 async function getEvents(
     eventName: string,
@@ -47,8 +46,8 @@ async function getEvents(
 
                 events.push({
                     index: Number(imtIndex),
-                    commitment,
-                    merkleRoot: imtRoot,
+                    commitment: commitment.toString(),
+                    merkleRoot: imtRoot.toString(),
                     blockNumber: Number(log.blockNumber),
                     timestamp: Number(block.timestamp)
                 });
@@ -74,5 +73,14 @@ export async function getDscCommitmentEvents(
         getEvents('DscKeyCommitmentRegistered', startBlock, rpcUrl, network)
     ]).then(([devEvents, regularEvents]) => [...devEvents, ...regularEvents]);
 
+    return events.sort((a, b) => a.index - b.index);
+}
+
+export async function getIdentityCommitmentEvents(
+    startBlock: number,
+    rpcUrl: string,
+    network: string
+): Promise<EventsData[]> {
+    const events = await getEvents('CommitmentRegistered', startBlock, rpcUrl, network);
     return events.sort((a, b) => a.index - b.index);
 }
