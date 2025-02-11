@@ -10,7 +10,7 @@ import io, { Socket } from 'socket.io-client';
 import { SelfApp } from '../../../common/src/utils/appType';
 import { setupUniversalLinkListener } from '../utils/qrCodeNew';
 
-// failure means that one of the requirements was not met, error means we fucked up. 
+// failure means that one of the requirements was not met, error means we fucked up.
 export type ProofStatus = 'success' | 'failure' | 'pending' | 'error';
 
 interface IProofContext {
@@ -70,9 +70,9 @@ export const useProofInfo = () => {
   return React.useContext(ProofContext);
 };
 
-// TODO store sockon on a ref? 
+// TODO store sockon on a ref?
 // handle it unmounting in progress?
-//  
+//
 function useWebsocket(
   selectedApp: SelfApp,
   setStatus: React.Dispatch<React.SetStateAction<ProofStatus>>,
@@ -85,7 +85,7 @@ function useWebsocket(
     if (!selectedApp.websocketUrl || !selectedApp.sessionId) {
       return;
     }
-    console.log('creating ws', selectedApp.websocketUrl, selectedApp.sessionId)
+    console.log('creating ws', selectedApp.websocketUrl, selectedApp.sessionId);
 
     try {
       newSocket = io(selectedApp.websocketUrl, {
