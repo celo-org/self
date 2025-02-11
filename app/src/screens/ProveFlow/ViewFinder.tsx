@@ -5,6 +5,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { View, XStack, YStack } from 'tamagui';
 
+import qrScanAnimation from '../../assets/animations/qr_scan.json';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import {
   QRCodeScannerView,
@@ -20,8 +21,6 @@ import useUserStore from '../../stores/userStore';
 import { slate800 } from '../../utils/colors';
 import handleQRCodeScan from '../../utils/qrCodeNew';
 
-interface QRCodeViewFinderScreenProps {}
-
 // TODO: replace this with proper tested lib
 // or react-native-url-polyfill -> new URL(uri)
 const parseUrlParams = (url: string): Map<string, string> => {
@@ -36,7 +35,7 @@ const parseUrlParams = (url: string): Map<string, string> => {
   return params;
 };
 
-const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
+const QRCodeViewFinderScreen = ({}) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const store = useUserStore();
@@ -69,7 +68,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
             <LottieView
               autoPlay
               loop
-              source={require('../../assets/animations/qr_scan.json')}
+              source={qrScanAnimation}
               style={styles.animation}
               cacheComposition={true}
               renderMode="HARDWARE"

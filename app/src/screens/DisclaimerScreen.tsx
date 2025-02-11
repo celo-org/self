@@ -5,12 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Text, YStack } from 'tamagui';
 
+import warningAnimation from '../assets/animations/warning.json';
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { useSettingStore } from '../stores/settingStore';
 import { slate700, white } from '../utils/colors';
-import { confirmTap, notificationWarning } from '../utils/haptic';
 import { dinot } from '../utils/fonts';
+import { confirmTap, notificationWarning } from '../utils/haptic';
 
 const DisclaimerScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -26,7 +27,7 @@ const DisclaimerScreen: React.FC = () => {
         <LottieView
           autoPlay
           loop={false}
-          source={require('../assets/animations/warning.json')}
+          source={warningAnimation}
           style={styles.animation}
           cacheComposition={true}
           renderMode="HARDWARE"
