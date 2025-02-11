@@ -61,7 +61,9 @@ export async function getLastEventBlockFromDB(type: string) {
         const result = await queryWithRetry(query, [type]);
 
         if (result.rows.length === 0) return null;
-        return parseInt(result.rows[0].block_number);
+        const blockNumber = parseInt(result.rows[0].block_number);
+        const index = parseInt(result.rows[0].index);
+        return { blockNumber, index };
     } catch (error) {
         console.error('Error getting last event block:', error);
         return null;

@@ -43,19 +43,21 @@ export class MerkleTreeService {
     }
 
     private async checkForEvents() {
-        let lastEventBlock: any = await getLastEventBlockFromDB(this.type);
-        console.log('lastEventBlock', lastEventBlock);
-        if (!lastEventBlock) {
-            lastEventBlock = DEPLOYMENT_BLOCK;
+        let { blockNumber, index }: any = await getLastEventBlockFromDB(this.type);
+        console.log('lastEventBlock', blockNumber, index);
+        if (!blockNumber) {
+            blockNumber = DEPLOYMENT_BLOCK;
         }
 
         console.log('\n=== Processing Events ===');
-        const events: EventsData[] = await getDscCommitmentEvents(lastEventBlock, process.env.RPC_URL as string, process.env.NETWORK as string);
+        const events: EventsData[] = await getDscCommitmentEvents(blockNumber, process.env.RPC_URL as string, process.env.NETWORK as string);
         console.log('Total events to process:', events.length);
 
         for (const event of events) {
             console.log('Processing commitment:', event.commitment);
-            this.insertCommitment(event.commitment);
+            if (event.index > index) {
+                this.insertCommitment(event.commitment);
+            }
         }
 
         const contractRoot = await getContractInstanceRoot(this.type);
