@@ -22,7 +22,6 @@ import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
 import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
 import RecoverWithPhraseScreen from './screens/AccountFlow/RecoverWithPhraseScreen';
 import SaveRecoveryPhraseScreen from './screens/AccountFlow/SaveRecoveryPhraseScreen';
-import DebugScreen from './screens/DebugScreen';
 import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
@@ -36,6 +35,8 @@ import ProveScreen from './screens/ProveFlow/ProveScreen';
 import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
 import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
+import DebugScreen from './screens/Settings/DebugRoutesScreen';
+import DevSettingsScreen from './screens/Settings/DevSettingsScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
@@ -272,11 +273,15 @@ const AppNavigation = createNativeStackNavigator({
         },
       },
     },
-    Debug: {
-      screen: DebugScreen,
+
+    DevSettings: {
+      screen: DevSettingsScreen,
       options: {
-        title: 'Debug',
-        headerShown: false,
+        if: () => __DEV__,
+        title: 'Developer Settings',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
   },
