@@ -5,7 +5,7 @@ import { Anchor, Text, XStack, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
 import useHapticNavigation from '../hooks/useHapticNavigation';
-import GetStartedCard from '../images/get-started-card.svg';
+import GetStartedCard from '../images/card-style-2.svg';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700, white } from '../utils/colors';
