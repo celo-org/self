@@ -45,7 +45,7 @@ function App(): React.JSX.Element {
   }, [initUserStore]);
 
   return (
-    <YStack f={1} bc={bgWhite} h="100%" w="100%">
+    <YStack f={1}  h="100%" w="100%">
       <AuthProvider>
         <ProofProvider>
           <AppNavigation />
