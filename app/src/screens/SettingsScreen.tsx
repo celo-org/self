@@ -9,6 +9,13 @@ import { Button, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
 import { BodyText } from '../components/typography/BodyText';
+import {
+  appStoreUrl,
+  gitHubUrl,
+  playStoreUrl,
+  selfUrl,
+  telegramUrl,
+} from '../consts/links';
 import Github from '../images/icons/github.svg';
 import Cloud from '../images/icons/settings_cloud_backup.svg';
 import Data from '../images/icons/settings_data.svg';
@@ -19,7 +26,6 @@ import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { gitHubUrl, appStoreUrl, selfUrl, telegramUrl, playStoreUrl } from '../consts/links';
 
 interface SettingsScreenProps {}
 interface MenuButtonProps extends PropsWithChildren {

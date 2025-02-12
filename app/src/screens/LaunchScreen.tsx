@@ -4,13 +4,13 @@ import { StyleSheet, View } from 'react-native';
 import { Anchor, Text, XStack, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../components/buttons/PrimaryButton';
+import { privacyUrl, termsUrl } from '../consts/links';
 import useHapticNavigation from '../hooks/useHapticNavigation';
 import GetStartedCard from '../images/card-style-2.svg';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700, white } from '../utils/colors';
 import { advercase, dinot } from '../utils/fonts';
-import { privacyUrl, termsUrl } from '../consts/links';
 
 interface LaunchScreenProps {}
 
