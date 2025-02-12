@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { findBestLanguageTag } from 'react-native-localize';
 
 import { ethers } from 'ethers';
@@ -12,7 +12,9 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { AuthContext } from '../../stores/authProvider';
+import { useAuth } from '../../stores/authProvider';
+// @ts-expect-error
+import { STORAGE_NAME } from '../../utils/cloudBackup/index';
 import { slate400 } from '../../utils/colors';
 import { loadSecretOrCreateIt } from '../../utils/keychain';
 
@@ -21,7 +23,7 @@ interface SaveRecoveryPhraseScreenProps {}
 const SaveRecoveryPhraseScreen: React.FC<
   SaveRecoveryPhraseScreenProps
 > = ({}) => {
-  const { loginWithBiometrics } = useContext(AuthContext);
+  const { loginWithBiometrics } = useAuth();
   const [mnemonic, setMnemonic] = useState<string[]>();
   const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
 
@@ -72,10 +74,10 @@ const SaveRecoveryPhraseScreen: React.FC<
               You can reveal your recovery phrase in settings.
             </Caption>
             <PrimaryButton onPress={onCloudBackupPress}>
-              Enable iCloud Back up
+              Enable {STORAGE_NAME}
             </PrimaryButton>
             <SecondaryButton onPress={onSkipPress}>
-              {userHasSeenMnemonic ? 'Continue' : 'Skip making a back up'}
+              {userHasSeenMnemonic ? 'Continue' : 'Skip making a backup'}
             </SecondaryButton>
           </YStack>
         </YStack>

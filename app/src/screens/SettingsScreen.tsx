@@ -45,7 +45,7 @@ const storeURL = Platform.OS === 'ios' ? 'TODO: ios URL' : 'TODO: android URL';
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Cloud back up', 'CloudBackupSettings'],
+  [Cloud, 'Cloud backup', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];

@@ -7,7 +7,9 @@ import { loadSecret, restoreFromPrivateKey } from '../keychain';
 const ENCRYPTED_FILE_PATH =
   RNFS.DocumentDirectoryPath + '/encrypted-private-key';
 
-export default function useBackupPrivateKey() {
+export const STORAGE_NAME = 'iCloud Backup';
+
+export function useBackupPrivateKey() {
   return {
     upload: backupWithICloud,
     download: downloadFromICloud,

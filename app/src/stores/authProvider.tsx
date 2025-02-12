@@ -2,10 +2,16 @@ import React, {
   PropsWithChildren,
   createContext,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
   useState,
 } from 'react';
 import ReactNativeBiometrics from 'react-native-biometrics';
 
+const biometrics = new ReactNativeBiometrics({
+  allowDeviceCredentials: true,
+});
 interface AuthProviderProps extends PropsWithChildren {
   authenticationTimeoutinMs?: number;
 }
@@ -13,16 +19,14 @@ interface IAuthContext {
   isAuthenticated: boolean;
   isAuthenticating: boolean;
   loginWithBiometrics: () => Promise<void>;
+  biometrics: typeof biometrics;
 }
 
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
   isAuthenticating: false,
   loginWithBiometrics: () => Promise.resolve(),
-});
-
-const biometrics = new ReactNativeBiometrics({
-  allowDeviceCredentials: true,
+  biometrics,
 });
 
 export const AuthProvider = ({
@@ -32,15 +36,22 @@ export const AuthProvider = ({
   const [_, setAuthenticatedTimeout] =
     useState<ReturnType<typeof setTimeout>>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isAuthenticatingPromise, setIsAuthenticatingPromise] =
+    useState<Promise<{ success: boolean; error?: string }> | null>(null);
 
   const loginWithBiometrics = useCallback(async () => {
-    setIsAuthenticating(true);
-    const { success, error } = await biometrics.simplePrompt({
+    if (isAuthenticatingPromise) {
+      await isAuthenticatingPromise;
+      return;
+    }
+
+    const promise = biometrics.simplePrompt({
       promptMessage: 'Confirm your identity to access the stored secret',
     });
+    setIsAuthenticatingPromise(promise);
+    const { success, error } = await promise;
     if (error) {
-      setIsAuthenticating(false);
+      setIsAuthenticatingPromise(null);
       // handle error
       throw error;
     }
@@ -49,7 +60,7 @@ export const AuthProvider = ({
       throw new Error('Canceled by user');
     }
 
-    setIsAuthenticating(false);
+    setIsAuthenticatingPromise(null);
     setIsAuthenticated(true);
     setAuthenticatedTimeout(previousTimeout => {
       if (previousTimeout) {
@@ -60,13 +71,21 @@ export const AuthProvider = ({
         authenticationTimeoutinMs,
       );
     });
-  }, []);
+  }, [isAuthenticatingPromise]);
 
-  const state: IAuthContext = {
-    isAuthenticated,
-    isAuthenticating,
-    loginWithBiometrics,
-  };
+  const state: IAuthContext = useMemo(
+    () => ({
+      isAuthenticated,
+      isAuthenticating: !!isAuthenticatingPromise,
+      loginWithBiometrics,
+      biometrics,
+    }),
+    [isAuthenticated, isAuthenticatingPromise, loginWithBiometrics],
+  );
 
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
 };

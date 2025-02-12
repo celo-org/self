@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 import { Text, View, YStack } from 'tamagui';
@@ -9,36 +9,32 @@ import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { BodyText } from '../../components/typography/BodyText';
 import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { usePassport } from '../../stores/passportDataProvider';
 import { useProofInfo } from '../../stores/proofProvider';
-import useUserStore from '../../stores/userStore';
-import { black, slate300, white } from '../../utils/colors';
+import { slate300, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
-  const { passportData } = useUserStore();
+  const { getData } = usePassport();
+
   const { selectedApp, setStatus } = useProofInfo();
+
+  const onVerify = useCallback(async function () {
+    buttonTap();
+    navigate('ProofRequestStatusScreen');
+    try {
+      const passportData = await getData();
+      await sendVcAndDisclosePayload(passportData!.data);
+    } catch (e) {
+      console.log('Error sending VC and disclose payload', e);
+      setStatus('error');
+    }
+  }, []);
 
   const disclosureOptions =
     (selectedApp?.args as ArgumentsProveOffChain)?.disclosureOptions || {};
-
-  if (!passportData) {
-    return (
-      <Text mt="$10" fontSize="$9" color={black} textAlign="center">
-        No passport data
-      </Text>
-    );
-  }
-
-  function onVerify() {
-    buttonTap();
-    navigate('ProofRequestStatusScreen');
-    sendVcAndDisclosePayload(passportData).catch(e => {
-      console.log('Error sending VC and disclose payload', e);
-      setStatus('error');
-    });
-  }
 
   return (
     <ExpandableBottomLayout.Layout unsafeArea flex={1}>

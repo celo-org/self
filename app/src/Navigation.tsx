@@ -120,7 +120,7 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
 };
 
 const AppNavigation = createNativeStackNavigator({
-  initialRouteName: 'AccountRecovery',
+  initialRouteName: 'Home',
   screenOptions: {
     header: DefaultNavBar,
   },

@@ -1,7 +1,9 @@
 import React, {
   PropsWithChildren,
   createContext,
+  useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -48,11 +50,11 @@ export function ProofProvider({ children }: PropsWithChildren) {
   const [_, setSocket] = useState<Socket | null>(null);
 
   // reset all the values so it not in wierd state
-  function setSelectedApp(app: SelfApp) {
+  const setSelectedApp = useCallback((app: SelfApp) => {
     setStatus('pending');
     setProofVerificationResult(null);
     _setSelectedApp(app);
-  }
+  }, []);
 
   useWebsocket(selectedApp, setStatus, setProofVerificationResult, setSocket);
 
@@ -63,14 +65,17 @@ export function ProofProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  const publicApi: IProofContext = {
-    status,
-    proofVerificationResult,
-    selectedApp,
-    setStatus,
-    setSelectedApp,
-    setProofVerificationResult,
-  };
+  const publicApi: IProofContext = useMemo(
+    () => ({
+      status,
+      proofVerificationResult,
+      selectedApp,
+      setStatus,
+      setSelectedApp,
+      setProofVerificationResult,
+    }),
+    [status, proofVerificationResult, setSelectedApp],
+  );
 
   return <Provider value={publicApi}>{children}</Provider>;
 }

@@ -1,10 +1,10 @@
-import React, { useCallback, useContext } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useCallback } from 'react';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import { Anchor, YStack } from 'tamagui';
+import { YStack } from 'tamagui';
 
 import { RootStackParamList } from '../../Navigation';
+import BackupDocumentationLink from '../../components/BackupDocumentationLink';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import { Caption } from '../../components/typography/Caption';
@@ -12,12 +12,15 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import Cloud from '../../images/icons/logo_cloud_backup.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { AuthContext } from '../../stores/authProvider';
+import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
-import { type UseBackupPrivateKey } from '../../utils/cloudBackup';
-// @ts-expect-error - there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
-import useBackupPrivateKey from '../../utils/cloudBackup/index';
-import { black, slate400, white } from '../../utils/colors';
+// there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
+import {
+  STORAGE_NAME,
+  useBackupPrivateKey, // @ts-expect-error
+} from '../../utils/cloudBackup/index';
+import { type UseBackupPrivateKey } from '../../utils/cloudBackup/types';
+import { white } from '../../utils/colors';
 
 interface CloudBackupScreenProps
   extends StaticScreenProps<
@@ -27,32 +30,11 @@ interface CloudBackupScreenProps
     | undefined
   > {}
 
-const DocumentationLink: React.FC = ({}) => {
-  if (Platform.OS === 'ios') {
-    <Anchor
-      style={styles.anchor}
-      unstyled
-      href="https://support.apple.com/en-us/102651"
-    >
-      iCloud data
-    </Anchor>;
-  }
-  return (
-    <Anchor
-      style={styles.anchor}
-      unstyled
-      href="https://developer.android.com/identity/data/autobackup"
-    >
-      Android Backup
-    </Anchor>
-  );
-};
-
 const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   route: { params },
 }) => {
   const navigation = useNavigation();
-  const { loginWithBiometrics } = useContext(AuthContext);
+  const { loginWithBiometrics } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
   const { upload, disableBackup } = (
     useBackupPrivateKey as UseBackupPrivateKey
@@ -68,7 +50,6 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
     toggleCloudBackupEnabled();
   }, [cloudBackupEnabled, upload, loginWithBiometrics]);
 
-  const storage = Platform.OS === 'ios' ? 'iCloud' : 'Android Backup';
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>
@@ -77,34 +58,40 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
       <ExpandableBottomLayout.BottomSection flexGrow={1}>
         <YStack alignItems="center" gap="$2.5" pb="$2.5">
           <Title>
-            {cloudBackupEnabled ? `${storage} is enabled` : `Enable ${storage}`}
+            {cloudBackupEnabled
+              ? `${STORAGE_NAME} is enabled`
+              : `Enable ${STORAGE_NAME}`}
           </Title>
           <Description>
             {cloudBackupEnabled
-              ? `Your account is being end-to-end encrypted backed up to ${storage} so you can easily restore it if you ever get a new phone.`
-              : `Your account will be end-to-end encrypted backed up to ${storage} so you can easily restore it if you ever get a new phone.`}
+              ? `Your account is being end-to-end encrypted backed up to ${STORAGE_NAME} so you can easily restore it if you ever get a new phone.`
+              : `Your account will be end-to-end encrypted backed up to ${STORAGE_NAME} so you can easily restore it if you ever get a new phone.`}
           </Description>
           <Caption>
-            Learn more about <DocumentationLink />
+            Learn more about <BackupDocumentationLink />
           </Caption>
 
           <YStack gap="$2.5" width="100%" pt="$6">
             {cloudBackupEnabled ? (
               <SecondaryButton onPress={toggleBackup}>
-                Disable {storage} back up
+                Disable {STORAGE_NAME}
               </SecondaryButton>
             ) : (
               <PrimaryButton onPress={toggleBackup}>
-                Enable {storage} back up
+                Enable {STORAGE_NAME}
               </PrimaryButton>
             )}
 
-            {params?.nextScreen && (
+            {params?.nextScreen ? (
               <PrimaryButton
                 onPress={() => navigation.navigate(params.nextScreen)}
               >
                 Continue
               </PrimaryButton>
+            ) : (
+              <SecondaryButton onPress={() => navigation.goBack()}>
+                Nevermind
+              </SecondaryButton>
             )}
           </YStack>
         </YStack>
@@ -112,23 +99,5 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
     </ExpandableBottomLayout.Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  layout: {
-    backgroundColor: black,
-    height: '100%',
-    paddingTop: '40%',
-  },
-  anchor: {
-    fontSize: 15,
-    fontFamily: 'DINOT-Medium',
-    textDecorationLine: 'underline',
-    borderBottomColor: slate400,
-    borderBottomWidth: 0.5,
-  },
-  button: {
-    width: '100%',
-  },
-});
 
 export default CloudBackupScreen;

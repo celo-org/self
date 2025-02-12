@@ -10,6 +10,7 @@ import { YStack } from 'tamagui';
 import AppNavigation from './src/Navigation';
 import { createSegmentClient } from './src/Segment';
 import { AuthProvider } from './src/stores/authProvider';
+import { PassportProvider } from './src/stores/passportDataProvider';
 import { ProofProvider } from './src/stores/proofProvider';
 import useUserStore from './src/stores/userStore';
 import { bgWhite } from './src/utils/colors';
@@ -47,9 +48,11 @@ function App(): React.JSX.Element {
   return (
     <YStack f={1} bc={bgWhite} h="100%" w="100%">
       <AuthProvider>
-        <ProofProvider>
-          <AppNavigation />
-        </ProofProvider>
+        <PassportProvider>
+          <ProofProvider>
+            <AppNavigation />
+          </ProofProvider>
+        </PassportProvider>
       </AuthProvider>
     </YStack>
   );

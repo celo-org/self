@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { findBestLanguageTag } from 'react-native-localize';
 
 import { ethers } from 'ethers';
@@ -7,7 +7,7 @@ import { YStack } from 'tamagui';
 import Mnemonic from '../../components/Mnemonic';
 import Description from '../../components/typography/Description';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { AuthContext } from '../../stores/authProvider';
+import { useAuth } from '../../stores/authProvider';
 import { loadSecretOrCreateIt } from '../../utils/keychain';
 
 interface ShowRecoveryPhraseScreenProps {}
@@ -15,7 +15,7 @@ interface ShowRecoveryPhraseScreenProps {}
 const ShowRecoveryPhraseScreen: React.FC<
   ShowRecoveryPhraseScreenProps
 > = ({}) => {
-  const { loginWithBiometrics } = useContext(AuthContext);
+  const { loginWithBiometrics } = useAuth();
   const [mnemonic, setMnemonic] = useState<string[]>();
 
   const onRevealWords = useCallback(async () => {

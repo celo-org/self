@@ -1,7 +1,6 @@
 import React from 'react';
-import { Platform } from 'react-native';
 
-import { Separator, Text, View, XStack, YStack } from 'tamagui';
+import { Separator, View, XStack, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
@@ -12,11 +11,13 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import Keyboard from '../../images/icons/keyboard.svg';
 import RestoreAccountSvg from '../../images/icons/restore_account.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import {
+  // there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
+  STORAGE_NAME, // @ts-expect-error
+} from '../../utils/cloudBackup/index';
 import { slate500, slate600, white } from '../../utils/colors';
 
 interface AccountRecoveryChoiceScreenProps {}
-
-const storage = Platform.OS === 'ios' ? 'iCloud' : 'Android Backup';
 
 const AccountRecoveryChoiceScreen: React.FC<
   AccountRecoveryChoiceScreenProps
@@ -41,7 +42,7 @@ const AccountRecoveryChoiceScreen: React.FC<
 
           <YStack gap="$2.5" width="100%" pt="$6">
             <PrimaryButton onPress={onRestoreFromCloudPress}>
-              Restore from {storage}
+              Restore from {STORAGE_NAME}
             </PrimaryButton>
             <XStack gap={64} ai="center" justifyContent="space-between">
               <Separator flexGrow={1} />
