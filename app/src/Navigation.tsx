@@ -120,6 +120,7 @@ const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
+    navigationBarColor: white,
   },
   layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
@@ -189,6 +190,7 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         title: 'Self',
         header: HomeNavBar,
+        navigationBarColor: black,
       },
     },
     Disclaimer: {
@@ -226,6 +228,13 @@ const AppNavigation = createNativeStackNavigator({
       screen: SettingsScreen,
       options: {
         title: 'Settings',
+        headerStyle: {
+          backgroundColor: white,
+        },
+        headerTitleStyle: {
+          color: black,
+        },
+        navigationBarColor: black,
       },
       config: {
         screens: {},
@@ -276,6 +285,9 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportDataInfoScreen,
       options: {
         title: 'Passport Data Info',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
     DevSettings: {
