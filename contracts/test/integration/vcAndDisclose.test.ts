@@ -150,7 +150,7 @@ describe("VC and Disclose", () => {
             ).to.be.revertedWithCustomError(hub, "INVALID_COMMITMENT_ROOT");
         });
 
-        it("should fail with invalid OFAC root", async () => {
+        it("should fail with invalid passport number OFAC root", async () => {
             const {hub, registry, owner} = deployedActors;
 
             await registry.connect(owner).devAddIdentityCommitment(
@@ -166,6 +166,54 @@ describe("VC and Disclose", () => {
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
                 ofacEnabled: [true, true, true] as [boolean, boolean, boolean],
+                vcAndDiscloseProof: vcAndDiscloseProof
+            }
+
+            await expect(
+                hub.verifyVcAndDisclose(vcAndDiscloseHubProof)
+            ).to.be.revertedWithCustomError(hub, "INVALID_OFAC_ROOT");
+        });
+
+        it("should fail with invalid name and dob OFAC root", async () => {
+            const {hub, registry, owner} = deployedActors;
+
+            await registry.connect(owner).devAddIdentityCommitment(
+                ATTESTATION_ID.E_PASSPORT,
+                nullifier,
+                commitment
+            );
+            vcAndDiscloseProof.pubSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NAME_DOB_SMT_ROOT_INDEX] = generateRandomFieldElement();
+
+            const vcAndDiscloseHubProof = {
+                olderThanEnabled: true,
+                olderThan: "20",
+                forbiddenCountriesEnabled: true,
+                forbiddenCountriesListPacked: forbiddenCountriesListPacked,
+                ofacEnabled: [false, true, false] as [boolean, boolean, boolean],
+                vcAndDiscloseProof: vcAndDiscloseProof
+            }
+
+            await expect(
+                hub.verifyVcAndDisclose(vcAndDiscloseHubProof)
+            ).to.be.revertedWithCustomError(hub, "INVALID_OFAC_ROOT");
+        });
+
+        it("should fail with invalid name and yob OFAC root", async () => {
+            const {hub, registry, owner} = deployedActors;
+
+            await registry.connect(owner).devAddIdentityCommitment(
+                ATTESTATION_ID.E_PASSPORT,
+                nullifier,
+                commitment
+            );
+            vcAndDiscloseProof.pubSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NAME_YOB_SMT_ROOT_INDEX] = generateRandomFieldElement();
+
+            const vcAndDiscloseHubProof = {
+                olderThanEnabled: true,
+                olderThan: "20",
+                forbiddenCountriesEnabled: true,
+                forbiddenCountriesListPacked: forbiddenCountriesListPacked,
+                ofacEnabled: [false, false, true] as [boolean, boolean, boolean],
                 vcAndDiscloseProof: vcAndDiscloseProof
             }
 
