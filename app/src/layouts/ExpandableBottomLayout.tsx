@@ -1,8 +1,6 @@
 import React from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { isNumber } from '@segment/analytics-react-native';
 import { View, ViewProps } from 'tamagui';
 
 import { black, white } from '../utils/colors';
@@ -27,7 +25,6 @@ const Layout: React.FC<ExpandableBottomLayoutProps> = ({
   children,
   backgroundColor,
 }) => {
-  console.log('backgroundColor', backgroundColor);
   return (
     <View flex={1} flexDirection="column" backgroundColor={backgroundColor}>
       <StatusBar
@@ -68,7 +65,7 @@ const BottomSection: React.FC<BottomSectionProps> = ({
   const { bottom } = useSafeAreaInsets();
   const incomingBottom = props.paddingBottom ?? props.pb ?? 0;
 
-  const totalBottom = isNumber(incomingBottom)
+  const totalBottom = typeof incomingBottom === 'number'
     ? bottom + incomingBottom
     : bottom;
   return (

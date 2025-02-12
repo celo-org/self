@@ -162,7 +162,6 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
       padding={20}
       borderTopLeftRadius={30}
       borderTopRightRadius={30}
-      paddingBottom={50}
     >
       <ScrollView>
         <YStack ai="flex-start" justifyContent="flex-start" width="100%">
@@ -177,18 +176,7 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
           ))}
         </YStack>
       </ScrollView>
-      <YStack ai="center" gap={20} justifyContent="center" paddingBottom={40}>
-          {routes.map(([Icon, menuText, menuRoute]) => (
-            <MenuButton
-              key={menuRoute}
-              Icon={Icon}
-              onPress={onMenuPress(menuRoute)}
-            >
-              {menuText}
-            </MenuButton>
-          ))}
-        </YStack>
-        <YStack ai="center" gap={20} justifyContent="center" paddingBottom={40}>
+        <YStack ai="center" gap={20} justifyContent="center" paddingBottom={50}>
           <Button
             unstyled
             icon={<Star color={white} height={24} width={21} />}
@@ -201,6 +189,7 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
             ai="center"
             gap={6}
             borderRadius={4}
+            onPress={() => Linking.openURL(storeURL)}
           >
             <BodyText color={white}>Leave an app store review</BodyText>
           </Button>
@@ -212,6 +201,7 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
           <BodyText color={amber500} fontSize={15}>
             SELF
           </BodyText>
+          {/* Dont remove if not viewing on ios */}
           <View marginBottom={bottom} />
         </YStack>
       </YStack>
