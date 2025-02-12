@@ -5,7 +5,7 @@ import { SvgProps } from 'react-native-svg';
 
 import { useNavigation } from '@react-navigation/native';
 import { Bug } from '@tamagui/lucide-icons';
-import { Button, ScrollView, XStack, YStack } from 'tamagui';
+import { Button, View, ScrollView, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
 import { BodyText } from '../components/typography/BodyText';
@@ -26,6 +26,7 @@ import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SettingsScreenProps {}
 interface MenuButtonProps extends PropsWithChildren {
@@ -150,8 +151,9 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
     },
     [navigation],
   );
-
+  const {bottom} = useSafeAreaInsets();
   return (
+    <View backgroundColor={white}>
     <YStack
       bg={black}
       gap={20}
@@ -199,8 +201,10 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
         <BodyText color={amber500} fontSize={15}>
           SELF
         </BodyText>
+        <View  marginBottom={bottom}/>
       </YStack>
     </YStack>
+    </View>
   );
 };
 
