@@ -13,7 +13,7 @@ import {
   NativeStackHeaderProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, ViewStyle } from 'tamagui';
+import { Button, TextStyle, ViewStyle } from 'tamagui';
 
 import { NavBar } from './components/NavBar';
 import ActivityIcon from './images/icons/activity.svg';
@@ -31,10 +31,11 @@ import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen'
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
+import ProofRequestStatusScreen from './screens/ProveFlow/ProofRequestStatusScreen';
 import ProveScreen from './screens/ProveFlow/ProveScreen';
-import ValidProofScreen from './screens/ProveFlow/ValidProofScreen';
 import QRCodeViewFinderScreen from './screens/ProveFlow/ViewFinder';
-import WrongProofScreen from './screens/ProveFlow/WrongProofScreen';
+import DevSettingsScreen from './screens/Settings/DevSettingsScreen';
+import PassportDataInfoScreen from './screens/Settings/PassportDataInfoScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
@@ -45,15 +46,19 @@ const DefaultNavBar = (props: NativeStackHeaderProps) => {
   const { goBack, canGoBack } = props.navigation;
   const { options } = props;
   const headerStyle = (options.headerStyle || {}) as ViewStyle;
+  const insets = useSafeAreaInsets();
   return (
     <NavBar.Container
       gap={14}
       paddingHorizontal={20}
-      paddingTop={12}
+      paddingTop={Math.max(insets.top, 12)}
       paddingBottom={20}
       backgroundColor={headerStyle.backgroundColor as string}
       barStyle={
-        options.headerTintColor === white ? 'light-content' : 'dark-content'
+        options.headerTintColor === white ||
+        (options.headerTitleStyle as TextStyle)?.color === white
+          ? 'light-content'
+          : 'dark-content'
       }
     >
       <NavBar.LeftAction
@@ -206,17 +211,13 @@ const AppNavigation = createNativeStackNavigator({
         headerStyle: {
           backgroundColor: black,
         },
-        headerTintColor: white,
+        headerTitleStyle: {
+          color: white,
+        },
       },
     },
-    ValidProofScreen: {
-      screen: ValidProofScreen,
-      options: {
-        headerShown: false,
-      },
-    },
-    WrongProofScreen: {
-      screen: WrongProofScreen,
+    ProofRequestStatusScreen: {
+      screen: ProofRequestStatusScreen,
       options: {
         headerShown: false,
       },
@@ -266,6 +267,21 @@ const AppNavigation = createNativeStackNavigator({
       screen: ShowRecoveryPhraseScreen,
       options: {
         title: 'Recovery Phrase',
+        headerStyle: {
+          backgroundColor: white,
+        },
+      },
+    },
+    PassportDataInfo: {
+      screen: PassportDataInfoScreen,
+      options: {
+        title: 'Passport Data Info',
+      },
+    },
+    DevSettings: {
+      screen: DevSettingsScreen,
+      options: {
+        title: 'Developer Settings',
         headerStyle: {
           backgroundColor: white,
         },

@@ -14,7 +14,7 @@ const SplashScreen: React.FC = ({}) => {
   const { userLoaded, passportData } = useUserStore();
 
   const redirect = useCallback(() => {
-    if (passportData) {
+    if (userLoaded && passportData) {
       navigation.navigate('Home');
     } else {
       navigation.navigate('Launch');
@@ -25,8 +25,8 @@ const SplashScreen: React.FC = ({}) => {
     setTimeout(() => {
       impactLight();
       redirect();
-    }, 750);
-  }, [redirect]);
+    }, 1000);
+  }, [userLoaded]);
 
   return (
     <LottieView

@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
+import passportOnboardingAnimation from '../../assets/animations/passport_onboarding.json';
 import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
@@ -12,7 +13,7 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { slate100 } from '../../utils/colors';
+import { black, slate100 } from '../../utils/colors';
 
 interface PassportOnboardingScreenProps {}
 
@@ -23,12 +24,13 @@ const PassportOnboardingScreen: React.FC<
   const onCancelPress = useHapticNavigation('Launch', 'cancel');
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
+      <StatusBar barStyle="light-content" backgroundColor={black} />
+      <ExpandableBottomLayout.TopSection roundTop>
         <LottieView
           autoPlay
           loop={false}
-          source={require('../../assets/animations/passport_onboarding.json')}
+          source={passportOnboardingAnimation}
           style={styles.animation}
           cacheComposition={true}
           renderMode="HARDWARE"

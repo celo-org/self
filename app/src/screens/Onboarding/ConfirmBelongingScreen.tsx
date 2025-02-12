@@ -4,13 +4,14 @@ import { StatusBar } from 'react-native';
 import { usePreventRemove } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
+import successAnimation from '../../assets/animations/loading/success.json';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { notificationSuccess } from '../../utils/haptic';
-import { styles } from '../ProveFlow/ValidProofScreen';
+import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
 const ConfirmBelongingScreen: React.FC = () => {
   const onOkPress = useHapticNavigation('Home');
@@ -24,13 +25,13 @@ const ConfirmBelongingScreen: React.FC = () => {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="black" />
+      <StatusBar barStyle="light-content" backgroundColor="black" hidden />
       <ExpandableBottomLayout.Layout>
         <ExpandableBottomLayout.TopSection>
           <LottieView
             autoPlay
             loop={false}
-            source={require('../../assets/animations/loading/success.json')}
+            source={successAnimation}
             style={styles.animation}
             cacheComposition={true}
             renderMode="HARDWARE"
