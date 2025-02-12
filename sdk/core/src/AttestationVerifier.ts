@@ -11,6 +11,7 @@ import {
   unpackReveal,
 } from '../../../common/src/utils/circuits/formatOutputs';
 import { castToScope } from '../../../common/src/utils/circuits/uuid';
+import { VcAndDiscloseProof } from '../../../contracts/test/utils/types';
 import { SelfVerifierReport } from './SelfVerifierReport';
 import {
   registryAbi
@@ -26,6 +27,9 @@ import {
   PublicSignals
 } from 'snarkjs';
 import { CIRCUIT_CONSTANTS, revealedDataTypes } from '../../../common/src/constants/constants';
+import { packForbiddenCountriesList } from '../../../common/src/utils/contracts/formatCallData';
+import { parseSolidityCalldata } from '../../../contracts/test/utils/generateProof';
+
 
 export class AttestationVerifier {
 
@@ -35,12 +39,18 @@ export class AttestationVerifier {
   protected attestationId: number = 1;
   protected targetRootTimestamp: number = 0;
 
+  protected nationality: { enabled: boolean; value: (typeof countryNames)[number] } = {
+    enabled: false,
+    value: '' as (typeof countryNames)[number],
+  };
   protected minimumAge: { enabled: boolean; value: string } = { enabled: false, value: '18' };
   protected excludedCountries: { enabled: boolean; value: (typeof countryNames)[number][] } = {
     enabled: false,
     value: [],
   };
-  protected ofac: boolean = false;
+  protected passportNoOfac: boolean = false;
+  protected nameAndDobOfac: boolean = false;
+  protected nameAndYobOfac: boolean = false;
 
   protected registryContract: any;
   protected verifyAllContract: any;
@@ -61,33 +71,39 @@ export class AttestationVerifier {
   }
 
   public async verify(proof: Groth16Proof, publicSignals: PublicSignals): Promise<SelfAttestation> {
+    const forbiddenCountriesListPacked = packForbiddenCountriesList(this.excludedCountries.value);
+    const solidityProof = parseSolidityCalldata(await groth16.exportSolidityCallData(
+        proof,
+        publicSignals
+    ), {} as VcAndDiscloseProof);
 
-    const solidityProof = await groth16.exportSolidityCallData(
-      proof,
-      publicSignals,
-    );
+    const vcAndDiscloseHubProof = {
+      olderThanEnabled: true,  
+      olderThan: "20",                
+      forbiddenCountriesEnabled: true,  
+      forbiddenCountriesListPacked: forbiddenCountriesListPacked[0], 
+      ofacEnabled: [true, true, true],  
+      vcAndDiscloseProof: {
+          a: solidityProof.a,
+          b: [solidityProof.b[0], solidityProof.b[1]],  
+          c: solidityProof.c,
+          pubSignals: solidityProof.pubSignals
+      }
+  };
 
-    const vcAndDiscloseHubProof: any = {
-      olderThanEnabled: this.minimumAge.enabled,
-      olderThan: BigInt(this.minimumAge.value),
-      forbiddenCountriesEnabled: this.excludedCountries.enabled,
-      forbiddenCountriesListPacked: BigInt(this.excludedCountries.value.length),
-      ofacEnabled: this.ofac,
-      vcAndDiscloseProof: solidityProof
-    }
+    const types = ["0", "1", "2"];
+
+    const timestamp = this.targetRootTimestamp;
+
+    console.log('Debug info:');
+    console.log('timestamp:', timestamp);
+    console.log('vcAndDiscloseHubProof:', vcAndDiscloseHubProof);
+    console.log('types:', types);
 
     const result = await this.verifyAllContract.verifyAll(
-      this.targetRootTimestamp,
-      vcAndDiscloseHubProof,
-      [
-        revealedDataTypes.issuing_state,
-        revealedDataTypes.name,
-        revealedDataTypes.passport_number,
-        revealedDataTypes.nationality,
-        revealedDataTypes.date_of_birth,
-        revealedDataTypes.gender,
-        revealedDataTypes.expiry_date,
-      ]
+        timestamp,
+        vcAndDiscloseHubProof,
+        types
     );
 
     console.log(result);
@@ -99,14 +115,14 @@ export class AttestationVerifier {
       attestation_id: "",
       current_date: "",
       issuing_state: result[0],
-      name: result[1],
-      passport_number: result[2],
-      nationality: result[3],
-      date_of_birth: result[4],
-      gender: result[5],
-      expiry_date: result[6],
-      older_than: result[7],
-      valid: result[8],
+      name: result[0],
+      passport_number: result[0],
+      nationality: result[0],
+      date_of_birth: result[0],
+      gender: result[0],
+      expiry_date: result[0],
+      older_than: result[0],
+      valid: result[1],
       nullifier: publicSignals[CIRCUIT_CONSTANTS.REGISTER_NULLIFIER_INDEX],
     }
 
@@ -128,7 +144,6 @@ export class AttestationVerifier {
     }
 
     return attestation;
-    
   }
 
 }

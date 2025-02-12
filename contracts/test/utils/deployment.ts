@@ -40,6 +40,15 @@ export async function deploySystemFixtures(): Promise<DeployedActors> {
     let mockPassport: PassportData;
 
     [owner, user1, user2] = await ethers.getSigners();
+    console.log("Deploying with owner address:", await owner.getAddress());
+    console.log("User1 address:", await user1.getAddress());
+    console.log("User2 address:", await user2.getAddress());
+
+    const newBalance = "0x" + ethers.parseEther("10000").toString(16);
+
+    await ethers.provider.send("hardhat_setBalance", [await owner.getAddress(), newBalance]);
+    await ethers.provider.send("hardhat_setBalance", [await user1.getAddress(), newBalance]);
+    await ethers.provider.send("hardhat_setBalance", [await user2.getAddress(), newBalance]);
 
     mockPassport = genMockPassportData(
         "sha256",

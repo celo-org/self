@@ -1,17 +1,17 @@
-// import {
-//   ArgumentsDisclose,
-//   ArgumentsProveOffChain,
-//   ArgumentsProveOnChain,
-//   ArgumentsRegister,
-//   Mode,
-//   SelfAppPartial,
-//   SelfApp
-// } from '../../../common/src/utils/appType';
+import {
+  ArgumentsDisclose,
+  ArgumentsProveOffChain,
+  ArgumentsProveOnChain,
+  ArgumentsRegister,
+  Mode,
+  SelfAppPartial,
+  SelfApp
+} from '../../../common/src/utils/appType';
 import {
   DEFAULT_RPC_URL,
   countryNames,
 } from '../../../common/src/constants/constants';
-// import { UserIdType } from '../../../common/src/utils/circuits/uuid';
+import { UserIdType } from '../../../common/src/utils/circuits/uuid';
 import { AttestationVerifier } from './AttestationVerifier';
 export class SelfVerifier extends AttestationVerifier {
 
@@ -20,13 +20,15 @@ export class SelfVerifier extends AttestationVerifier {
     devMode: boolean = false,
     rpcUrl: string = DEFAULT_RPC_URL,
     registryContractAddress: `0x${string}`,
-    hubContractAddress: `0x${string}`
+    verifyAllContractAddress: `0x${string}`,
+    targetRootTimestamp: number = 0
   ) {
     super(
       devMode,
       rpcUrl,
       registryContractAddress,
-      hubContractAddress
+      verifyAllContractAddress,
+      targetRootTimestamp
     );
     this.scope = scope;
   }
@@ -73,45 +75,45 @@ export class SelfVerifier extends AttestationVerifier {
   }
 
   // TODO: related to the qr code
-  getIntent(
-    appName: string,
-    userId: string,
-    userIdType: UserIdType,
-    sessionId: string,
-    websocketUrl: string = WEBSOCKET_URL
-  ): string {
-    const intent_raw: SelfAppPartial = {
-      appName: appName,
-      scope: this.scope,
-      websocketUrl: websocketUrl,
-      sessionId: sessionId,
-      userId: userId,
-      userIdType: userIdType,
-      devMode: this.devMode,
-    };
+  // getIntent(
+  //   appName: string,
+  //   userId: string,
+  //   userIdType: UserIdType,
+  //   sessionId: string,
+  //   websocketUrl: string = WEBSOCKET_URL
+  // ): string {
+  //   const intent_raw: SelfAppPartial = {
+  //     appName: appName,
+  //     scope: this.scope,
+  //     websocketUrl: websocketUrl,
+  //     sessionId: sessionId,
+  //     userId: userId,
+  //     userIdType: userIdType,
+  //     devMode: this.devMode,
+  //   };
 
-    let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
-        const argsVcAndDisclose: ArgumentsDisclose = {
-          disclosureOptions: {
-            minimumAge: this.minimumAge,
-            nationality: this.nationality,
-            excludedCountries: this.excludedCountries,
-            ofac: this.ofac,
-        };
-        selfArguments = argsVcAndDisclose;
-    }
+  //   let selfArguments: ArgumentsProveOffChain | ArgumentsRegister;
+  //       const argsVcAndDisclose: ArgumentsDisclose = {
+  //         disclosureOptions: {
+  //           minimumAge: this.minimumAge,
+  //           nationality: this.nationality,
+  //           excludedCountries: this.excludedCountries,
+  //           ofac: this.ofac,
+  //       };
+  //       selfArguments = argsVcAndDisclose;
+  //   }
 
-    const intent: SelfApp = {
-      ...intent_raw,
-      args: selfArguments,
-    };
-    const encoded = msgpack.encode(intent);
-    try {
-      const compressedData = pako.deflate(encoded);
-      return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
-    } catch (err) {
-      console.error(err);
-      return '';
-    }
-  }
+  //   const intent: SelfApp = {
+  //     ...intent_raw,
+  //     args: selfArguments,
+  //   };
+  //   const encoded = msgpack.encode(intent);
+  //   try {
+  //     const compressedData = pako.deflate(encoded);
+  //     return btoa(String.fromCharCode(...new Uint8Array(compressedData)));
+  //   } catch (err) {
+  //     console.error(err);
+  //     return '';
+  //   }
+  // }
 }

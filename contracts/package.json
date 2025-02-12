@@ -34,6 +34,7 @@
     "test:disclose:local": "TEST_ENV=local npx hardhat test test/integration/vcAndDisclose.test.ts",
     "test:endtoend:local": "TEST_ENV=local npx hardhat test test/Integration/endToEnd.test.ts",
     "test:verifyall:local": "TEST_ENV=local npx hardhat test test/integration/verifyAll.test.ts",
+    "test:sdkcore:local": "TEST_ENV=local npx hardhat test test/sdk/sdkCore.test.ts --network localhost",
     "test:example:local": "TEST_ENV=local npx hardhat test test/example/*",
     "test:formatter:local": "TEST_ENV=local npx hardhat test test/unit/formatter.test.ts",
     "test:hub:local": "TEST_ENV=local npx hardhat test test/unit/IdentityVerificationHub.test.ts",
