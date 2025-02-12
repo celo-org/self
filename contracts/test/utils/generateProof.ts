@@ -198,7 +198,9 @@ export async function generateVcAndDiscloseProof(
     selectorOlderThan: string | number = "1",
     merkletree: LeanIMT<bigint>,
     majority: string = "20",
-    smt?: SMT,
+    passportNo_smt?: SMT,
+    nameAndDob_smt?: SMT,
+    nameAndYob_smt?: SMT,
     selectorOfac: string | number = "1",
     forbiddenCountriesList: string[] = ["AAA"],
     userIdentifier: string = "0000000000000000000000000000000000000000"
@@ -212,7 +214,9 @@ export async function generateVcAndDiscloseProof(
         selectorOlderThan,
         merkletree,
         majority,
-        smt,
+        passportNo_smt,
+        nameAndDob_smt,
+        nameAndYob_smt,
         selectorOfac,
         forbiddenCountriesList,
         userIdentifier
