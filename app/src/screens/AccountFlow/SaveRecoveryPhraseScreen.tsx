@@ -46,7 +46,9 @@ const SaveRecoveryPhraseScreen: React.FC<
     setMnemonic(words.trim().split(' '));
   }, []);
 
-  const onCloudBackupPress = useHapticNavigation('TODO: cloud backup');
+  const onCloudBackupPress = useHapticNavigation('CloudBackupSettings', {
+    params: { nextScreen: 'AccountVerifiedSuccess' },
+  });
   const onSkipPress = useHapticNavigation('AccountVerifiedSuccess');
 
   return (

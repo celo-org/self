@@ -29,7 +29,7 @@ export const AuthProvider = ({
   children,
   authenticationTimeoutinMs = 15 * 60 * 1000,
 }: AuthProviderProps) => {
-  const [authenticatedTimeout, setAuthenticatedTimeout] =
+  const [_, setAuthenticatedTimeout] =
     useState<ReturnType<typeof setTimeout>>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -49,13 +49,17 @@ export const AuthProvider = ({
       throw new Error('Canceled by user');
     }
 
-    if (authenticatedTimeout) {
-      clearTimeout(authenticatedTimeout);
-    }
     setIsAuthenticating(false);
-    setAuthenticatedTimeout(
-      setTimeout(() => setIsAuthenticated(false), authenticationTimeoutinMs),
-    );
+    setIsAuthenticated(true);
+    setAuthenticatedTimeout(previousTimeout => {
+      if (previousTimeout) {
+        clearTimeout(previousTimeout);
+      }
+      return setTimeout(
+        () => setIsAuthenticated(false),
+        authenticationTimeoutinMs,
+      );
+    });
   }, []);
 
   const state: IAuthContext = {

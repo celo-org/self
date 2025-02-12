@@ -1,21 +1,28 @@
 import React from 'react';
+import { Platform } from 'react-native';
 
-import { View, YStack } from 'tamagui';
+import { Separator, Text, View, XStack, YStack } from 'tamagui';
 
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
+import { Caption } from '../../components/typography/Caption';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
+import Keyboard from '../../images/icons/keyboard.svg';
 import RestoreAccountSvg from '../../images/icons/restore_account.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { slate600, white } from '../../utils/colors';
+import { slate500, slate600, white } from '../../utils/colors';
 
-interface AccountRecoveryScreenProps {}
+interface AccountRecoveryChoiceScreenProps {}
 
-const AccountRecoveryScreen: React.FC<AccountRecoveryScreenProps> = ({}) => {
-  const onRestoreAccountPress = useHapticNavigation('AccountRecoveryChoice');
-  const onCreateAccountPress = useHapticNavigation('SaveRecoveryPhrase');
+const storage = Platform.OS === 'ios' ? 'iCloud' : 'Android Backup';
+
+const AccountRecoveryChoiceScreen: React.FC<
+  AccountRecoveryChoiceScreenProps
+> = ({}) => {
+  const onRestoreFromCloudPress = useHapticNavigation('RecoverWithCloud');
+  const onEnterRecoveryPress = useHapticNavigation('SaveRecoveryPhrase');
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -33,11 +40,21 @@ const AccountRecoveryScreen: React.FC<AccountRecoveryScreenProps> = ({}) => {
           </Description>
 
           <YStack gap="$2.5" width="100%" pt="$6">
-            <PrimaryButton onPress={onRestoreAccountPress}>
-              Restore my account
+            <PrimaryButton onPress={onRestoreFromCloudPress}>
+              Restore from {storage}
             </PrimaryButton>
-            <SecondaryButton onPress={onCreateAccountPress}>
-              Create new account
+            <XStack gap={64} ai="center" justifyContent="space-between">
+              <Separator flexGrow={1} />
+              <Caption>OR</Caption>
+              <Separator flexGrow={1} />
+            </XStack>
+            <SecondaryButton onPress={onEnterRecoveryPress}>
+              <XStack alignItems="center" justifyContent="center">
+                <Keyboard height={25} width={40} color={slate500} />
+                <View pl={12}>
+                  <Description>Enter recovery phrase</Description>
+                </View>
+              </XStack>
             </SecondaryButton>
           </YStack>
         </YStack>
@@ -46,4 +63,4 @@ const AccountRecoveryScreen: React.FC<AccountRecoveryScreenProps> = ({}) => {
   );
 };
 
-export default AccountRecoveryScreen;
+export default AccountRecoveryChoiceScreen;

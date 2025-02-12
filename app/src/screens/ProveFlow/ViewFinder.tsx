@@ -61,7 +61,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
     },
     [store, navigation, doneScanningQR],
   );
-  const onCancelPress = useHapticNavigation('Home', 'cancel');
+  const onCancelPress = useHapticNavigation('Home', { action: 'cancel' });
 
   return (
     <>

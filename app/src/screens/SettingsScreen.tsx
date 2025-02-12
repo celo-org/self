@@ -18,6 +18,7 @@ import ShareIcon from '../images/icons/share.svg';
 import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
+import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 
 interface SettingsScreenProps {}
@@ -44,7 +45,7 @@ const storeURL = Platform.OS === 'ios' ? 'TODO: ios URL' : 'TODO: android URL';
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Enable cloud back up', 'CloudBackupSettingsScreen'],
+  [Cloud, 'Cloud back up', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];

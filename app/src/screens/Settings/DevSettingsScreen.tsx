@@ -34,6 +34,7 @@ const items: (keyof RootStackParamList)[] = [
   'RecoverWithPhrase',
   'AccountVerifiedSuccess',
   'ShowRecoveryPhrase',
+  'CloudBackupSettings',
 ];
 const ScreenSelector = ({}) => {
   const navigation = useNavigation();

@@ -90,7 +90,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       }
     }
   }, [isNfcSupported, isNfcEnabled, passportNumber, dateOfBirth, dateOfExpiry]);
-  const onCancelPress = useHapticNavigation('PassportCamera', 'cancel');
+  const onCancelPress = useHapticNavigation('PassportCamera', {
+    action: 'cancel',
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _cancelScanIfRunning = useCallback(async () => {
