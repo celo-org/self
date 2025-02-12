@@ -16,19 +16,15 @@ import { AttestationVerifier } from './AttestationVerifier';
 export class SelfVerifier extends AttestationVerifier {
 
   constructor(
-    scope: string, 
-    devMode: boolean = false,
+    scope: string,
     rpcUrl: string = DEFAULT_RPC_URL,
     registryContractAddress: `0x${string}`,
     verifyAllContractAddress: `0x${string}`,
-    targetRootTimestamp: number = 0
   ) {
     super(
-      devMode,
       rpcUrl,
       registryContractAddress,
       verifyAllContractAddress,
-      targetRootTimestamp
     );
     this.scope = scope;
   }
@@ -64,13 +60,18 @@ export class SelfVerifier extends AttestationVerifier {
     return this;
   }
 
-  enableOFACCheck(): this {
-    this.ofac = true;
+  enablePassportNoOfacCheck(): this {
+    this.passportNoOfac = true;
     return this;
   }
 
-  allowMockPassports(): this {
-    this.devMode = true;
+  enableNameAndDobOfacCheck(): this {
+    this.nameAndDobOfac = true;
+    return this;
+  }
+
+  enableNameAndYobOfacCheck(): this {
+    this.nameAndYobOfac = true;
     return this;
   }
 
