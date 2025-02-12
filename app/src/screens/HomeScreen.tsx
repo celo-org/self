@@ -51,11 +51,7 @@ const HomeScreen: React.FC = () => {
         </Caption>
         <PrivacyNote />
       </YStack>
-      <YStack
-        ai="center"
-        gap={20}
-        justifyContent="flex-end"
-      >
+      <YStack ai="center" gap={20} justifyContent="flex-end">
         <ScanButton onPress={onScanButtonPress} hitSlop={50}>
           <ScanIcon color={amber500} />
         </ScanButton>
