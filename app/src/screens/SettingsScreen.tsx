@@ -19,6 +19,7 @@ import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
+import { gitHubUrl, appStoreUrl, selfUrl, telegramUrl, playStoreUrl } from '../consts/links';
 
 interface SettingsScreenProps {}
 interface MenuButtonProps extends PropsWithChildren {
@@ -40,7 +41,7 @@ type RouteOption =
   | 'share'
   | 'email_feedback';
 
-const storeURL = Platform.OS === 'ios' ? 'TODO: ios URL' : 'TODO: android URL';
+const storeURL = Platform.OS === 'ios' ? appStoreUrl : playStoreUrl;
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
@@ -56,9 +57,9 @@ if (__DEV__ || true) {
 }
 
 const social = [
-  [Github, 'https://github.com/selfxyz/self'],
-  [Web, 'https://www.self.xyz/'],
-  [Telegram, 'TODO: Telegram URL?'],
+  [Github, gitHubUrl],
+  [Web, selfUrl],
+  [Telegram, telegramUrl],
 ] as [React.FC<SvgProps>, string][];
 
 const MenuButton: React.FC<MenuButtonProps> = ({ children, Icon, onPress }) => (

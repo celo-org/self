@@ -10,6 +10,7 @@ import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
 import { slate50, slate100, slate500, slate700, white } from '../utils/colors';
 import { advercase, dinot } from '../utils/fonts';
+import { privacyUrl, termsUrl } from '../consts/links';
 
 interface LaunchScreenProps {}
 
@@ -47,14 +48,13 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
             The simplest way to verify identity for safety and trust wherever
             you are.
           </Text>
-          {/* TODO add linking */}
           <Text style={styles.notice}>
             By continuing, you agree to the&nbsp;
-            <Anchor style={styles.link} href="https://example.com">
+            <Anchor style={styles.link} href={termsUrl}>
               User Terms and Conditions
             </Anchor>
             &nbsp;and acknowledge the&nbsp;
-            <Anchor style={styles.link} href="https://example.com">
+            <Anchor style={styles.link} href={privacyUrl}>
               Privacy notice
             </Anchor>
             &nbsp;of Self provided by Self Inc.
