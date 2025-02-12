@@ -41,7 +41,7 @@ const ProveScreen: React.FC = () => {
   }
 
   return (
-    <ExpandableBottomLayout.Layout  flex={1} backgroundColor={black}>
+    <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
       <ExpandableBottomLayout.TopSection backgroundColor={black}>
         <YStack alignItems="center">
           <Text>Check</Text>

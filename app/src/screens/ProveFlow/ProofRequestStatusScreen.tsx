@@ -58,7 +58,11 @@ const SuccessScreen: React.FC = () => {
   return (
     <ExpandableBottomLayout.Layout backgroundColor={white}>
       <StatusBar barStyle="dark-content" backgroundColor={white} />
-      <ExpandableBottomLayout.TopSection roundTop marginTop={20} backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection
+        roundTop
+        marginTop={20}
+        backgroundColor={black}
+      >
         <LottieView
           autoPlay
           loop={status === 'pending'}
@@ -68,7 +72,10 @@ const SuccessScreen: React.FC = () => {
           renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection paddingBottom={20} backgroundColor={white}>
+      <ExpandableBottomLayout.BottomSection
+        paddingBottom={20}
+        backgroundColor={white}
+      >
         <View style={styles.content}>
           <Title size="large">{getTitle(status)}</Title>
           <Info status={status} appName={appName} />

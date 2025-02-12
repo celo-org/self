@@ -2,10 +2,10 @@ import React from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { isNumber } from '@segment/analytics-react-native';
 import { View, ViewProps } from 'tamagui';
 
 import { black, white } from '../utils/colors';
-import { isNumber } from '@segment/analytics-react-native';
 
 interface ExpandableBottomLayoutProps extends ViewProps {
   children: React.ReactNode;
@@ -30,7 +30,10 @@ const Layout: React.FC<ExpandableBottomLayoutProps> = ({
   console.log('backgroundColor', backgroundColor);
   return (
     <View flex={1} flexDirection="column" backgroundColor={backgroundColor}>
-      <StatusBar barStyle={backgroundColor === black ? 'light-content' : 'dark-content'} backgroundColor={backgroundColor} />
+      <StatusBar
+        barStyle={backgroundColor === black ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundColor}
+      />
       {children}
     </View>
   );
@@ -41,7 +44,7 @@ const TopSection: React.FC<TopSectionProps> = ({
   backgroundColor,
   ...props
 }) => {
-  const {top} = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <View
       {...props}
@@ -49,10 +52,10 @@ const TopSection: React.FC<TopSectionProps> = ({
       style={[
         styles.topSection,
         props.roundTop && styles.roundTop,
-        props.roundTop ? { marginTop: top } : {paddingTop: top},
-        {backgroundColor}
+        props.roundTop ? { marginTop: top } : { paddingTop: top },
+        { backgroundColor },
       ]}
-    >  
+    >
       {children}
     </View>
   );
@@ -62,10 +65,12 @@ const BottomSection: React.FC<BottomSectionProps> = ({
   children,
   ...props
 }) => {
-  const {bottom} = useSafeAreaInsets();
-  const incomingBottom = props.paddingBottom ?? props.pb ??  0;
+  const { bottom } = useSafeAreaInsets();
+  const incomingBottom = props.paddingBottom ?? props.pb ?? 0;
 
-  const totalBottom = isNumber(incomingBottom) ? bottom + incomingBottom : bottom;
+  const totalBottom = isNumber(incomingBottom)
+    ? bottom + incomingBottom
+    : bottom;
   return (
     <View {...props} style={styles.bottomSection} paddingBottom={totalBottom}>
       {children}

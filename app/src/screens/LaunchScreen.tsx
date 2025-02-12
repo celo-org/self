@@ -11,7 +11,7 @@ import useHapticNavigation from '../hooks/useHapticNavigation';
 import GetStartedCard from '../images/card-style-2.svg';
 import Logo from '../images/logo.svg';
 import { ExpandableBottomLayout } from '../layouts/ExpandableBottomLayout';
-import { slate50, slate100, slate500, white, black } from '../utils/colors';
+import { black, slate50, slate100, slate500, white } from '../utils/colors';
 import { advercase, dinot } from '../utils/fonts';
 
 interface LaunchScreenProps {}

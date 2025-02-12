@@ -9,9 +9,9 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { black, white } from '../../utils/colors';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
-import { black, white } from '../../utils/colors';
 
 const ConfirmBelongingScreen: React.FC = () => {
   const onOkPress = useHapticNavigation('Home');
@@ -36,7 +36,11 @@ const ConfirmBelongingScreen: React.FC = () => {
             renderMode="HARDWARE"
           />
         </ExpandableBottomLayout.TopSection>
-        <ExpandableBottomLayout.BottomSection gap={20} paddingBottom={20} backgroundColor={white}>
+        <ExpandableBottomLayout.BottomSection
+          gap={20}
+          paddingBottom={20}
+          backgroundColor={white}
+        >
           <Title textAlign="center">Confirm your identity</Title>
           <Description textAlign="center" paddingBottom={20}>
             By continuing, you certify that this passport belongs to you and is

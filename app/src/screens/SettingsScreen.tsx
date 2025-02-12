@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, useCallback } from 'react';
 import { Linking, Platform, Share } from 'react-native';
 import { getCountry, getLocales, getTimeZone } from 'react-native-localize';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgProps } from 'react-native-svg';
 
 import { useNavigation } from '@react-navigation/native';
@@ -26,7 +27,6 @@ import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SettingsScreenProps {}
 interface MenuButtonProps extends PropsWithChildren {
@@ -151,7 +151,7 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
     },
     [navigation],
   );
-  const {bottom} = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
   return (
     <View backgroundColor={white}>
     <YStack
@@ -178,32 +178,43 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
         </YStack>
       </ScrollView>
       <YStack ai="center" gap={20} justifyContent="center" paddingBottom={40}>
-        <Button
-          unstyled
-          icon={<Star color={white} height={24} width={21} />}
-          width="100%"
-          padding={20}
-          backgroundColor={slate800}
-          color={white}
-          flexDirection="row"
-          jc="center"
-          ai="center"
-          gap={6}
-          borderRadius={4}
-        >
-          <BodyText color={white}>Leave an app store review</BodyText>
-        </Button>
-        <XStack gap={32}>
-          {social.map(([Icon, href], i) => (
-            <SocialButton key={i} Icon={Icon} href={href} />
+          {routes.map(([Icon, menuText, menuRoute]) => (
+            <MenuButton
+              key={menuRoute}
+              Icon={Icon}
+              onPress={onMenuPress(menuRoute)}
+            >
+              {menuText}
+            </MenuButton>
           ))}
-        </XStack>
-        <BodyText color={amber500} fontSize={15}>
-          SELF
-        </BodyText>
-        <View  marginBottom={bottom}/>
+        </YStack>
+        <YStack ai="center" gap={20} justifyContent="center" paddingBottom={40}>
+          <Button
+            unstyled
+            icon={<Star color={white} height={24} width={21} />}
+            width="100%"
+            padding={20}
+            backgroundColor={slate800}
+            color={white}
+            flexDirection="row"
+            jc="center"
+            ai="center"
+            gap={6}
+            borderRadius={4}
+          >
+            <BodyText color={white}>Leave an app store review</BodyText>
+          </Button>
+          <XStack gap={32}>
+            {social.map(([Icon, href], i) => (
+              <SocialButton key={i} Icon={Icon} href={href} />
+            ))}
+          </XStack>
+          <BodyText color={amber500} fontSize={15}>
+            SELF
+          </BodyText>
+          <View marginBottom={bottom} />
+        </YStack>
       </YStack>
-    </YStack>
     </View>
   );
 };
