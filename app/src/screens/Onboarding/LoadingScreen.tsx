@@ -13,7 +13,7 @@ import miscAnimation from '../../assets/animations/loading/misc.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import useUserStore from '../../stores/userStore';
-import { sendDscPayload } from '../../utils/proving/payload';
+import { registerPassport } from '../../utils/proving/payload';
 
 const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation(
@@ -55,7 +55,7 @@ const LoadingScreen: React.FC = () => {
         const passportDataInit = initPassportDataParsing(passportData);
         await useUserStore.getState().registerPassportData(passportDataInit);
         // This will trigger sendPayload(), which updates global status via your tee.ts code.
-        await sendDscPayload(
+        await registerPassport(
           useUserStore.getState().passportData as PassportData,
         );
       } catch (error) {
