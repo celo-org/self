@@ -66,8 +66,6 @@ describe("VerifyAll", () => {
             forbiddenCountriesList,
             (await deployedActors.user1.getAddress()).slice(2)
         );
-        baseVcAndDiscloseProof = parseSolidityCalldata(await groth16.exportSolidityCallData(rawProof.proof, rawProof.publicSignals), {} as VcAndDiscloseProof);
-        console.log("baseVcAndDiscloseProof", baseVcAndDiscloseProof);
         snapshotId = await ethers.provider.send("evm_snapshot", []);
     });
 
@@ -102,11 +100,6 @@ describe("VerifyAll", () => {
             };
 
             const types = ['0', '1', '2']; // Example types
-            console.log('timestamp', timestamp);
-            console.log('timestamp type', typeof timestamp);
-            console.log('vcAndDiscloseHubProof', vcAndDiscloseHubProof);
-            console.log('types', types);
-
             const [readableData, success] = await verifyAll.verifyAll(
                 timestamp,
                 vcAndDiscloseHubProof,

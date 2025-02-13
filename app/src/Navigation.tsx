@@ -25,6 +25,7 @@ import SaveRecoveryPhraseScreen from './screens/AccountFlow/SaveRecoveryPhraseSc
 import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
+import LoadingScreen from './screens/LoadingScreen';
 import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
 import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen';
@@ -120,6 +121,7 @@ const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   screenOptions: {
     header: DefaultNavBar,
+    navigationBarColor: white,
   },
   layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
@@ -170,6 +172,12 @@ const AppNavigation = createNativeStackNavigator({
         headerShown: false,
       },
     },
+    LoadingScreen: {
+      screen: LoadingScreen,
+      options: {
+        headerShown: false,
+      },
+    },
     CreateMock: {
       screen: MockDataScreen,
       options: {
@@ -189,6 +197,7 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         title: 'Self',
         header: HomeNavBar,
+        navigationBarColor: black,
       },
     },
     Disclaimer: {
@@ -226,6 +235,13 @@ const AppNavigation = createNativeStackNavigator({
       screen: SettingsScreen,
       options: {
         title: 'Settings',
+        headerStyle: {
+          backgroundColor: white,
+        },
+        headerTitleStyle: {
+          color: black,
+        },
+        navigationBarColor: black,
       },
       config: {
         screens: {},
@@ -276,6 +292,9 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportDataInfoScreen,
       options: {
         title: 'Passport Data Info',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
     DevSettings: {

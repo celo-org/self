@@ -1,9 +1,11 @@
 import React from 'react';
 
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 import { Text, View, YStack } from 'tamagui';
 
-import { ArgumentsProveOffChain } from '../../../../common/src/utils/appType';
+import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
+import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { BodyText } from '../../components/typography/BodyText';
@@ -21,12 +23,22 @@ const ProveScreen: React.FC = () => {
   const { selectedApp, setStatus } = useProofInfo();
 
   const disclosureOptions =
-    (selectedApp?.args as ArgumentsProveOffChain)?.disclosureOptions || {};
+    (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || {};
 
   if (!passportData) {
     return (
       <Text mt="$10" fontSize="$9" color={black} textAlign="center">
         No passport data
+      </Text>
+    );
+  }
+
+  // FIXME: Probably not the right animation, but we need to show something while
+  // waiting for the web app data
+  if (!selectedApp.sessionId) {
+    return (
+      <Text mt="$10" fontSize="$9" color={black} textAlign="center">
+        <LottieView source={miscAnimation} autoPlay loop />
       </Text>
     );
   }
@@ -41,8 +53,8 @@ const ProveScreen: React.FC = () => {
   }
 
   return (
-    <ExpandableBottomLayout.Layout unsafeArea flex={1}>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection backgroundColor={black}>
         <YStack alignItems="center">
           <Text>Check</Text>
           <BodyText fontSize={24} color={slate300} textAlign="center">
@@ -55,6 +67,7 @@ const ProveScreen: React.FC = () => {
         flexGrow={1}
         justifyContent="space-between"
         paddingBottom={20}
+        backgroundColor={white}
       >
         <Disclosures disclosures={disclosureOptions} />
         <View>
