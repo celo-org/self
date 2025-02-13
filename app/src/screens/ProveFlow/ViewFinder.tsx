@@ -40,7 +40,7 @@ const parseUrlParams = (url: string): Map<string, string> => {
 const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({ }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { setSelectedApp } = useProofInfo();
+  const { setSelectedApp, cleanSelfApp } = useProofInfo();
   const [doneScanningQR, setDoneScanningQR] = useState(false);
   const { startAppListener } = useApp();
 
@@ -55,13 +55,10 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({ }) => {
         setDoneScanningQR(true);
         const encodedData = parseUrlParams(uri!);
         const sessionId = encodedData.get('sessionId');
-        console.log('sessionId__', sessionId);
-
+        cleanSelfApp();
         if (sessionId) {
-          console.log('starting app listener');
           startAppListener(sessionId, setSelectedApp);
         }
-
         navigation.navigate('ProveScreen');
       }
     },
