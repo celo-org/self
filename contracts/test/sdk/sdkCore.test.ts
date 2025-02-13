@@ -11,14 +11,13 @@ import { generateVcAndDiscloseRawProof, parseSolidityCalldata } from "../utils/g
 import { Formatter } from "../utils/formatter";
 import { formatCountriesList, reverseBytes } from "../../../common/src/utils/circuits/formatInputs";
 import { VerifyAll } from "../../typechain-types";
-import { AttestationVerifier } from "../../../sdk/core/src/AttestationVerifier";
-import { SelfVerifier } from "../../../sdk/core/src/SelfVerifier";
+import { SelfBackendVerifier } from "../../../sdk/core/src/SelfBackendVerifier";
 import { Groth16Proof, PublicSignals, groth16 } from "snarkjs";
 import { VcAndDiscloseProof } from "../utils/types";
+import { hasSubscribers } from "diagnostics_channel";
 
 describe("VerifyAll with AttestationVerifier", () => {
-    let attestationVerifier: AttestationVerifier;
-    let selfVerifier: SelfVerifier;
+    let selfBackendVerifier: SelfBackendVerifier;
     let proof: Groth16Proof;
     let publicSignals: PublicSignals;
     let deployedActors: DeployedActors;
@@ -32,6 +31,10 @@ describe("VerifyAll with AttestationVerifier", () => {
     let nullifier: any;
     let forbiddenCountriesList: string[];
     let forbiddenCountriesListPacked: string;
+    let baseRawProof: {
+        proof: Groth16Proof,
+        publicSignals: PublicSignals
+    };
     let rawProof: {
         proof: Groth16Proof,
         publicSignals: PublicSignals
@@ -54,16 +57,16 @@ describe("VerifyAll with AttestationVerifier", () => {
         imt = new LeanIMT<bigint>(hashFunction);
         await imt.insert(BigInt(commitment));
 
-        forbiddenCountriesList = ['AAA', 'ABC', 'CBA'];
+        forbiddenCountriesList = ['AFG', 'ALB'];
         forbiddenCountriesListPacked = reverseBytes(Formatter.bytesToHexString(new Uint8Array(formatCountriesList(forbiddenCountriesList))));
 
-        rawProof = await generateVcAndDiscloseRawProof(
+        baseRawProof = await generateVcAndDiscloseRawProof(
             registerSecret,
-            BigInt(ATTESTATION_ID.E_PASSPORT).toString(),
+            ATTESTATION_ID.E_PASSPORT,
             deployedActors.mockPassport,
             "test-scope",
             new Array(88).fill("1"),
-            "1",
+            1,
             imt,
             "20",
             undefined,
@@ -73,29 +76,18 @@ describe("VerifyAll with AttestationVerifier", () => {
             forbiddenCountriesList,
             (await deployedActors.user1?.getAddress()).slice(2)
         );
-        baseVcAndDiscloseProof = parseSolidityCalldata(await groth16.exportSolidityCallData(rawProof.proof, rawProof.publicSignals), {} as VcAndDiscloseProof);
-        console.log("baseVcAndDiscloseProof", baseVcAndDiscloseProof);
-        snapshotId = await ethers.provider.send("evm_snapshot", []);
         // Setup AttestationVerifier with the same verifyAll contract
-        attestationVerifier = new AttestationVerifier(
-            true, // devMode
+        selfBackendVerifier = new SelfBackendVerifier(
             "http://127.0.0.1:8545", // or your test RPC URL
-            await deployedActors.registry.getAddress() as `0x${string}`,
-            await verifyAll.getAddress() as `0x${string}`,
-            0 // targetRootTimestamp
-        );
-        selfVerifier = new SelfVerifier(
             "test-scope",
-            true,
-            "http://127.0.0.1:8545",
             await deployedActors.registry.getAddress() as `0x${string}`,
             await verifyAll.getAddress() as `0x${string}`,
-            0
         );
+        snapshotId = await ethers.provider.send("evm_snapshot", []);
     });
 
     beforeEach(async () => {
-        vcAndDiscloseProof = structuredClone(baseVcAndDiscloseProof);
+        rawProof = structuredClone(baseRawProof);
     });
 
     afterEach(async () => {
@@ -103,50 +95,98 @@ describe("VerifyAll with AttestationVerifier", () => {
         snapshotId = await ethers.provider.send("evm_snapshot", []);
     });
 
-    it("should verify attestation using AttestationVerifier", async () => {
-        // Setup proof and public signals from the existing test
-        
+    it("should verify and get valid attestation result successfully after identity commitment is added", async () => {
+        const { registry, owner } = deployedActors;
 
-        const cscaRoot = await deployedActors.registry.getCscaRoot();
-        console.log("cscaRoot", cscaRoot);
-        const passportNoOfacRoot = await deployedActors.registry.getPassportNoOfacRoot();
-        console.log("passportNoOfacRoot", passportNoOfacRoot);
-        const nameAndDobOfacRoot = await deployedActors.registry.getNameAndDobOfacRoot();
-        console.log("nameAndDobOfacRoot", nameAndDobOfacRoot);
-        const nameAndYobOfacRoot = await deployedActors.registry.getNameAndYobOfacRoot();
-        console.log("nameAndYobOfacRoot", nameAndYobOfacRoot);
-        // Verify using AttestationVerifier
-        selfVerifier.excludeCountries("Afghanistan");
-        selfVerifier.setTargetRootTimestamp(0);
-        const result = await selfVerifier.verify(
+        await registry.connect(owner).devAddIdentityCommitment(
+            ATTESTATION_ID.E_PASSPORT,
+            nullifier,
+            commitment
+        );
+
+        selfBackendVerifier.excludeCountries("Afghanistan", "Albania");
+        selfBackendVerifier.setMinimumAge(20);
+        selfBackendVerifier.enablePassportNoOfacCheck();
+        selfBackendVerifier.enableNameAndDobOfacCheck();
+        selfBackendVerifier.enableNameAndYobOfacCheck();
+        selfBackendVerifier.setNationality("France");
+        selfBackendVerifier.setTargetRootTimestamp(0);
+
+        const result = await selfBackendVerifier.verify(
             rawProof.proof,
             rawProof.publicSignals
         );
-        // const attestation = await attestationVerifier.verify(
-        //     rawProof.proof,
-        //     rawProof.publicSignals
-        // );
 
-        // Verify the attestation result
-        expect(result).to.not.be.null;
-        expect(result.credentialSubject.valid).to.be.true;
-        expect(result.credentialSubject.name).to.not.be.empty;
+        // Assert that the attestation verification result is valid.
+        expect(result.userId).to.equal(rawProof.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_USER_IDENTIFIER_INDEX]);
+        expect(result.isValid).to.be.true;
+        expect(result.isValidDetails.isValidScope).to.be.true;
+        expect(result.isValidDetails.isValidAttestationId).to.be.true;
+        expect(result.isValidDetails.isValidProof).to.be.true;
+        expect(result.isValidDetails.isValidNationality).to.be.true;
+        expect(result.application).to.equal("test-scope");
+        expect(result.credentialSubject.merkle_root).to.equal(rawProof.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_MERKLE_ROOT_INDEX]);
+        expect(result.credentialSubject.attestation_id).to.equal(BigInt(ATTESTATION_ID.E_PASSPORT));
+        expect(result.credentialSubject.current_date?.slice(0, 16))
+            .to.equal(new Date().toISOString().slice(0, 16));
+        expect(result.credentialSubject.issuing_state).to.equal("FRA");
+        expect(result.credentialSubject.name?.[0]).to.equal("ALPHONSE HUGHUES ALBERT");
+        expect(result.credentialSubject.name?.[1]).to.equal("DUPONT");
+        expect(result.credentialSubject.passport_number).to.equal("15AA81234");
+        expect(result.credentialSubject.nationality).to.equal("FRA");
+        expect(result.credentialSubject.date_of_birth).to.equal("31-01-94");
+        expect(result.credentialSubject.gender).to.equal("M");
+        expect(result.credentialSubject.expiry_date).to.equal("31-10-40");
+        expect(result.credentialSubject.older_than).to.equal("20");
+        expect(result.credentialSubject.passport_no_ofac).to.equal("1");
+        expect(result.credentialSubject.name_and_dob_ofac).to.equal("1");
+        expect(result.credentialSubject.name_and_yob_ofac).to.equal("1");
     });
 
-    // it("should handle verification failure in AttestationVerifier", async () => {
-    //     // Modify proof to cause verification failure
-    //     const invalidProof = { ...vcAndDiscloseProof.proof };
-    //     const invalidPublicSignals = [...vcAndDiscloseProof.pubSignals];
-    //     invalidPublicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_MERKLE_ROOT_INDEX] = generateRandomFieldElement();
+    it("should fail when invalid VC and Disclose proof is provided", async () => {
+        const { registry, owner, hub } = deployedActors;
+        await registry.connect(owner).devAddIdentityCommitment(
+            ATTESTATION_ID.E_PASSPORT,
+            nullifier,
+            commitment
+        );
 
-    //     try {
-    //         await attestationVerifier.verify(
-    //             invalidProof,
-    //             invalidPublicSignals
-    //         );
-    //         expect.fail("Should have thrown an error");
-    //     } catch (error) {
-    //         expect(error).to.exist;
-    //     }
-    // });
+        rawProof.proof.pi_a[0] = generateRandomFieldElement();
+        const result = await selfBackendVerifier.verify(
+            rawProof.proof,
+            rawProof.publicSignals
+        );
+        expect(result.isValid).to.be.false;
+        expect(result.isValidDetails.isValidProof).to.be.false;
+    });
+
+    it("should fail when invalid scope is provided", async () => {
+        rawProof.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX] = generateRandomFieldElement().toString();
+        const result = await selfBackendVerifier.verify(
+            rawProof.proof,
+            rawProof.publicSignals
+        );
+        expect(result.isValid).to.be.false;
+        expect(result.isValidDetails.isValidScope).to.be.false;
+    });
+
+    it("should fail when invalid attestation id is provided", async () => {
+        rawProof.publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX] = generateRandomFieldElement().toString();
+        const result = await selfBackendVerifier.verify(
+            rawProof.proof,
+            rawProof.publicSignals
+        );
+        expect(result.isValid).to.be.false;
+        expect(result.isValidDetails.isValidAttestationId).to.be.false;
+    });
+
+    it("should fail when invalid nationality is provided", async () => {
+        selfBackendVerifier.setNationality("United States of America");
+        const result = await selfBackendVerifier.verify(
+            rawProof.proof,
+            rawProof.publicSignals
+        );
+        expect(result.isValid).to.be.false;
+        expect(result.isValidDetails.isValidNationality).to.be.false;
+    });
 });

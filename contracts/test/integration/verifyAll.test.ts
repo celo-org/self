@@ -11,8 +11,6 @@ import { generateVcAndDiscloseRawProof, parseSolidityCalldata } from "../utils/g
 import { Formatter } from "../utils/formatter";
 import { formatCountriesList, reverseBytes } from "../../../common/src/utils/circuits/formatInputs";
 import { VerifyAll } from "../../typechain-types";
-import { AttestationVerifier } from "../../../sdk/core/src/AttestationVerifier";
-import { SelfVerifier } from "../../../sdk/core/src/SelfVerifier";
 import { Groth16Proof, PublicSignals, groth16 } from "snarkjs";
 import { VcAndDiscloseProof } from "../utils/types";
 
@@ -194,13 +192,13 @@ describe("VerifyAll", () => {
                 olderThan: "20",
                 forbiddenCountriesEnabled: true,
                 forbiddenCountriesListPacked: forbiddenCountriesListPacked,
-                ofacEnabled: true,
+                ofacEnabled: [true, true, true],
                 vcAndDiscloseProof: vcAndDiscloseProof
             };
 
             const types = ['0', '1', '2'];
             const [readableData, success] = await verifyAll.verifyAll(
-                123456, // Invalid timestamp
+                123456,
                 vcAndDiscloseHubProof,
                 types
             );

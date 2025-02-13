@@ -3,15 +3,18 @@ import { formatForbiddenCountriesListFromCircuitOutput, getAttributeFromUnpacked
 import { unpackReveal } from './circuits/formatOutputs';
 import { Groth16Proof, PublicSignals } from 'snarkjs';
 
-export interface SelfAttestation {
-  '@context': string[];
-  type: string[];
-  issuer: string;
-  issuanceDate: string;
+export interface SelfVerificationResult {
+  isValid: boolean;
+  isValidDetails: {
+    isValidScope: boolean;
+    isValidAttestationId: boolean;
+    isValidProof: boolean;
+    isValidNationality: boolean;
+  };
+  userId: string;
+  application: string;
+  nullifier: string;
   credentialSubject: {
-    userId: string;
-    application: string;
-    scope?: string;
     merkle_root?: string;
     attestation_id?: string;
     targetRootTimestamp?: string;
@@ -24,8 +27,9 @@ export interface SelfAttestation {
     gender?: string;
     expiry_date?: string;
     older_than?: string;
-    valid?: boolean;
-    nullifier?: string;
+    passport_no_ofac?: string;
+    name_and_dob_ofac?: string;
+    name_and_yob_ofac?: string;
   };
   proof: {
     type: string;
