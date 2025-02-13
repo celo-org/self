@@ -27,15 +27,15 @@ export function HeldPrimaryButton({
     Animated.timing(animation, {
       toValue: 1,
       duration: ACTION_TIMER,
-      useNativeDriver: false,
-    });
+      useNativeDriver: true,
+    }).start();
   };
 
   const onPressOut = () => {
     Animated.timing(animation, {
       toValue: 0,
       duration: ACTION_TIMER,
-      useNativeDriver: false,
+      useNativeDriver: true,
     });
   };
 
@@ -46,17 +46,16 @@ export function HeldPrimaryButton({
   };
 
   const getProgressStyles = () => {
-    const width = animation.interpolate({
+    const scaleX = animation.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, size.width],
+      outputRange: [0, 1],
     });
     const bgColor = animation.interpolate({
       inputRange: [0, 1],
       outputRange: COLORS,
     });
     return {
-      width: width,
-      height: size.height,
+      transform: [{scaleX}],
       backgroundColor: bgColor,
     };
   };
@@ -81,7 +80,7 @@ export function HeldPrimaryButton({
       onPressOut={onPressOut}
       onLayout={getButtonSize}
       animatedComponent={
-        <Animated.View style={[styles.fill, getProgressStyles()]} />
+        <Animated.View style={[styles.fill, size, getProgressStyles()]} />
       }
     >
       {children}
@@ -90,6 +89,7 @@ export function HeldPrimaryButton({
 }
 const styles = StyleSheet.create({
   fill: {
+    transformOrigin: 'left',
     position: 'absolute',
     top: 0,
     left: 0,

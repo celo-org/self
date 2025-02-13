@@ -11,7 +11,7 @@ import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHol
 import { BodyText } from '../../components/typography/BodyText';
 import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { useProofInfo } from '../../stores/proofProvider';
+import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import useUserStore from '../../stores/userStore';
 import { black, slate300, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
@@ -23,7 +23,7 @@ const ProveScreen: React.FC = () => {
   const { selectedApp, setStatus } = useProofInfo();
 
   const disclosureOptions =
-    (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || {};
+    (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || [];
 
   if (!passportData) {
     return (
@@ -48,7 +48,7 @@ const ProveScreen: React.FC = () => {
     navigate('ProofRequestStatusScreen');
     sendVcAndDisclosePayload(passportData).catch(e => {
       console.log('Error sending VC and disclose payload', e);
-      setStatus('error');
+      setStatus(ProofStatusEnum.ERROR);
     });
   }
 
