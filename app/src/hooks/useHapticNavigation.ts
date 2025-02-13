@@ -8,14 +8,20 @@ import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
 
 type NavigationAction = 'default' | 'cancel' | 'confirm';
 
-const useHapticNavigation = (
-  screen: keyof RootStackParamList | null,
-  action: NavigationAction = 'default',
+const useHapticNavigation = <
+  T extends keyof RootStackParamList,
+  P extends T extends null ? never : RootStackParamList[T],
+>(
+  screen: T,
+  options: {
+    params?: P;
+    action?: NavigationAction;
+  } = {},
 ) => {
   const navigation = useNavigation();
 
   return useCallback(() => {
-    switch (action) {
+    switch (options.action) {
       case 'cancel':
         if (screen !== null) {
           navigation.dispatch(state => {
@@ -44,13 +50,18 @@ const useHapticNavigation = (
       case 'confirm':
         impactMedium();
         break;
+
+      case 'default':
       default:
         impactLight();
     }
+
     if (screen) {
-      navigation.navigate(screen);
+      // @ts-expect-error - This actually works from outside usage, just unsure how to
+      // make typescript understand that this is correct
+      navigation.navigate(screen, options.params);
     }
-  }, [navigation, screen, action]);
+  }, [navigation, screen, options.action]);
 };
 
 export default useHapticNavigation;
