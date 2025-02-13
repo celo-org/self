@@ -90,13 +90,17 @@ const ScreenSelector = ({}) => {
 };
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
-  const { setRegistered } = useUserStore();
+  const {
+    clearPassportDataFromStorage,
+    clearPassportMetadataFromStorage,
+    setRegistered,
+  } = useUserStore();
 
   const nav = useNavigation();
 
   function handleRestart() {
-    // clearPassportMetadataFromStorage();
-    // clearPassportDataFromStorage();
+    clearPassportMetadataFromStorage();
+    clearPassportDataFromStorage();
     setRegistered(false);
     nav.navigate('Launch');
   }
@@ -125,7 +129,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
         </Button>
       </Fieldset>
 
-      <Fieldset gap="$4" mt="$1" horizontal>
+      <Fieldset gap="$4" mt="$1" horizontal marginBottom={30}>
         <Label
           color={textBlack}
           width={200}
@@ -210,7 +214,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
                         </Button>
                       </Fieldset> */}
 
-      <Fieldset gap="$4" mt="$1" horizontal>
+      <Fieldset marginTop={30} gap="$4" mt="$1" horizontal>
         <Label color={textBlack} justifyContent="flex-end" htmlFor="skip">
           Shortcut
         </Label>
