@@ -3,10 +3,9 @@ import { SMT } from '@openpassport/zk-kit-smt';
 import { poseidon2 } from 'poseidon-lite';
 import { v4 } from 'uuid';
 
-import passportNoAndNationalitySMTData from '../../../../common/ofacdata/outputs/passportNoAndNationalitySMT.json';
 import nameAndDobSMTData from '../../../../common/ofacdata/outputs/nameAndDobSMT.json';
 import nameAndYobSMTData from '../../../../common/ofacdata/outputs/nameAndYobSMT.json';
-
+import passportNoAndNationalitySMTData from '../../../../common/ofacdata/outputs/passportNoAndNationalitySMT.json';
 import {
   DEPLOYED_CIRCUITS_DSC,
   DEPLOYED_CIRCUITS_REGISTER,
