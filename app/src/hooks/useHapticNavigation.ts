@@ -1,5 +1,6 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
+
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import * as uuid from 'uuid';
 
 import type { RootStackParamList } from '../Navigation';
@@ -16,13 +17,13 @@ const useHapticNavigation = (
   return useCallback(() => {
     switch (action) {
       case 'cancel':
-        navigation.dispatch((state) => {
+        navigation.dispatch(state => {
           const routes = [
             ...state.routes.slice(0, state.routes.length - 1),
             {
               key: `screen-${uuid.v4()}`,
               name: screen,
-              params: {}
+              params: {},
             },
             ...state.routes.slice(state.routes.length - 1),
           ];
@@ -38,7 +39,7 @@ const useHapticNavigation = (
 
         navigation.goBack();
 
-        return
+        return;
       case 'confirm':
         impactMedium();
         break;
