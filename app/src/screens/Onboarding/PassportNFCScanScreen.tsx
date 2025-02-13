@@ -8,10 +8,7 @@ import {
 } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
 
-import {
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
 

@@ -28,18 +28,18 @@ const useHapticNavigation = (
               },
               ...state.routes.slice(state.routes.length - 1),
             ];
-  
+
             return CommonActions.reset({
               ...state,
               routes,
               index: routes.length - 1,
             });
-          });  
+          });
         }
 
         selectionChange();
         navigation.goBack();
-        
+
         return;
       case 'confirm':
         impactMedium();
