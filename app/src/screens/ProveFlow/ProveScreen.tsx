@@ -7,7 +7,7 @@ import { Text, View, YStack } from 'tamagui';
 import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
-import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
 import { BodyText } from '../../components/typography/BodyText';
 import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
@@ -81,7 +81,9 @@ const ProveScreen: React.FC = () => {
             Self will confirm that these details are accurate and none of your
             confidential info will be revealed to {selectedApp.appName}
           </Caption>
-          <PrimaryButton onLongPress={onVerify}>Hold To Verify</PrimaryButton>
+          <HeldPrimaryButton onPress={onVerify}>
+            Hold To Verify
+          </HeldPrimaryButton>
         </View>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
