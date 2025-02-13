@@ -14,7 +14,7 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
-import { slate500, slate600, white } from '../../utils/colors';
+import { black, slate500, slate600, white } from '../../utils/colors';
 
 interface AccountRecoveryChoiceScreenProps {}
 
@@ -51,13 +51,13 @@ const AccountRecoveryChoiceScreen: React.FC<
   ]);
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection backgroundColor={black}>
         <View borderColor={slate600} borderWidth="$1" borderRadius="$10" p="$5">
           <RestoreAccountSvg height={80} width={80} color={white} />
         </View>
       </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection>
+      <ExpandableBottomLayout.BottomSection backgroundColor={white}>
         <YStack alignItems="center" gap="$2.5" pb="$2.5">
           <Title>Restore your Self account</Title>
           <Description>
@@ -68,9 +68,10 @@ const AccountRecoveryChoiceScreen: React.FC<
           <YStack gap="$2.5" width="100%" pt="$6">
             <PrimaryButton
               onPress={onRestoreFromCloudPress}
-              disabled={restoring}
+              // disabled={restoring}
+              disabled
             >
-              Restore from {STORAGE_NAME}
+              Restore from {STORAGE_NAME} (soon)
             </PrimaryButton>
             <XStack gap={64} ai="center" justifyContent="space-between">
               <Separator flexGrow={1} />

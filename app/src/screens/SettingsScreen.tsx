@@ -18,7 +18,7 @@ import {
   telegramUrl,
 } from '../consts/links';
 import Github from '../images/icons/github.svg';
-import Cloud from '../images/icons/settings_cloud_backup.svg';
+// import Cloud from '../images/icons/settings_cloud_backup.svg';
 import Data from '../images/icons/settings_data.svg';
 import Feedback from '../images/icons/settings_feedback.svg';
 import Lock from '../images/icons/settings_lock.svg';
@@ -26,7 +26,6 @@ import ShareIcon from '../images/icons/share.svg';
 import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
-import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 
 interface SettingsScreenProps {}
@@ -53,7 +52,7 @@ const storeURL = Platform.OS === 'ios' ? appStoreUrl : playStoreUrl;
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Cloud backup', 'CloudBackupSettings'],
+  // [Cloud, 'Cloud backup', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];

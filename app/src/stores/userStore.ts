@@ -7,10 +7,10 @@ import { create } from 'zustand';
 import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData, Proof } from '../../../common/src/utils/types';
 import {
-  loadPassportData,
-  loadPassportMetadata,
-  loadSecretOrCreateIt,
-  storePassportData,
+  // loadPassportData,
+  // loadPassportMetadata,
+  // loadSecretOrCreateIt,
+  // storePassportData,
   storePassportMetadata,
 } from '../utils/keychain';
 
@@ -119,7 +119,7 @@ const useUserStore = create<UserState>((set, get) => ({
   // When reading passport for the first time:
   // - Check presence of secret. If there is none, create one and store it
   // 	- Store the passportData and try registering the commitment in the background
-  registerPassportData: async passportData => {
+  registerPassportData: async (/*passportData*/) => {
     // const alreadyStoredPassportData = await loadPassportData();
     // if (alreadyStoredPassportData) {
     //   console.log(

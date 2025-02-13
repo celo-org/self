@@ -49,9 +49,11 @@ function App(): React.JSX.Element {
     <YStack f={1} h="100%" w="100%">
       <AuthProvider>
         <PassportProvider>
-          <ProofProvider>
-            <AppNavigation />
-          </ProofProvider>
+          <AppProvider>
+            <ProofProvider>
+              <AppNavigation />
+            </ProofProvider>
+          </AppProvider>
         </PassportProvider>
       </AuthProvider>
     </YStack>
