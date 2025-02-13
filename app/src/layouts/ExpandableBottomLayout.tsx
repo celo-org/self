@@ -13,13 +13,13 @@ interface ExpandableBottomLayoutProps extends ViewProps {
 
 interface TopSectionProps extends ViewProps {
   children: React.ReactNode;
-  backgroundColor?: string;
+  backgroundColor: string;
   roundTop?: boolean;
 }
 
 interface BottomSectionProps extends ViewProps {
   children: React.ReactNode;
-  backgroundColor?: string;
+  backgroundColor: string;
 }
 
 const Layout: React.FC<ExpandableBottomLayoutProps> = ({
