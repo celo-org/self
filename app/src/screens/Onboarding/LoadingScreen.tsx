@@ -6,24 +6,19 @@ import LottieView from 'lottie-react-native';
 // Import passport data generation and payload functions from common
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
 import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
+import { PassportData } from '../../../../common/src/utils/types';
 // Import animations
 import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import useUserStore from '../../stores/userStore';
 import { registerPassport } from '../../utils/proving/payload';
-import { PassportData } from '../../../../common/src/utils/types';
 
 const LoadingScreen: React.FC = () => {
-  const goToSuccessScreen = useHapticNavigation(
-    'AccountVerifiedSuccess'
-  );
-  const goToErrorScreen = useHapticNavigation(
-    'ConfirmBelongingScreen',
-  );
+  const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
+  const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
   const goToSuccessScreenWithDelay = () => {
     setTimeout(() => {
       goToSuccessScreen();
