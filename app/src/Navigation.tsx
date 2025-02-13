@@ -119,6 +119,8 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
 
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
+  orientation: 'portrait_up',
+  presentation: 'card',
   screenOptions: {
     header: DefaultNavBar,
     navigationBarColor: white,
@@ -146,6 +148,8 @@ const AppNavigation = createNativeStackNavigator({
     PassportOnboarding: {
       screen: PassportOnboardingScreen,
       options: {
+        animation: 'slide_from_bottom',
+        presentation: 'modal',
         headerShown: false,
       },
     },
@@ -153,12 +157,16 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportCameraScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'containedModal',
       },
     },
     PassportNFCScan: {
       screen: PassportNFCScanScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'containedModal',
       },
       initialParams: {
         passportNumber: '',
@@ -183,6 +191,7 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         if: () => true, // TODO: dev only
         title: 'Mock Passport',
+        presentation: 'fullScreenModal',
       },
     },
     // TODO: rename ? maybe summary
@@ -211,6 +220,8 @@ const AppNavigation = createNativeStackNavigator({
       screen: QRCodeViewFinderScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'fullScreenModal',
       },
     },
     ProveScreen: {
@@ -229,11 +240,15 @@ const AppNavigation = createNativeStackNavigator({
       screen: ProofRequestStatusScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'fullScreenModal',
       },
     },
     Settings: {
       screen: SettingsScreen,
       options: {
+        presentation: 'fullScreenModal',
+        animation: 'slide_from_bottom',
         title: 'Settings',
         headerStyle: {
           backgroundColor: white,
@@ -257,6 +272,8 @@ const AppNavigation = createNativeStackNavigator({
       screen: SaveRecoveryPhraseScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'containedModal',
       },
     },
     RecoverWithPhrase: {
@@ -277,6 +294,8 @@ const AppNavigation = createNativeStackNavigator({
       screen: AccountVerifiedSuccessScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'containedModal',
       },
     },
     ShowRecoveryPhrase: {
@@ -301,6 +320,7 @@ const AppNavigation = createNativeStackNavigator({
       screen: DevSettingsScreen,
       options: {
         title: 'Developer Settings',
+        presentation: 'card', //this one must be card for the select menu to render
         headerStyle: {
           backgroundColor: white,
         },
