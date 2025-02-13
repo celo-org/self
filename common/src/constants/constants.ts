@@ -74,6 +74,7 @@ export const MAX_CERT_BYTES: Partial<Record<keyof typeof SignatureAlgorithmIndex
 export const ECDSA_K_LENGTH_FACTOR = 2;
 // possible values because of sha1 constaints: 192,320,384, 448, 576, 640
 
+export const CIRCUIT_TYPES = ['dsc', 'register', 'vc_and_disclose']
 export const circuitNameFromMode = {
   prove: 'prove',
   prove_onchain: 'prove',

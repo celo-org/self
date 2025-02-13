@@ -83,7 +83,14 @@ export async function sendRegisterPayload(passportData: PassportData) {
     mock_secret,
     passportData,
   );
-  await sendPayload(inputs, circuitName, WS_RPC_URL_REGISTER);
+  await sendPayload(
+    inputs,
+    'register',
+    circuitName,
+    'https',
+    'https://self.xyz',
+    WS_RPC_URL_REGISTER,
+  );
 }
 
 function generateTeeInputsDsc(passportData: PassportData) {
@@ -106,7 +113,14 @@ export async function sendDscPayload(passportData: PassportData): Promise<any> {
   }
   const { inputs, circuitName } = generateTeeInputsDsc(passportData);
   console.log('circuitName', circuitName);
-  const result = await sendPayload(inputs, circuitName, WS_RPC_URL_DSC);
+  const result = await sendPayload(
+    inputs,
+    'dsc',
+    circuitName,
+    'https',
+    'https://self.xyz',
+    WS_RPC_URL_DSC,
+  );
   return result;
 }
 
@@ -167,7 +181,14 @@ export async function sendVcAndDisclosePayload(
     return;
   }
   const { inputs, circuitName } = generateTeeInputsVCAndDisclose(passportData);
-  await sendPayload(inputs, circuitName, WS_RPC_URL_VC_AND_DISCLOSE);
+  await sendPayload(
+    inputs,
+    'vc_and_disclose',
+    circuitName,
+    'https',
+    'https://self.xyz',
+    WS_RPC_URL_VC_AND_DISCLOSE,
+  );
 }
 
 /*** Logic Flow ****/
@@ -195,6 +216,7 @@ async function checkIdPassportDscIsInTree(passportData: PassportData) {
     await sendDscPayload(passportData);
   } else {
     console.log('DSC is found in the tree, skipping DSC payload');
+    await sendDscPayload(passportData);
   }
 }
 
