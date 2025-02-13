@@ -13,7 +13,7 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
-import { white } from '../../utils/colors';
+import { black, white } from '../../utils/colors';
 
 interface RecoverWithCloudScreenProps {}
 
@@ -37,11 +37,14 @@ const RecoverWithCloudScreen: React.FC<RecoverWithCloudScreenProps> = ({}) => {
     }
   }, [cloudBackupEnabled, download, restoreAccountFromPrivateKey]);
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection backgroundColor={black}>
         <Cloud height={200} width={140} color={white} />
       </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection flexGrow={1}>
+      <ExpandableBottomLayout.BottomSection
+        flexGrow={1}
+        backgroundColor={white}
+      >
         <YStack gap="$10">
           <YStack gap="$2.5" alignItems="center">
             <Title>Restore your Self Account</Title>

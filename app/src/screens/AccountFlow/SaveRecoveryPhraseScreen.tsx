@@ -13,9 +13,8 @@ import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
-// @ts-expect-error
-import { STORAGE_NAME } from '../../utils/cloudBackup/index';
-import { slate400 } from '../../utils/colors';
+import { STORAGE_NAME } from '../../utils/cloudBackup';
+import { black, slate400, white } from '../../utils/colors';
 
 interface SaveRecoveryPhraseScreenProps {}
 
@@ -55,8 +54,8 @@ const SaveRecoveryPhraseScreen: React.FC<
   const onSkipPress = useHapticNavigation('AccountVerifiedSuccess');
 
   return (
-    <ExpandableBottomLayout.Layout>
-      <ExpandableBottomLayout.BottomSection>
+    <ExpandableBottomLayout.Layout backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection roundTop backgroundColor={white}>
         <YStack
           alignItems="center"
           gap="$2.5"
@@ -82,7 +81,7 @@ const SaveRecoveryPhraseScreen: React.FC<
             </SecondaryButton>
           </YStack>
         </YStack>
-      </ExpandableBottomLayout.BottomSection>
+      </ExpandableBottomLayout.TopSection>
     </ExpandableBottomLayout.Layout>
   );
 };

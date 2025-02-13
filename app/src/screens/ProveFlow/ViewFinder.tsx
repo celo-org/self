@@ -1,7 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { View, XStack, YStack } from 'tamagui';
 
@@ -17,10 +21,9 @@ import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import QRScan from '../../images/icons/qr_code.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { useApp } from '../../stores/appProvider';
 import { useProofInfo } from '../../stores/proofProvider';
-import useUserStore from '../../stores/userStore';
-import { black, slate800 } from '../../utils/colors';
-import handleQRCodeScan from '../../utils/qrCodeNew';
+import { black, slate800, white } from '../../utils/colors';
 
 interface QRCodeViewFinderScreenProps {}
 
@@ -41,33 +44,43 @@ const parseUrlParams = (url: string): Map<string, string> => {
 const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const store = useUserStore();
-  const { setSelectedApp } = useProofInfo();
+  const { setSelectedApp, cleanSelfApp } = useProofInfo();
   const [doneScanningQR, setDoneScanningQR] = useState(false);
+  const { startAppListener } = useApp();
+
+  // This resets to the default state when we navigate back to this screen
+  useFocusEffect(
+    useCallback(() => {
+      setDoneScanningQR(false);
+    }, []),
+  );
+
   const onQRData = useCallback<QRCodeScannerViewProps['onQRData']>(
     async (error, uri) => {
       if (doneScanningQR) {
-        // return
+        return;
       }
       if (error) {
-        // TODO: handle error better
         console.error(error);
       } else {
         setDoneScanningQR(true);
         const encodedData = parseUrlParams(uri!);
-        await handleQRCodeScan(encodedData.get('data')!, setSelectedApp);
+        const sessionId = encodedData.get('sessionId');
+        cleanSelfApp();
+        if (sessionId) {
+          startAppListener(sessionId, setSelectedApp);
+        }
         navigation.navigate('ProveScreen');
       }
     },
-    [store, navigation, doneScanningQR],
+    [doneScanningQR, navigation, startAppListener],
   );
   const onCancelPress = useHapticNavigation('Home', { action: 'cancel' });
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor={black} />
-      <ExpandableBottomLayout.Layout>
-        <ExpandableBottomLayout.TopSection roundTop>
+      <ExpandableBottomLayout.Layout backgroundColor={white}>
+        <ExpandableBottomLayout.TopSection roundTop backgroundColor={black}>
           {!doneScanningQR && (
             <>
               <QRCodeScannerView onQRData={onQRData} isMounted={isFocused} />
@@ -83,7 +96,7 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
           )}
           {null}
         </ExpandableBottomLayout.TopSection>
-        <ExpandableBottomLayout.BottomSection>
+        <ExpandableBottomLayout.BottomSection backgroundColor={white}>
           <YStack alignItems="center" gap="$2.5" paddingBottom={20}>
             <YStack alignItems="center" gap="$6" pb="$2.5">
               <Title>Verify your ID</Title>

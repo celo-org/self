@@ -1,17 +1,20 @@
 import React, { useCallback } from 'react';
+import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 import { Text, View, YStack } from 'tamagui';
 
-import { ArgumentsProveOffChain } from '../../../../common/src/utils/appType';
+import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
+import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
-import { PrimaryButton } from '../../components/buttons/PrimaryButton';
+import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
 import { BodyText } from '../../components/typography/BodyText';
 import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { usePassport } from '../../stores/passportDataProvider';
-import { useProofInfo } from '../../stores/proofProvider';
-import { slate300, white } from '../../utils/colors';
+import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
+import { black, slate300, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 
@@ -29,28 +32,40 @@ const ProveScreen: React.FC = () => {
       await sendVcAndDisclosePayload(passportData!.data);
     } catch (e) {
       console.log('Error sending VC and disclose payload', e);
-      setStatus('error');
+      setStatus(ProofStatusEnum.ERROR);
     }
   }, []);
 
   const disclosureOptions =
-    (selectedApp?.args as ArgumentsProveOffChain)?.disclosureOptions || {};
+    (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || [];
 
   return (
-    <ExpandableBottomLayout.Layout unsafeArea flex={1}>
-      <ExpandableBottomLayout.TopSection>
+    <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
+      <ExpandableBottomLayout.TopSection backgroundColor={black}>
         <YStack alignItems="center">
-          <Text>Check</Text>
-          <BodyText fontSize={24} color={slate300} textAlign="center">
-            <Text color={white}>{selectedApp.appName}</Text> is requesting that
-            you prove the following information:
-          </BodyText>
+          {!selectedApp.sessionId ? (
+            <LottieView
+              source={miscAnimation}
+              autoPlay
+              loop
+              resizeMode="cover"
+              cacheComposition={true}
+              renderMode="HARDWARE"
+              style={styles.animation}
+            />
+          ) : (
+            <BodyText fontSize={24} color={slate300} textAlign="center">
+              <Text color={white}>{selectedApp.appName}</Text> is requesting
+              that you prove the following information:
+            </BodyText>
+          )}
         </YStack>
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection
         flexGrow={1}
         justifyContent="space-between"
         paddingBottom={20}
+        backgroundColor={white}
       >
         <Disclosures disclosures={disclosureOptions} />
         <View>
@@ -64,7 +79,12 @@ const ProveScreen: React.FC = () => {
             Self will confirm that these details are accurate and none of your
             confidential info will be revealed to {selectedApp.appName}
           </Caption>
-          <PrimaryButton onLongPress={onVerify}>Hold To Verify</PrimaryButton>
+          <HeldPrimaryButton
+            onPress={onVerify}
+            disabled={!selectedApp.sessionId}
+          >
+            Hold To Verify
+          </HeldPrimaryButton>
         </View>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
@@ -72,3 +92,12 @@ const ProveScreen: React.FC = () => {
 };
 
 export default ProveScreen;
+
+const styles = StyleSheet.create({
+  animation: {
+    top: 0,
+    width: 200,
+    height: 200,
+    transform: [{ scale: 2 }, { translateY: -20 }],
+  },
+});

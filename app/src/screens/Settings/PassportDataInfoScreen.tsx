@@ -3,15 +3,10 @@ import React, { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { ScrollView, Separator, XStack, YStack } from 'tamagui';
 
-import {
-  PassportMetadata,
-  parsePassportData,
-} from '../../../../common/src/utils/passports/passport_parsing/parsePassportData';
-import { PassportData } from '../../../../common/src/utils/types';
+import { PassportMetadata } from '../../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { Caption } from '../../components/typography/Caption';
 import { usePassport } from '../../stores/passportDataProvider';
-import useUserStore from '../../stores/userStore';
-import { black, slate200 } from '../../utils/colors';
+import { black, slate200, white } from '../../utils/colors';
 
 // TODO clarify if we need more/less keys to be displayed
 const dataKeysToLabels: Record<
@@ -78,7 +73,7 @@ const PassportDataInfoScreen: React.FC<PassportDataInfoScreenProps> = ({}) => {
   });
 
   return (
-    <ScrollView px="$4">
+    <ScrollView px="$4" backgroundColor={white}>
       <YStack f={1} p="$0" gap="$2" jc="flex-start" py="$2">
         {Object.entries(dataKeysToLabels).map(([key, label]) => (
           <InfoRow

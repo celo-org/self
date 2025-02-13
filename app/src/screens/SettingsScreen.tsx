@@ -1,16 +1,24 @@
 import React, { PropsWithChildren, useCallback } from 'react';
 import { Linking, Platform, Share } from 'react-native';
 import { getCountry, getLocales, getTimeZone } from 'react-native-localize';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgProps } from 'react-native-svg';
 
 import { useNavigation } from '@react-navigation/native';
 import { Bug } from '@tamagui/lucide-icons';
-import { Button, XStack, YStack } from 'tamagui';
+import { Button, ScrollView, View, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
 import { BodyText } from '../components/typography/BodyText';
+import {
+  appStoreUrl,
+  gitHubUrl,
+  playStoreUrl,
+  selfUrl,
+  telegramUrl,
+} from '../consts/links';
 import Github from '../images/icons/github.svg';
-import Cloud from '../images/icons/settings_cloud_backup.svg';
+// import Cloud from '../images/icons/settings_cloud_backup.svg';
 import Data from '../images/icons/settings_data.svg';
 import Feedback from '../images/icons/settings_feedback.svg';
 import Lock from '../images/icons/settings_lock.svg';
@@ -18,7 +26,6 @@ import ShareIcon from '../images/icons/share.svg';
 import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
-import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 
 interface SettingsScreenProps {}
@@ -41,11 +48,11 @@ type RouteOption =
   | 'share'
   | 'email_feedback';
 
-const storeURL = Platform.OS === 'ios' ? 'TODO: ios URL' : 'TODO: android URL';
+const storeURL = Platform.OS === 'ios' ? appStoreUrl : playStoreUrl;
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Cloud backup', 'CloudBackupSettings'],
+  // [Cloud, 'Cloud backup', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];
@@ -57,9 +64,9 @@ if (__DEV__ || true) {
 }
 
 const social = [
-  [Github, 'https://github.com/selfxyz/self'],
-  [Web, 'https://www.self.xyz/'],
-  [Telegram, 'TODO: Telegram URL?'],
+  [Github, gitHubUrl],
+  [Web, selfUrl],
+  [Telegram, telegramUrl],
 ] as [React.FC<SvgProps>, string][];
 
 const MenuButton: React.FC<MenuButtonProps> = ({ children, Icon, onPress }) => (
@@ -69,7 +76,8 @@ const MenuButton: React.FC<MenuButtonProps> = ({ children, Icon, onPress }) => (
     width="100%"
     flexDirection="row"
     gap={6}
-    padding={20}
+    py={20}
+    px={10}
     borderBottomColor={neutral700}
     borderBottomWidth={1}
   >
@@ -143,55 +151,61 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
     },
     [navigation],
   );
-
+  const { bottom } = useSafeAreaInsets();
   return (
-    <YStack
-      bg={black}
-      gap={20}
-      jc="space-between"
-      height={'100%'}
-      padding={20}
-      borderTopLeftRadius={30}
-      borderTopRightRadius={30}
-      paddingBottom={50}
-    >
-      <YStack ai="flex-start" gap={20} justifyContent="flex-start" width="100%">
-        {routes.map(([Icon, menuText, menuRoute]) => (
-          <MenuButton
-            key={menuRoute}
-            Icon={Icon}
-            onPress={onMenuPress(menuRoute)}
+    <View backgroundColor={white}>
+      <YStack
+        bg={black}
+        gap={20}
+        jc="space-between"
+        height={'100%'}
+        padding={20}
+        borderTopLeftRadius={30}
+        borderTopRightRadius={30}
+      >
+        <ScrollView>
+          <YStack ai="flex-start" justifyContent="flex-start" width="100%">
+            {routes.map(([Icon, menuText, menuRoute]) => (
+              <MenuButton
+                key={menuRoute}
+                Icon={Icon}
+                onPress={onMenuPress(menuRoute)}
+              >
+                {menuText}
+              </MenuButton>
+            ))}
+          </YStack>
+        </ScrollView>
+        <YStack ai="center" gap={20} justifyContent="center" paddingBottom={50}>
+          <Button
+            unstyled
+            icon={<Star color={white} height={24} width={21} />}
+            width="100%"
+            padding={20}
+            backgroundColor={slate800}
+            color={white}
+            flexDirection="row"
+            jc="center"
+            ai="center"
+            gap={6}
+            borderRadius={4}
+            onPress={() => Linking.openURL(storeURL)}
           >
-            {menuText}
-          </MenuButton>
-        ))}
+            <BodyText color={white}>Leave an app store review</BodyText>
+          </Button>
+          <XStack gap={32}>
+            {social.map(([Icon, href], i) => (
+              <SocialButton key={i} Icon={Icon} href={href} />
+            ))}
+          </XStack>
+          <BodyText color={amber500} fontSize={15}>
+            SELF
+          </BodyText>
+          {/* Dont remove if not viewing on ios */}
+          <View marginBottom={bottom} />
+        </YStack>
       </YStack>
-      <YStack ai="center" gap={20} justifyContent="center" paddingBottom={40}>
-        <Button
-          unstyled
-          icon={<Star color={white} height={24} width={21} />}
-          width="100%"
-          padding={20}
-          backgroundColor={slate800}
-          color={white}
-          flexDirection="row"
-          jc="center"
-          ai="center"
-          gap={6}
-          borderRadius={4}
-        >
-          <BodyText color={white}>Leave an app store review</BodyText>
-        </Button>
-        <XStack gap={32}>
-          {social.map(([Icon, href], i) => (
-            <SocialButton key={i} Icon={Icon} href={href} />
-          ))}
-        </XStack>
-        <BodyText color={amber500} fontSize={15}>
-          SELF
-        </BodyText>
-      </YStack>
-    </YStack>
+    </View>
   );
 };
 
