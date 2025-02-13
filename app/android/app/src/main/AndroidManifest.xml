@@ -22,6 +22,7 @@
       android:dataExtractionRules="@xml/backup_rules"
       tools:replace="android:allowBackup, android:icon, android:roundIcon, android:name"
       android:theme="@style/AppTheme"
+      android:backupInForeground="true"
       android:supportsRtl="true">
       <activity
         android:name=".MainActivity"

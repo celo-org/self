@@ -3,6 +3,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -21,10 +22,22 @@ const _getSecurely = async function <T>(
     return null;
   }
 
-  const { signature, error, success } = await biometrics.createSignature({
+  let result: Awaited<ReturnType<typeof biometrics.createSignature>>;
+  const args = {
     payload: dataString,
     promptMessage: 'Allow access to account private key',
-  });
+  };
+  try {
+    result = await biometrics.createSignature(args);
+  } catch (e) {
+    console.log(
+      'No enrolled public key. Creating a public key from biometrics',
+    );
+    await biometrics.createKeys();
+    result = await biometrics.createSignature(args);
+  }
+
+  const { error, success, signature } = result;
   if (error) {
     // handle error
     throw error;

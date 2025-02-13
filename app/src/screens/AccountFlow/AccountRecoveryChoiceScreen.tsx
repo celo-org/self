@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Separator, View, XStack, YStack } from 'tamagui';
 
@@ -11,10 +11,15 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import Keyboard from '../../images/icons/keyboard.svg';
 import RestoreAccountSvg from '../../images/icons/restore_account.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import { useAuth } from '../../stores/authProvider';
+import { useSettingStore } from '../../stores/settingStore';
 import {
   // there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
   STORAGE_NAME, // @ts-expect-error
 } from '../../utils/cloudBackup/index';
+// @ts-expect-error
+import { useBackupPrivateKey } from '../../utils/cloudBackup/index';
+import { UseBackupPrivateKey } from '../../utils/cloudBackup/types';
 import { slate500, slate600, white } from '../../utils/colors';
 
 interface AccountRecoveryChoiceScreenProps {}
@@ -22,8 +27,34 @@ interface AccountRecoveryChoiceScreenProps {}
 const AccountRecoveryChoiceScreen: React.FC<
   AccountRecoveryChoiceScreenProps
 > = ({}) => {
-  const onRestoreFromCloudPress = useHapticNavigation('RecoverWithCloud');
+  const { restoreAccountFromPrivateKey } = useAuth();
+  const [restoring, setRestoring] = useState(false);
+  const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
+  const { download } = (useBackupPrivateKey as UseBackupPrivateKey)();
+
+  const onRestoreFromCloudNext = useHapticNavigation('AccountVerifiedSuccess');
   const onEnterRecoveryPress = useHapticNavigation('SaveRecoveryPhrase');
+
+  const onRestoreFromCloudPress = useCallback(async () => {
+    setRestoring(true);
+    try {
+      const restoredPrivKey = await download();
+      await restoreAccountFromPrivateKey(restoredPrivKey);
+      if (!cloudBackupEnabled) {
+        toggleCloudBackupEnabled();
+      }
+      onRestoreFromCloudNext();
+    } catch (e) {
+      console.error(e);
+      setRestoring(false);
+      throw new Error('Something wrong happened during cloud recovery');
+    }
+  }, [
+    cloudBackupEnabled,
+    download,
+    restoreAccountFromPrivateKey,
+    onRestoreFromCloudNext,
+  ]);
 
   return (
     <ExpandableBottomLayout.Layout>
@@ -41,7 +72,10 @@ const AccountRecoveryChoiceScreen: React.FC<
           </Description>
 
           <YStack gap="$2.5" width="100%" pt="$6">
-            <PrimaryButton onPress={onRestoreFromCloudPress}>
+            <PrimaryButton
+              onPress={onRestoreFromCloudPress}
+              disabled={restoring}
+            >
               Restore from {STORAGE_NAME}
             </PrimaryButton>
             <XStack gap={64} ai="center" justifyContent="space-between">
@@ -49,7 +83,10 @@ const AccountRecoveryChoiceScreen: React.FC<
               <Caption>OR</Caption>
               <Separator flexGrow={1} />
             </XStack>
-            <SecondaryButton onPress={onEnterRecoveryPress}>
+            <SecondaryButton
+              onPress={onEnterRecoveryPress}
+              disabled={restoring}
+            >
               <XStack alignItems="center" justifyContent="center">
                 <Keyboard height={25} width={40} color={slate500} />
                 <View pl={12}>

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { YStack } from 'tamagui';
