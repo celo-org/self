@@ -1,29 +1,16 @@
-import {
-  countryCodes,
-  countryNames,
-  getCountryCode,
-} from '../../../common/src/constants/constants';
-import type { SelfVerificationResult } from '../../../common/src/utils/selfAttestation';
-import { castToScope } from '../../../common/src/utils/circuits/uuid';
-import { VcAndDiscloseProof } from '../../../contracts/test/utils/types';
-import {
-  registryAbi
-} from "./abi/IdentityRegistryImplV1";
-import {
-  verifyAllAbi
-} from "./abi/VerifyAll";
+import { VcAndDiscloseProof } from './types/types';
+import { registryAbi } from './abi/IdentityRegistryImplV1';
+import { verifyAllAbi } from './abi/VerifyAll';
+import { parseSolidityCalldata } from './utils/utils';
 import { ethers } from 'ethers';
-import {
-  groth16,
-  Groth16Proof,
-  PublicSignals
-} from 'snarkjs';
-import { CIRCUIT_CONSTANTS, revealedDataTypes } from '../../../common/src/constants/constants';
-import { packForbiddenCountriesList } from '../../../common/src/utils/contracts/formatCallData';
-import { parseSolidityCalldata } from '../../../contracts/test/utils/generateProof';
+import { groth16, Groth16Proof, PublicSignals } from 'snarkjs';
+import { countryCodes, countryNames, getCountryCode } from '@common/constants/constants';
+import type { SelfVerificationResult } from '@common/utils/selfAttestation';
+import { castToScope } from '@common/utils/circuits/uuid';
+import { CIRCUIT_CONSTANTS, revealedDataTypes } from '@common/constants/constants';
+import { packForbiddenCountriesList } from '@common/utils/contracts/formatCallData';
 
 export class SelfBackendVerifier {
-
   protected scope: string;
   protected attestationId: number = 1;
   protected targetRootTimestamp: number = 0;
@@ -48,7 +35,7 @@ export class SelfBackendVerifier {
     rpcUrl: string,
     scope: string,
     registryContractAddress: `0x${string}`,
-    verifyAllContractAddress: `0x${string}`,
+    verifyAllContractAddress: `0x${string}`
   ) {
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     this.registryContract = new ethers.Contract(registryContractAddress, registryAbi, provider);
@@ -57,36 +44,39 @@ export class SelfBackendVerifier {
   }
 
   public async verify(
-    proof: Groth16Proof, 
+    proof: Groth16Proof,
     publicSignals: PublicSignals
   ): Promise<SelfVerificationResult> {
-    const excludedCountryCodes = this.excludedCountries.value.map(country => getCountryCode(country));
+    const excludedCountryCodes = this.excludedCountries.value.map((country) =>
+      getCountryCode(country)
+    );
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
-    const packedValue = forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked[0] : '0';
-    const solidityProof = parseSolidityCalldata(await groth16.exportSolidityCallData(
-      proof,
-      publicSignals
-    ), {} as VcAndDiscloseProof);
+    const packedValue =
+      forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked[0] : '0';
+    const solidityProof = parseSolidityCalldata(
+      await groth16.exportSolidityCallData(proof, publicSignals),
+      {} as VcAndDiscloseProof
+    );
 
-    const isValidScope = this.scope === castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
-    const isValidAttestationId = this.attestationId.toString() === publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
+    const isValidScope =
+      this.scope ===
+      castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
+    const isValidAttestationId =
+      this.attestationId.toString() ===
+      publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
 
     const vcAndDiscloseHubProof = {
-      olderThanEnabled: this.minimumAge.enabled,  
-      olderThan: this.minimumAge.value,                
-      forbiddenCountriesEnabled: this.excludedCountries.enabled,  
-      forbiddenCountriesListPacked: packedValue, 
-      ofacEnabled: [
-        this.passportNoOfac, 
-        this.nameAndDobOfac, 
-        this.nameAndYobOfac
-      ],  
+      olderThanEnabled: this.minimumAge.enabled,
+      olderThan: this.minimumAge.value,
+      forbiddenCountriesEnabled: this.excludedCountries.enabled,
+      forbiddenCountriesListPacked: packedValue,
+      ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-          a: solidityProof.a,
-          b: [solidityProof.b[0], solidityProof.b[1]],  
-          c: solidityProof.c,
-          pubSignals: solidityProof.pubSignals
-      }
+        a: solidityProof.a,
+        b: [solidityProof.b[0], solidityProof.b[1]],
+        c: solidityProof.c,
+        pubSignals: solidityProof.pubSignals,
+      },
     };
 
     const types = [
@@ -104,12 +94,8 @@ export class SelfBackendVerifier {
     ];
 
     const timestamp = this.targetRootTimestamp;
-    
-    const result = await this.verifyAllContract.verifyAll(
-      timestamp,
-      vcAndDiscloseHubProof,
-      types
-    );
+
+    const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
 
     let isValidNationality = true;
     if (this.nationality.enabled) {
@@ -133,7 +119,7 @@ export class SelfBackendVerifier {
       passport_no_ofac: result[0][revealedDataTypes.passport_no_ofac],
       name_and_dob_ofac: result[0][revealedDataTypes.name_and_dob_ofac],
       name_and_yob_ofac: result[0][revealedDataTypes.name_and_yob_ofac],
-    }
+    };
 
     const attestation: SelfVerificationResult = {
       isValid: result[1] && isValidScope && isValidAttestationId && isValidNationality,
@@ -148,15 +134,12 @@ export class SelfBackendVerifier {
       nullifier: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NULLIFIER_INDEX],
       credentialSubject: credentialSubject,
       proof: {
-        type: "Groth16Proof",
-        verificationMethod: "Verify commitment inclusion and disclose attributes",
         value: {
           proof: proof,
           publicSignals: publicSignals,
         },
-        vkey: "",
-      }
-    }
+      },
+    };
 
     return attestation;
   }
@@ -206,5 +189,4 @@ export class SelfBackendVerifier {
     this.nameAndYobOfac = true;
     return this;
   }
-
 }
