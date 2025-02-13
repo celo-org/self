@@ -59,45 +59,18 @@ export const PassportContext = createContext<IPassportContext>({
 });
 
 export const PassportProvider = ({ children }: PassportProviderProps) => {
-  const { biometrics } = useAuth();
-
-  const _getSecurely = useCallback(
-    async function <T>(
-      fn: () => Promise<string | false>,
-    ): Promise<{ signature: string; data: T } | null> {
-      const dataString = await fn();
-      if (!dataString) {
-        return null;
-      }
-
-      const { signature, error, success } = await biometrics.createSignature({
-        payload: dataString,
-        promptMessage: 'Allow access to passport data',
-      });
-      if (error) {
-        // handle error
-        throw error;
-      }
-      if (!success) {
-        // user canceled
-        throw new Error('Canceled by user');
-      }
-
-      return {
-        signature: signature!,
-        data: JSON.parse(dataString),
-      };
-    },
-    [biometrics],
-  );
+  const { _getSecurely } = useAuth();
 
   const getData = useCallback(
-    () => _getSecurely<PassportData>(loadPassportData),
+    () => _getSecurely<PassportData>(loadPassportData, str => JSON.parse(str)),
     [_getSecurely],
   );
 
   const getMetadata = useCallback(
-    () => _getSecurely<PassportMetadata>(loadPassportMetadata),
+    () =>
+      _getSecurely<PassportMetadata>(loadPassportMetadata, str =>
+        JSON.parse(str),
+      ),
     [_getSecurely],
   );
 

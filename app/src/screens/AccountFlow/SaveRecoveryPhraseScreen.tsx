@@ -16,32 +16,33 @@ import { useAuth } from '../../stores/authProvider';
 // @ts-expect-error
 import { STORAGE_NAME } from '../../utils/cloudBackup/index';
 import { slate400 } from '../../utils/colors';
-import { loadSecretOrCreateIt } from '../../utils/keychain';
 
 interface SaveRecoveryPhraseScreenProps {}
 
 const SaveRecoveryPhraseScreen: React.FC<
   SaveRecoveryPhraseScreenProps
 > = ({}) => {
-  const { loginWithBiometrics } = useAuth();
+  const { getOrCreatePrivateKey } = useAuth();
   const [mnemonic, setMnemonic] = useState<string[]>();
   const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
 
   const onRevealWords = useCallback(async () => {
     await loadMnemonic();
-    await loginWithBiometrics();
     setUserHasSeenMnemonic(true);
   }, []);
 
   const loadMnemonic = useCallback(async () => {
-    const privKey = await loadSecretOrCreateIt();
+    const privKey = await getOrCreatePrivateKey();
+    if (!privKey) {
+      return;
+    }
 
     const { languageTag } = findBestLanguageTag(
       Object.keys(ethers.wordlists),
     ) || { languageTag: 'en' };
 
     const words = ethers.Mnemonic.entropyToPhrase(
-      privKey,
+      privKey.data,
       ethers.wordlists[languageTag],
     );
 

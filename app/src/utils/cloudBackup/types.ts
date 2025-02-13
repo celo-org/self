@@ -1,5 +1,5 @@
 export type UseBackupPrivateKey = () => {
-  upload: () => Promise<void>;
+  upload: (privateKey: string) => Promise<void>;
   download: () => Promise<string>;
   disableBackup: () => Promise<void>;
 };

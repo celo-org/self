@@ -1,7 +1,6 @@
+import { useMemo } from 'react';
 import { CloudStorage, CloudStorageScope } from 'react-native-cloud-storage';
 import RNFS from 'react-native-fs';
-
-import { loadSecret, restoreFromPrivateKey } from '../keychain';
 
 // Note: also defined in app/android/app/src/main/res/xml/backup_rules.xml
 const ENCRYPTED_FILE_PATH =
@@ -10,15 +9,17 @@ const ENCRYPTED_FILE_PATH =
 export const STORAGE_NAME = 'iCloud Backup';
 
 export function useBackupPrivateKey() {
-  return {
-    upload: backupWithICloud,
-    download: downloadFromICloud,
-    disableBackup: disableBackupToICloud,
-  };
+  return useMemo(
+    () => ({
+      upload: (privateKey: string) => backupWithICloud(privateKey),
+      download: () => downloadFromICloud(),
+      disableBackup: () => disableBackupToICloud,
+    }),
+    [],
+  );
 }
 
-async function backupWithICloud() {
-  const privateKey = await loadSecret();
+async function backupWithICloud(privateKey: string) {
   if (!privateKey) {
     throw new Error(
       'Private key not set yet. Did the user see the recovery phrase?',
@@ -36,7 +37,6 @@ async function downloadFromICloud() {
     ENCRYPTED_FILE_PATH,
     CloudStorageScope.AppData,
   );
-  await restoreFromPrivateKey(privateKey);
   return privateKey;
 }
 

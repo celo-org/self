@@ -24,18 +24,23 @@ interface RecoverWithCloudScreenProps {}
 
 const RecoverWithCloudScreen: React.FC<RecoverWithCloudScreenProps> = ({}) => {
   const navigation = useNavigation();
-  const { loginWithBiometrics } = useAuth();
+  const { restoreAccountFromPrivateKey } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
   const { download } = (useBackupPrivateKey as UseBackupPrivateKey)();
 
   const restoreBackup = useCallback(async () => {
-    await loginWithBiometrics();
-    await download();
-    if (!cloudBackupEnabled) {
-      toggleCloudBackupEnabled();
+    const restoredPrivKey = await download();
+    try {
+      await restoreAccountFromPrivateKey(restoredPrivKey);
+      if (!cloudBackupEnabled) {
+        toggleCloudBackupEnabled();
+      }
+      navigation.navigate('AccountVerifiedSuccess');
+    } catch (e) {
+      console.error(e);
+      throw new Error('Something wrong happened during cloud recovery');
     }
-    navigation.navigate('AccountVerifiedSuccess');
-  }, [cloudBackupEnabled, download, loginWithBiometrics]);
+  }, [cloudBackupEnabled, download, restoreAccountFromPrivateKey]);
   return (
     <ExpandableBottomLayout.Layout>
       <ExpandableBottomLayout.TopSection>

@@ -34,21 +34,25 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   route: { params },
 }) => {
   const navigation = useNavigation();
-  const { loginWithBiometrics } = useAuth();
+  const { getOrCreatePrivateKey } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
   const { upload, disableBackup } = (
     useBackupPrivateKey as UseBackupPrivateKey
   )();
 
   const toggleBackup = useCallback(async () => {
-    await loginWithBiometrics();
+    const privKey = await getOrCreatePrivateKey();
+    if (!privKey) {
+      return;
+    }
+
     if (cloudBackupEnabled) {
       await disableBackup();
     } else {
-      await upload();
+      await upload(privKey.data);
     }
     toggleCloudBackupEnabled();
-  }, [cloudBackupEnabled, upload, loginWithBiometrics]);
+  }, [cloudBackupEnabled, upload, getOrCreatePrivateKey]);
 
   return (
     <ExpandableBottomLayout.Layout>
