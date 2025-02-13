@@ -55,7 +55,7 @@ export function HeldPrimaryButton({
       outputRange: COLORS,
     });
     return {
-      transform: [{scaleX}],
+      transform: [{ scaleX }],
       backgroundColor: bgColor,
     };
   };
