@@ -245,7 +245,7 @@ export function getPayload(
   endpointType: string,
   endpoint: string,
 ) {
-  if (circuit == 'vc_and_disclose') {
+  if (circuit === 'vc_and_disclose') {
     const payload: TEEPayloadDisclose = {
       type: 'disclose',
       endpointType: endpointType,
@@ -256,7 +256,7 @@ export function getPayload(
       },
     };
     return payload;
-  } else if (circuit == 'register' || circuit == 'dsc') {
+  } else if (circuit === 'register' || circuit === 'dsc') {
     const payload: TEEPayload = {
       type: circuit as 'register' | 'dsc',
       onchain: true,

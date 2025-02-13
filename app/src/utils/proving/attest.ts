@@ -9,7 +9,6 @@ import { sha384 } from 'js-sha512';
 import { Certificate } from 'pkijs';
 
 import { IMAGE_HASH } from '../../../../common/src/constants/constants';
-import { parseCertificateSimple } from '../../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
 
