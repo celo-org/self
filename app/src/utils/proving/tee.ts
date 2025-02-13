@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import {
   CIRCUIT_TYPES,
-  WS_DB_RELAYER_NEW,
+  WS_DB_RELAYER,
 } from '../../../../common/src/constants/constants';
 import { EndpointType } from '../../../../common/src/utils/appType';
 import {
@@ -61,6 +61,7 @@ export async function sendPayload(
   wsRpcUrl: string,
   timeoutMs = 1200000,
 ): Promise<void> {
+
   return new Promise(resolve => {
     let finalized = false;
     function finalize(status: ProofStatusEnum) {
@@ -114,15 +115,7 @@ export async function sendPayload(
               'hex',
             ).toString('binary'),
           );
-          const payload: TEEPayload = {
-            type: circuit,
-            endpointType: endpointType,
-            endpoint: endpoint,
-            circuit: {
-              name: circuitName,
-              inputs: JSON.stringify(inputs),
-            },
-          };
+          const payload = getPayload(inputs, circuit, circuitName, endpointType, endpoint);
           const encryptionData = encryptAES256GCM(
             JSON.stringify(payload),
             forgeKey,
@@ -134,7 +127,6 @@ export async function sendPayload(
             params: {
               uuid: result.result.uuid,
               ...encryptionData,
-              onchain: true,
             },
           };
           console.log('Sending submit body');
@@ -155,7 +147,7 @@ export async function sendPayload(
           console.log('Received UUID:', receivedUuid);
           console.log(result);
           if (!socket) {
-            socket = io(WS_DB_RELAYER_NEW, {
+            socket = io(WS_DB_RELAYER, {
               path: '/',
               transports: ['websocket'],
             });
@@ -163,17 +155,18 @@ export async function sendPayload(
               console.log('SocketIO: Connection opened');
               socket?.emit('subscribe', receivedUuid);
             });
-            socket.on('message', message => {
+            socket.on('status', message => {
               const data =
                 typeof message === 'string' ? JSON.parse(message) : message;
               console.log('SocketIO message:', data);
               // When the proof has generated, disconnect and close the WebSocket.
-              if (data.new_status === 2) {
+              if (data.status === 2) {
                 console.log('Proof generation completed');
                 socket?.disconnect();
                 if (ws.readyState === WebSocket.OPEN) {
                   ws.close();
                 }
+                finalize(ProofStatusEnum.SUCCESS);
               }
             });
             socket.on('disconnect', reason => {
@@ -222,13 +215,46 @@ export { encryptAES256GCM };
 /***
  *  types
  * ***/
-
-export type TEEPayload = {
-  type: (typeof CIRCUIT_TYPES)[number];
-  endpointType: EndpointType;
+export type TEEPayloadDisclose = {
+  type: 'disclose';
+  endpointType: string;
   endpoint: string;
   circuit: {
     name: string;
     inputs: string;
   };
-};
+}
+
+export type TEEPayload = {
+  type: 'register' | 'dsc';
+  onchain: true;
+  circuit: {
+    name: string;
+    inputs: string;
+  };
+}
+export function getPayload(inputs: any, circuit: string, circuitName: string, endpointType: string, endpoint: string) {
+  if (circuit == 'vc_and_disclose') {
+    const payload: TEEPayloadDisclose = {
+      type: 'disclose',
+      endpointType: endpointType,
+      endpoint: endpoint,
+      circuit: {
+        name: circuitName,
+        inputs: JSON.stringify(inputs),
+      },
+    }
+    return payload;
+  }
+  else if (circuit == 'register' || circuit == 'dsc') {
+    const payload: TEEPayload = {
+      type: circuit as 'register' | 'dsc',
+      onchain: true,
+      circuit: {
+        name: circuitName,
+        inputs: JSON.stringify(inputs),
+      },
+    }
+    return payload;
+  }
+}

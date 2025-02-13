@@ -7,12 +7,10 @@ export const DEFAULT_USER_ID_TYPE = 'uuid';
 
 export const MODAL_SERVER_ADDRESS = 'https://zk-passport--dsc-prover-generate-dsc-proof.modal.run';
 export const REDIRECT_URL = 'https://redirect.openpassport.app';
-export const WS_RPC_URL = "ws://54.71.75.253:8888/";
 export const WS_RPC_URL_REGISTER = "ws://register.proving.openpassport.app:8888/";
 export const WS_RPC_URL_DSC = "ws://dsc.proving.openpassport.app:8888/";
 export const WS_RPC_URL_VC_AND_DISCLOSE = "ws://disclose.proving.openpassport.app:8888/";
-export const WS_DB_RELAYER_OLD = '"ws://3.110.97.137:8888/';
-export const WS_DB_RELAYER_NEW = 'https://websocket.openpassport.app';
+export const WS_DB_RELAYER = 'wss://websocket.openpassport.app';
 
 export const CSCA_TREE_URL = 'https://tree.openpassport.app/csca';
 export const DSC_TREE_URL = 'https://tree.openpassport.app/dsc';

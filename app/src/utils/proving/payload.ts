@@ -27,8 +27,8 @@ import { sendPayload } from './tee';
 
 const mock_secret = '0'; //TODO: retrieve the secret from keychain
 
-function generateTeeInputsRegister(secret: string, passportData: PassportData) {
-  const inputs = generateCircuitInputsRegister(secret, passportData);
+async function generateTeeInputsRegister(secret: string, passportData: PassportData) {
+  const inputs = await generateCircuitInputsRegister(secret, passportData);
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -83,6 +83,7 @@ export async function sendRegisterPayload(passportData: PassportData) {
     mock_secret,
     passportData,
   );
+  console.log('WS_RPC_URL_REGISTER', WS_RPC_URL_REGISTER);
   await sendPayload(
     inputs,
     'register',
@@ -216,7 +217,6 @@ async function checkIdPassportDscIsInTree(passportData: PassportData) {
     await sendDscPayload(passportData);
   } else {
     console.log('DSC is found in the tree, skipping DSC payload');
-    await sendDscPayload(passportData);
   }
 }
 

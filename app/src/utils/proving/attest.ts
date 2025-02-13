@@ -79,17 +79,6 @@ export const verifyCertChain = async (
   try {
     // Parse all certificates
     const certChain = certChainStr.map(cert => new X509Certificate(cert));
-    for (let i = 0; i < certChainStr.length; i++) {
-      const parsedCert = parseCertificateSimple(certChainStr[i]);
-      console.log(
-        'i:',
-        i,
-        'cert aki',
-        parsedCert.authorityKeyIdentifier,
-        'cert ski',
-        parsedCert.subjectKeyIdentifier,
-      );
-    }
 
     // Verify the chain from leaf to root
     // certChain[0] is the root, we use the hardcoded rootPem
@@ -386,6 +375,7 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
   const signature_crypto = Buffer.from(signatureValue).toString('hex');
   return key_csca.verify(tbsHash, signature_crypto);
 }
+
 export function getTBSHash(pem: string): string {
   const certBuffer = Buffer.from(
     pem.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
