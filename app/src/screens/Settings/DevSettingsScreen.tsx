@@ -1,5 +1,4 @@
 import React from 'react';
-import Dialog from 'react-native-dialog';
 
 import { useNavigation } from '@react-navigation/native';
 import { Check, ChevronDown, Eraser, IterationCw } from '@tamagui/lucide-icons';
@@ -20,6 +19,8 @@ const items: (keyof RootStackParamList)[] = [
   'PassportCamera',
   'PassportNFCScan',
   'PassportDataInfo',
+  'LoadingScreen',
+  'AccountVerifiedSuccess',
   'ConfirmBelongingScreen',
   'CreateMock',
   'NextScreen',
@@ -89,17 +90,13 @@ const ScreenSelector = ({}) => {
 };
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
-  const {
-    clearPassportDataFromStorage,
-    clearPassportMetadataFromStorage,
-    setRegistered,
-  } = useUserStore();
+  const { setRegistered } = useUserStore();
 
   const nav = useNavigation();
 
   function handleRestart() {
-    clearPassportMetadataFromStorage();
-    clearPassportDataFromStorage();
+    // clearPassportMetadataFromStorage();
+    // clearPassportDataFromStorage();
     setRegistered(false);
     nav.navigate('Launch');
   }
@@ -144,7 +141,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
           borderWidth={1.2}
           size="$3.5"
           ml="$2"
-          onPress={clearPassportDataFromStorage}
+          // onPress={}
         >
           <Eraser color={textBlack} />
         </Button>
@@ -189,7 +186,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
           <Eraser color={textColor2} />
         </Button>
       </Fieldset> */}
-      <Dialog.Container visible={false}>
+      {/* <Dialog.Container visible={false}>
         <Dialog.Title>Delete Secret</Dialog.Title>
         <Dialog.Description>
           You are about to delete your secret. Be careful! You will not be able
@@ -203,7 +200,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
           //   onPress={() => handleDeleteSecret()}
           label="Delete secret"
         />
-      </Dialog.Container>
+      </Dialog.Container> */}
       {/* <Fieldset gap="$4" mt="$1" horizontal>
                         <Label color={textBlack} width={200} justifyContent="flex-end" htmlFor="skip" >
                           registered = (!registered)
