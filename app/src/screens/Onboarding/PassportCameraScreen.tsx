@@ -3,7 +3,6 @@ import { Platform, StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { platform } from 'process';
 import { View, XStack, YStack } from 'tamagui';
 
 import passportScanAnimation from '../../assets/animations/passport_scan.json';
