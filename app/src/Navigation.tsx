@@ -1,23 +1,15 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   StaticParamList,
   createStaticNavigation,
 } from '@react-navigation/native';
-import {
-  NativeStackHeaderProps,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
-import { Button, TextStyle, ViewStyle } from 'tamagui';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { NavBar } from './components/NavBar';
-import ActivityIcon from './images/icons/activity.svg';
-import SettingsIcon from './images/icons/settings.svg';
+import DefaultNavBar from './components/DefaultNavBar';
+import HomeNavBar from './components/HomeNavBar';
 import AccountRecoveryChoiceScreen from './screens/AccountFlow/AccountRecoveryChoiceScreen';
 import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
 import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
@@ -30,6 +22,7 @@ import LaunchScreen from './screens/LaunchScreen';
 import MockDataScreen from './screens/MockDataScreen';
 import NextScreen from './screens/NextScreen';
 import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen';
+import LoadingScreen from './screens/Onboarding/LoadingScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
 import PassportNFCScanScreen from './screens/Onboarding/PassportNFCScanScreen';
 import PassportOnboardingScreen from './screens/Onboarding/PassportOnboardingScreen';
@@ -43,86 +36,14 @@ import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScree
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
-import { black, neutral400, slate300, white } from './utils/colors';
-
-const DefaultNavBar = (props: NativeStackHeaderProps) => {
-  const { goBack, canGoBack } = props.navigation;
-  const { options } = props;
-  const headerStyle = (options.headerStyle || {}) as ViewStyle;
-  const insets = useSafeAreaInsets();
-  return (
-    <NavBar.Container
-      gap={14}
-      paddingHorizontal={20}
-      paddingTop={Math.max(insets.top, 12)}
-      paddingBottom={20}
-      backgroundColor={headerStyle.backgroundColor as string}
-      barStyle={
-        options.headerTintColor === white ||
-        (options.headerTitleStyle as TextStyle)?.color === white
-          ? 'light-content'
-          : 'dark-content'
-      }
-    >
-      <NavBar.LeftAction
-        component={
-          options.headerBackTitle || (canGoBack() ? 'back' : undefined)
-        }
-        onPress={goBack}
-        {...options.headerTitleStyle}
-      />
-      <NavBar.Title {...options.headerTitleStyle}>
-        {props.options.title}
-      </NavBar.Title>
-    </NavBar.Container>
-  );
-};
-
-const HomeNavBar = (props: NativeStackHeaderProps) => {
-  const insets = useSafeAreaInsets();
-  return (
-    <NavBar.Container
-      backgroundColor={black}
-      barStyle={'light-content'}
-      padding={16}
-      justifyContent="space-between"
-      paddingTop={Math.max(insets.top, 20)}
-    >
-      <NavBar.LeftAction
-        component={
-          <Button
-            size="$3"
-            unstyled
-            icon={
-              <ActivityIcon width={'35'} height={'100%'} color={neutral400} />
-            }
-          />
-        }
-        onPress={() => props.navigation.navigate('Activity')}
-      />
-      <NavBar.Title size="large" color={white}>
-        {props.options.title}
-      </NavBar.Title>
-      <NavBar.RightAction
-        component={
-          <Button
-            size={'$3'}
-            unstyled
-            icon={
-              <SettingsIcon width={'35'} height={'100%'} color={neutral400} />
-            }
-          />
-        }
-        onPress={() => props.navigation.navigate('Settings')}
-      />
-    </NavBar.Container>
-  );
-};
+import { black, slate300, white } from './utils/colors';
 
 const AppNavigation = createNativeStackNavigator({
-  initialRouteName: 'Home',
+  initialRouteName: 'Splash',
+  orientation: 'portrait_up',
   screenOptions: {
     header: DefaultNavBar,
+    navigationBarColor: white,
   },
   layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
   screens: {
@@ -153,6 +74,8 @@ const AppNavigation = createNativeStackNavigator({
     PassportOnboarding: {
       screen: PassportOnboardingScreen,
       options: {
+        animation: 'slide_from_bottom',
+        // presentation: 'modal' wanted to do this but seems to break stuff
         headerShown: false,
       },
     },
@@ -160,12 +83,14 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportCameraScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
       },
     },
     PassportNFCScan: {
       screen: PassportNFCScanScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
       },
       initialParams: {
         passportNumber: '',
@@ -175,6 +100,12 @@ const AppNavigation = createNativeStackNavigator({
     },
     ConfirmBelongingScreen: {
       screen: ConfirmBelongingScreen,
+      options: {
+        headerShown: false,
+      },
+    },
+    LoadingScreen: {
+      screen: LoadingScreen,
       options: {
         headerShown: false,
       },
@@ -201,6 +132,8 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         title: 'Self',
         header: HomeNavBar,
+        navigationBarColor: black,
+        presentation: 'card',
       },
     },
     Disclaimer: {
@@ -217,6 +150,8 @@ const AppNavigation = createNativeStackNavigator({
       screen: QRCodeViewFinderScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        // presentation: 'modal',
       },
     },
     ProveScreen: {
@@ -235,6 +170,8 @@ const AppNavigation = createNativeStackNavigator({
       screen: ProofRequestStatusScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
+        presentation: 'containedModal',
       },
     },
     /**
@@ -256,6 +193,7 @@ const AppNavigation = createNativeStackNavigator({
       screen: SaveRecoveryPhraseScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
       },
     },
     RecoverWithPhrase: {
@@ -282,6 +220,7 @@ const AppNavigation = createNativeStackNavigator({
       screen: AccountVerifiedSuccessScreen,
       options: {
         headerShown: false,
+        animation: 'slide_from_bottom',
       },
     },
     /**
@@ -290,7 +229,15 @@ const AppNavigation = createNativeStackNavigator({
     Settings: {
       screen: SettingsScreen,
       options: {
+        animation: 'slide_from_bottom',
         title: 'Settings',
+        headerStyle: {
+          backgroundColor: white,
+        },
+        headerTitleStyle: {
+          color: black,
+        },
+        navigationBarColor: black,
       },
       config: {
         screens: {},
@@ -309,6 +256,9 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportDataInfoScreen,
       options: {
         title: 'Passport Data Info',
+        headerStyle: {
+          backgroundColor: white,
+        },
       },
     },
     DevSettings: {

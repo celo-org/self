@@ -9,7 +9,7 @@ type NavigationAction = 'default' | 'cancel' | 'confirm';
 
 const useHapticNavigation = <
   T extends keyof RootStackParamList,
-  P extends RootStackParamList[T],
+  P extends T extends null ? never : RootStackParamList[T],
 >(
   screen: T,
   options: {
@@ -23,8 +23,8 @@ const useHapticNavigation = <
     switch (options.action) {
       case 'cancel':
         selectionChange();
-        break;
-
+        navigation.goBack();
+        return;
       case 'confirm':
         impactMedium();
         break;
@@ -34,9 +34,11 @@ const useHapticNavigation = <
         impactLight();
     }
 
-    // @ts-expect-error - This actually works from outside usage, just unsure how to
-    // make typescript understand that this is correct
-    navigation.navigate(screen, options.params);
+    if (screen) {
+      // @ts-expect-error - This actually works from outside usage, just unsure how to
+      // make typescript understand that this is correct
+      navigation.navigate(screen, options.params);
+    }
   }, [navigation, screen, options.action]);
 };
 

@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
-import "./constants/CircuitConstants.sol";
-import "./constants/AttestationId.sol";
-import "./libraries/Formatter.sol";
-import "./libraries/CircuitAttributeHandler.sol";
-import "./interfaces/IIdentityVerificationHubV1.sol";
-import "./interfaces/IIdentityRegistryV1.sol";
-import "./interfaces/IRegisterCircuitVerifier.sol";
-import "./interfaces/IVcAndDiscloseCircuitVerifier.sol";
-import "./interfaces/IDscCircuitVerifier.sol";
-import "./upgradeable/ImplRoot.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import {CircuitConstants} from "./constants/CircuitConstants.sol";
+import {AttestationId} from "./constants/AttestationId.sol";
+import {Formatter} from "./libraries/Formatter.sol";
+import {CircuitAttributeHandler} from "./libraries/CircuitAttributeHandler.sol";
+import {IIdentityVerificationHubV1} from "./interfaces/IIdentityVerificationHubV1.sol";
+import {IIdentityRegistryV1} from "./interfaces/IIdentityRegistryV1.sol";
+import {IRegisterCircuitVerifier} from "./interfaces/IRegisterCircuitVerifier.sol";
+import {IVcAndDiscloseCircuitVerifier} from "./interfaces/IVcAndDiscloseCircuitVerifier.sol";
+import {IDscCircuitVerifier} from "./interfaces/IDscCircuitVerifier.sol";
+import {ImplRoot} from "./upgradeable/ImplRoot.sol";
 
 /**
  * @notice ⚠️ CRITICAL STORAGE LAYOUT WARNING ⚠️
@@ -205,10 +205,10 @@ contract IdentityVerificationHubImplV1 is
      * @param dscCircuitVerifierAddresses Array of addresses for DSC circuit verifiers.
      */
     function initialize(
-        address registryAddress, 
+        address registryAddress,
         address vcAndDiscloseCircuitVerifierAddress,
         uint256[] memory registerCircuitVerifierIds,
-        address[] memory registerCircuitVerifierAddresses, 
+        address[] memory registerCircuitVerifierAddresses,
         uint256[] memory dscCircuitVerifierIds,
         address[] memory dscCircuitVerifierAddresses
     ) external initializer {
@@ -344,8 +344,12 @@ contract IdentityVerificationHubImplV1 is
                 attrs.expiryDate = CircuitAttributeHandler.getExpiryDate(charcodes);
             } else if (dataType == RevealedDataType.OLDER_THAN) {
                 attrs.olderThan = CircuitAttributeHandler.getOlderThan(charcodes);
-            } else if (dataType == RevealedDataType.OFAC) {
-                attrs.ofac = CircuitAttributeHandler.getOfac(charcodes);
+            } else if (dataType == RevealedDataType.PASSPORT_NO_OFAC) {
+                attrs.passportNoOfac = CircuitAttributeHandler.getPassportNoOfac(charcodes);
+            } else if (dataType == RevealedDataType.NAME_AND_DOB_OFAC) {
+                attrs.nameAndDobOfac = CircuitAttributeHandler.getNameAndDobOfac(charcodes);
+            } else if (dataType == RevealedDataType.NAME_AND_YOB_OFAC) {
+                attrs.nameAndYobOfac = CircuitAttributeHandler.getNameAndYobOfac(charcodes);
             }
         }
 
@@ -610,11 +614,20 @@ contract IdentityVerificationHubImplV1 is
                 revert INVALID_OLDER_THAN();
             }
         }
-        if (proof.ofacEnabled) {
-            if (!CircuitAttributeHandler.compareOfac(Formatter.fieldElementsToBytes(revealedDataPacked))) {
+        if (proof.ofacEnabled[0] || proof.ofacEnabled[1] || proof.ofacEnabled[2]) {
+            if (!CircuitAttributeHandler.compareOfac(
+                Formatter.fieldElementsToBytes(revealedDataPacked),
+                proof.ofacEnabled[0],
+                proof.ofacEnabled[1],
+                proof.ofacEnabled[2]
+            )) {
                 revert INVALID_OFAC();
             }
-            if (!IIdentityRegistryV1(_registry).checkOfacRoot(proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_SMT_ROOT_INDEX])) {
+            if (!IIdentityRegistryV1(_registry).checkOfacRoots(
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_PASSPORT_NO_SMT_ROOT_INDEX],
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_NAME_DOB_SMT_ROOT_INDEX],
+                proof.vcAndDiscloseProof.pubSignals[CircuitConstants.VC_AND_DISCLOSE_NAME_YOB_SMT_ROOT_INDEX]
+            )) {
                 revert INVALID_OFAC_ROOT();
             }
         }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
@@ -87,7 +87,7 @@ contract Airdrop is PassportAirdropRoot, Ownable {
      * @param _olderThan Value for 'olderThan' verification.
      * @param _forbiddenCountriesEnabled Flag indicating if forbidden countries verification is enabled.
      * @param _forbiddenCountriesListPacked Packed list of forbidden countries.
-     * @param _ofacEnabled Flag indicating if OFAC verification is enabled.
+     * @param _ofacEnabled Array of flags indicating which OFAC checks are enabled. [passportNo, nameAndDob, nameAndYob]
      */
     constructor(
         address _identityVerificationHub, 
@@ -100,7 +100,7 @@ contract Airdrop is PassportAirdropRoot, Ownable {
         uint256 _olderThan,
         bool _forbiddenCountriesEnabled,
         uint256 _forbiddenCountriesListPacked,
-        bool _ofacEnabled
+        bool[3] memory _ofacEnabled
     ) 
         PassportAirdropRoot(
             _identityVerificationHub, 

@@ -9,11 +9,11 @@ import { YStack } from 'tamagui';
 // Adjust the import path as needed
 import AppNavigation from './src/Navigation';
 import { createSegmentClient } from './src/Segment';
+import { AppProvider } from './src/stores/appProvider';
 import { AuthProvider } from './src/stores/authProvider';
 import { PassportProvider } from './src/stores/passportDataProvider';
 import { ProofProvider } from './src/stores/proofProvider';
 import useUserStore from './src/stores/userStore';
-import { bgWhite } from './src/utils/colors';
 
 global.Buffer = Buffer;
 
@@ -46,7 +46,7 @@ function App(): React.JSX.Element {
   }, [initUserStore]);
 
   return (
-    <YStack f={1} bc={bgWhite} h="100%" w="100%">
+    <YStack f={1} h="100%" w="100%">
       <AuthProvider>
         <PassportProvider>
           <ProofProvider>
