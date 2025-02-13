@@ -25,7 +25,7 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
             size="$3"
             unstyled
             icon={
-              <ActivityIcon width={'35'} height={'100%'} color={neutral400} />
+              <ActivityIcon width={'24'} height={'100%'} color={neutral400} />
             }
           />
         }
@@ -40,7 +40,7 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
             size={'$3'}
             unstyled
             icon={
-              <SettingsIcon width={'35'} height={'100%'} color={neutral400} />
+              <SettingsIcon width={'24'} height={'100%'} color={neutral400} />
             }
           />
         }
