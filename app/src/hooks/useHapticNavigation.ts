@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import * as uuid from 'uuid';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from '../Navigation';
 import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
@@ -18,35 +18,18 @@ const useHapticNavigation = <
     action?: NavigationAction;
   } = {},
 ) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation() as NativeStackScreenProps<RootStackParamList>['navigation'];
 
   return useCallback(() => {
     switch (options.action) {
       case 'cancel':
-        if (screen !== null) {
-          navigation.dispatch(state => {
-            const routes = [
-              ...state.routes.slice(0, state.routes.length - 1),
-              {
-                key: `${screen}-${uuid.v4()}`,
-                name: screen,
-                params: {},
-              },
-              ...state.routes.slice(state.routes.length - 1),
-            ];
-
-            return CommonActions.reset({
-              ...state,
-              routes,
-              index: routes.length - 1,
-            });
-          });
-        }
-
         selectionChange();
-        navigation.goBack();
-
+        // @ts-expect-error - This actually works from outside usage, just unsure how to
+        // make typescript understand that this is correct
+        navigation.popTo(screen, options.params);
         return;
+
       case 'confirm':
         impactMedium();
         break;
@@ -56,11 +39,9 @@ const useHapticNavigation = <
         impactLight();
     }
 
-    if (screen) {
-      // @ts-expect-error - This actually works from outside usage, just unsure how to
-      // make typescript understand that this is correct
-      navigation.navigate(screen, options.params);
-    }
+    // @ts-expect-error - This actually works from outside usage, just unsure how to
+    // make typescript understand that this is correct
+    navigation.navigate(screen, options.params);
   }, [navigation, screen, options.action]);
 };
 
