@@ -13,13 +13,7 @@ import RestoreAccountSvg from '../../images/icons/restore_account.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
-import {
-  // there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
-  STORAGE_NAME, // @ts-expect-error
-} from '../../utils/cloudBackup/index';
-// @ts-expect-error
-import { useBackupPrivateKey } from '../../utils/cloudBackup/index';
-import { UseBackupPrivateKey } from '../../utils/cloudBackup/types';
+import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { slate500, slate600, white } from '../../utils/colors';
 
 interface AccountRecoveryChoiceScreenProps {}
@@ -30,7 +24,7 @@ const AccountRecoveryChoiceScreen: React.FC<
   const { restoreAccountFromPrivateKey } = useAuth();
   const [restoring, setRestoring] = useState(false);
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
-  const { download } = (useBackupPrivateKey as UseBackupPrivateKey)();
+  const { download } = useBackupPrivateKey();
 
   const onRestoreFromCloudNext = useHapticNavigation('AccountVerifiedSuccess');
   const onEnterRecoveryPress = useHapticNavigation('SaveRecoveryPhrase');

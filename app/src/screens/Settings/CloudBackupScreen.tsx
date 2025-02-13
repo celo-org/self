@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { YStack } from 'tamagui';
@@ -14,12 +14,7 @@ import Cloud from '../../images/icons/logo_cloud_backup.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
-// there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
-import {
-  STORAGE_NAME,
-  useBackupPrivateKey, // @ts-expect-error
-} from '../../utils/cloudBackup/index';
-import { type UseBackupPrivateKey } from '../../utils/cloudBackup/types';
+import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { white } from '../../utils/colors';
 
 interface CloudBackupScreenProps
@@ -36,9 +31,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   const navigation = useNavigation();
   const { getOrCreatePrivateKey } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
-  const { upload, disableBackup } = (
-    useBackupPrivateKey as UseBackupPrivateKey
-  )();
+  const { upload, disableBackup } = useBackupPrivateKey();
 
   const toggleBackup = useCallback(async () => {
     const privKey = await getOrCreatePrivateKey();

@@ -12,12 +12,7 @@ import Cloud from '../../images/icons/logo_cloud_backup.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
-import {
-  // there's cloudBackup/index.ios.ts and cloudBackup/index.android.ts
-  STORAGE_NAME,
-  useBackupPrivateKey, // @ts-expect-error
-} from '../../utils/cloudBackup/index';
-import { type UseBackupPrivateKey } from '../../utils/cloudBackup/types';
+import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { white } from '../../utils/colors';
 
 interface RecoverWithCloudScreenProps {}
@@ -26,7 +21,7 @@ const RecoverWithCloudScreen: React.FC<RecoverWithCloudScreenProps> = ({}) => {
   const navigation = useNavigation();
   const { restoreAccountFromPrivateKey } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
-  const { download } = (useBackupPrivateKey as UseBackupPrivateKey)();
+  const { download } = useBackupPrivateKey();
 
   const restoreBackup = useCallback(async () => {
     const restoredPrivKey = await download();
