@@ -61,7 +61,6 @@ export async function sendPayload(
   wsRpcUrl: string,
   timeoutMs = 1200000,
 ): Promise<void> {
-
   return new Promise(resolve => {
     let finalized = false;
     function finalize(status: ProofStatusEnum) {
@@ -115,7 +114,13 @@ export async function sendPayload(
               'hex',
             ).toString('binary'),
           );
-          const payload = getPayload(inputs, circuit, circuitName, endpointType, endpoint);
+          const payload = getPayload(
+            inputs,
+            circuit,
+            circuitName,
+            endpointType,
+            endpoint,
+          );
           const encryptionData = encryptAES256GCM(
             JSON.stringify(payload),
             forgeKey,
@@ -223,7 +228,7 @@ export type TEEPayloadDisclose = {
     name: string;
     inputs: string;
   };
-}
+};
 
 export type TEEPayload = {
   type: 'register' | 'dsc';
@@ -232,8 +237,14 @@ export type TEEPayload = {
     name: string;
     inputs: string;
   };
-}
-export function getPayload(inputs: any, circuit: string, circuitName: string, endpointType: string, endpoint: string) {
+};
+export function getPayload(
+  inputs: any,
+  circuit: string,
+  circuitName: string,
+  endpointType: string,
+  endpoint: string,
+) {
   if (circuit == 'vc_and_disclose') {
     const payload: TEEPayloadDisclose = {
       type: 'disclose',
@@ -243,10 +254,9 @@ export function getPayload(inputs: any, circuit: string, circuitName: string, en
         name: circuitName,
         inputs: JSON.stringify(inputs),
       },
-    }
+    };
     return payload;
-  }
-  else if (circuit == 'register' || circuit == 'dsc') {
+  } else if (circuit == 'register' || circuit == 'dsc') {
     const payload: TEEPayload = {
       type: circuit as 'register' | 'dsc',
       onchain: true,
@@ -254,7 +264,7 @@ export function getPayload(inputs: any, circuit: string, circuitName: string, en
         name: circuitName,
         inputs: JSON.stringify(inputs),
       },
-    }
+    };
     return payload;
   }
 }

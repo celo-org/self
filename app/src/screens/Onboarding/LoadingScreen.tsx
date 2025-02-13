@@ -71,9 +71,7 @@ const LoadingScreen: React.FC = () => {
           const passportDataInit = initPassportDataParsing(passportData);
           await useUserStore.getState().registerPassportData(passportDataInit);
           // This will trigger sendPayload(), which updates global status via your tee.ts code.
-          await registerPassport(
-            passportDataInit,
-          );
+          await registerPassport(passportDataInit);
         } catch (error) {
           console.error('Error processing payload:', error);
           setStatus(ProofStatusEnum.ERROR);

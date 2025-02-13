@@ -27,7 +27,10 @@ import { sendPayload } from './tee';
 
 const mock_secret = '0'; //TODO: retrieve the secret from keychain
 
-async function generateTeeInputsRegister(secret: string, passportData: PassportData) {
+async function generateTeeInputsRegister(
+  secret: string,
+  passportData: PassportData,
+) {
   const inputs = await generateCircuitInputsRegister(secret, passportData);
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
