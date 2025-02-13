@@ -70,10 +70,10 @@ export const numberInRange = (
  * @param certChainStr An array of certificates in PEM format, ordered from leaf to root.
  * @return True if the certificate chain is valid, false otherwise.
  */
-export const verifyCertChain = (
+export const verifyCertChain = async (
   rootPem: string,
   certChainStr: string[],
-): boolean => {
+): Promise<boolean> => {
   try {
     // Parse all certificates
     const rootCert = new X509Certificate(rootPem);
@@ -94,7 +94,7 @@ export const verifyCertChain = (
 
       // Verify signature
       try {
-        const isValid = currentCert.verify(issuerCert);
+        const isValid = await currentCert.verify(issuerCert);
         if (!isValid) {
           console.error(`Certificate at index ${i} has invalid signature`);
           return false;
@@ -199,7 +199,7 @@ export const verifyAttestation = async (attestation: Array<number>) => {
   }
   console.log('TEE image hash verified');
 
-  if (!verifyCertChain(AWS_ROOT_PEM, [...certChain, cert])) {
+  if (!await verifyCertChain(AWS_ROOT_PEM, [...certChain, cert])) {
     throw new Error('Invalid certificate chain');
   }
 
@@ -340,7 +340,7 @@ export function getCertificateFromPem(pemContent: string): Certificate {
   }
 
   const asn1Data = asn1js.fromBER(arrayBuffer);
-  if (asn1.offset === -1) {
+  if (asn1Data.offset === -1) {
     throw new Error(`ASN.1 parsing error: ${asn1Data.result.error}`);
   }
 
