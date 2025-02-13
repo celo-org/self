@@ -149,7 +149,7 @@ export class SelfBackendVerifier {
       credentialSubject: credentialSubject,
       proof: {
         type: "Groth16Proof",
-        verificationMethod: "Vc and Disclose",
+        verificationMethod: "Verify commitment inclusion and disclose attributes",
         value: {
           proof: proof,
           publicSignals: publicSignals,

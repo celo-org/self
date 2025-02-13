@@ -53,7 +53,7 @@ export async function generateRegisterProof(
     console.log(CYAN, "=== Start generateRegisterProof ===", RESET);
 
     // Get the circuit inputs
-    const registerCircuitInputs: CircuitSignals = generateCircuitInputsRegister(
+    const registerCircuitInputs: CircuitSignals = await generateCircuitInputsRegister(
         secret,
         passportData
     );
@@ -93,7 +93,7 @@ export async function generateDscProof(
 ): Promise<DscCircuitProof> {
     console.log(CYAN, "=== Start generateDscProof ===", RESET);
 
-    const dscCircuitInputs: CircuitSignals = generateCircuitInputsDSC(
+    const dscCircuitInputs: CircuitSignals = await generateCircuitInputsDSC(
         dscCertificate,
         true
     );

@@ -7,7 +7,7 @@ import { generateCommitment } from "../../../common/src/utils/passports/passport
 import { ATTESTATION_ID, CIRCUIT_CONSTANTS } from "../utils/constants";
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
-import { generateVcAndDiscloseRawProof, parseSolidityCalldata } from "../utils/generateProof";
+import { generateVcAndDiscloseProof, parseSolidityCalldata } from "../utils/generateProof";
 import { Formatter } from "../utils/formatter";
 import { formatCountriesList, reverseBytes } from "../../../common/src/utils/circuits/formatInputs";
 import { VerifyAll } from "../../typechain-types";
@@ -50,7 +50,7 @@ describe("VerifyAll", () => {
         forbiddenCountriesList = ['AAA', 'ABC', 'CBA'];
         forbiddenCountriesListPacked = reverseBytes(Formatter.bytesToHexString(new Uint8Array(formatCountriesList(forbiddenCountriesList))));
 
-        rawProof = await generateVcAndDiscloseRawProof(
+        baseVcAndDiscloseProof = await generateVcAndDiscloseProof(
             registerSecret,
             BigInt(ATTESTATION_ID.E_PASSPORT).toString(),
             deployedActors.mockPassport,
