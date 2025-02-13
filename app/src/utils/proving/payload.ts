@@ -84,7 +84,7 @@ export async function sendRegisterPayload(passportData: PassportData) {
 }
 
 function generateTeeInputsDsc(passportData: PassportData) {
-  const inputs = generateCircuitInputsDSC(passportData.dsc);
+  const inputs = generateCircuitInputsDSC(passportData.dsc, false);
   const circuitName = getCircuitNameFromPassportData(passportData, 'dsc');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -94,7 +94,7 @@ function generateTeeInputsDsc(passportData: PassportData) {
 
 export async function sendDscPayload(
   passportData: PassportData,
-): Promise<boolean> {
+): Promise<any> {
   if (!passportData) {
     return false;
   }

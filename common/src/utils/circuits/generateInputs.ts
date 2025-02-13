@@ -32,7 +32,7 @@ import { parseDscCertificateData } from '../passports/passport_parsing/parseDscC
 
 export async function generateCircuitInputsDSC(
   dscCertificate: string,
-  devMode: boolean = false
+  devMode: boolean = true
 ) {
   const serialized_csca_tree = (await getCSCATree(devMode) as any).data;
   console.log('serialized_csca_tree', serialized_csca_tree);
