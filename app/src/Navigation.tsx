@@ -120,7 +120,6 @@ const HomeNavBar = (props: NativeStackHeaderProps) => {
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   orientation: 'portrait_up',
-  presentation: 'card',
   screenOptions: {
     header: DefaultNavBar,
     navigationBarColor: white,
@@ -149,7 +148,7 @@ const AppNavigation = createNativeStackNavigator({
       screen: PassportOnboardingScreen,
       options: {
         animation: 'slide_from_bottom',
-        presentation: 'modal',
+        // presentation: 'modal' wanted to do this but seems to break stuff
         headerShown: false,
       },
     },
@@ -158,7 +157,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'containedModal',
       },
     },
     PassportNFCScan: {
@@ -166,7 +164,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'containedModal',
       },
       initialParams: {
         passportNumber: '',
@@ -191,7 +188,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         if: () => true, // TODO: dev only
         title: 'Mock Passport',
-        presentation: 'fullScreenModal',
       },
     },
     // TODO: rename ? maybe summary
@@ -207,6 +203,7 @@ const AppNavigation = createNativeStackNavigator({
         title: 'Self',
         header: HomeNavBar,
         navigationBarColor: black,
+        presentation: 'card',
       },
     },
     Disclaimer: {
@@ -221,7 +218,7 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'fullScreenModal',
+        // presentation: 'modal',
       },
     },
     ProveScreen: {
@@ -241,13 +238,12 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'fullScreenModal',
+        presentation: 'containedModal',
       },
     },
     Settings: {
       screen: SettingsScreen,
       options: {
-        presentation: 'fullScreenModal',
         animation: 'slide_from_bottom',
         title: 'Settings',
         headerStyle: {
@@ -273,7 +269,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'containedModal',
       },
     },
     RecoverWithPhrase: {
@@ -295,7 +290,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'containedModal',
       },
     },
     ShowRecoveryPhrase: {
@@ -320,7 +314,6 @@ const AppNavigation = createNativeStackNavigator({
       screen: DevSettingsScreen,
       options: {
         title: 'Developer Settings',
-        presentation: 'card', //this one must be card for the select menu to render
         headerStyle: {
           backgroundColor: white,
         },
