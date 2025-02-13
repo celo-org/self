@@ -260,4 +260,4 @@ export const verifyAllAbi = [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];

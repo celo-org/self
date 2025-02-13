@@ -1,16 +1,9 @@
 import {
+  countryCodes,
   countryNames,
   getCountryCode,
 } from '../../../common/src/constants/constants';
-import type { SelfAttestation } from '../../../common/src/utils/selfAttestation';
-import {
-  parsePublicSignalsDisclose,
-} from '../../../common/src/utils/selfAttestation';
-import {
-  formatForbiddenCountriesListFromCircuitOutput,
-  getAttributeFromUnpackedReveal,
-  unpackReveal,
-} from '../../../common/src/utils/circuits/formatOutputs';
+import type { SelfVerificationResult } from '../../../common/src/utils/selfAttestation';
 import { castToScope } from '../../../common/src/utils/circuits/uuid';
 import { VcAndDiscloseProof } from '../../../contracts/test/utils/types';
 import {
@@ -29,8 +22,7 @@ import { CIRCUIT_CONSTANTS, revealedDataTypes } from '../../../common/src/consta
 import { packForbiddenCountriesList } from '../../../common/src/utils/contracts/formatCallData';
 import { parseSolidityCalldata } from '../../../contracts/test/utils/generateProof';
 
-
-export class AttestationVerifier {
+export class SelfBackendVerifier {
 
   protected scope: string;
   protected attestationId: number = 1;
@@ -54,18 +46,20 @@ export class AttestationVerifier {
 
   constructor(
     rpcUrl: string,
+    scope: string,
     registryContractAddress: `0x${string}`,
     verifyAllContractAddress: `0x${string}`,
   ) {
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     this.registryContract = new ethers.Contract(registryContractAddress, registryAbi, provider);
     this.verifyAllContract = new ethers.Contract(verifyAllContractAddress, verifyAllAbi, provider);
+    this.scope = scope;
   }
 
   public async verify(
     proof: Groth16Proof, 
     publicSignals: PublicSignals
-  ): Promise<SelfAttestation> {
+  ): Promise<SelfVerificationResult> {
     const excludedCountryCodes = this.excludedCountries.value.map(country => getCountryCode(country));
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
     const packedValue = forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked[0] : '0';
@@ -73,6 +67,9 @@ export class AttestationVerifier {
       proof,
       publicSignals
     ), {} as VcAndDiscloseProof);
+
+    const isValidScope = this.scope === castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
+    const isValidAttestationId = this.attestationId.toString() === publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
 
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,  
@@ -107,16 +104,21 @@ export class AttestationVerifier {
     ];
 
     const timestamp = this.targetRootTimestamp;
+    
     const result = await this.verifyAllContract.verifyAll(
-        timestamp,
-        vcAndDiscloseHubProof,
-        types
+      timestamp,
+      vcAndDiscloseHubProof,
+      types
     );
 
+    let isValidNationality = true;
+    if (this.nationality.enabled) {
+      const nationality = result[0][revealedDataTypes.nationality];
+      const countryCode = countryCodes[nationality as keyof typeof countryCodes];
+      isValidNationality = countryCode === this.nationality.value;
+    }
+
     const credentialSubject = {
-      userId: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_USER_IDENTIFIER_INDEX],
-      valid: result[1],
-      application: this.scope,
       merkle_root: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_MERKLE_ROOT_INDEX],
       attestation_id: this.attestationId.toString(),
       current_date: new Date().toISOString(),
@@ -131,10 +133,19 @@ export class AttestationVerifier {
       passport_no_ofac: result[0][revealedDataTypes.passport_no_ofac],
       name_and_dob_ofac: result[0][revealedDataTypes.name_and_dob_ofac],
       name_and_yob_ofac: result[0][revealedDataTypes.name_and_yob_ofac],
-      nullifier: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NULLIFIER_INDEX],
     }
 
-    const attestation: SelfAttestation = {
+    const attestation: SelfVerificationResult = {
+      isValid: result[1] && isValidScope && isValidAttestationId && isValidNationality,
+      isValidDetails: {
+        isValidScope: isValidScope,
+        isValidAttestationId: isValidAttestationId,
+        isValidProof: result[1],
+        isValidNationality: isValidNationality,
+      },
+      userId: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_USER_IDENTIFIER_INDEX],
+      application: this.scope,
+      nullifier: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NULLIFIER_INDEX],
       credentialSubject: credentialSubject,
       proof: {
         type: "Groth16Proof",
@@ -148,6 +159,52 @@ export class AttestationVerifier {
     }
 
     return attestation;
+  }
+
+  setTargetRootTimestamp(targetRootTimestamp: number): this {
+    this.targetRootTimestamp = targetRootTimestamp;
+    return this;
+  }
+
+  setMinimumAge(age: number): this {
+    if (age < 10) {
+      throw new Error('Minimum age must be at least 10 years old');
+    }
+    if (age > 100) {
+      throw new Error('Minimum age must be at most 100 years old');
+    }
+    this.minimumAge = { enabled: true, value: age.toString() };
+    return this;
+  }
+
+  setNationality(country: (typeof countryNames)[number]): this {
+    this.nationality = { enabled: true, value: country };
+    return this;
+  }
+
+  discloseNationality(): this {
+    this.setNationality('Any');
+    return this;
+  }
+
+  excludeCountries(...countries: (typeof countryNames)[number][]): this {
+    this.excludedCountries = { enabled: true, value: countries };
+    return this;
+  }
+
+  enablePassportNoOfacCheck(): this {
+    this.passportNoOfac = true;
+    return this;
+  }
+
+  enableNameAndDobOfacCheck(): this {
+    this.nameAndDobOfac = true;
+    return this;
+  }
+
+  enableNameAndYobOfacCheck(): this {
+    this.nameAndYobOfac = true;
+    return this;
   }
 
 }
