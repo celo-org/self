@@ -12,6 +12,7 @@ import miscAnimation from '../../assets/animations/loading/misc.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
+import useUserStore from '../../stores/userStore';
 import { registerPassport } from '../../utils/proving/payload';
 
 const LoadingScreen: React.FC = () => {
