@@ -34,7 +34,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     (error, result) => {
       if (error) {
         console.error(error);
-        //TODO:  Add error handling here
+        //TODO: Add error handling here
         return;
       }
 
@@ -45,39 +45,29 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
 
       const { passportNumber, dateOfBirth, dateOfExpiry } = result;
 
-      if (!checkScannedInfo(passportNumber, dateOfBirth, dateOfExpiry + "00")) {
+      const formattedDateOfBirth = Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfBirth) : dateOfBirth;
+      const formattedDateOfExpiry = Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfExpiry) : dateOfExpiry;
+
+      if (!checkScannedInfo(passportNumber, formattedDateOfBirth, formattedDateOfExpiry)) {
         trackEvent('Passport Camera Scan Failed', {
           passportNumberLength: passportNumber.length,
-          dateOfBirthLength: dateOfBirth.length,
-          dateOfExpiryLength: dateOfExpiry.length,
+          dateOfBirthLength: formattedDateOfBirth.length,
+          dateOfExpiryLength: formattedDateOfExpiry.length,
         });
         navigation.navigate('PassportCameraTrouble');
         return;
       }
 
-      if (Platform.OS === 'ios') {
-        store.update({
-          passportNumber,
-          dateOfBirth: formatDateToYYMMDD(dateOfBirth),
-          dateOfExpiry: formatDateToYYMMDD(dateOfExpiry),
-        });
-        console.log('Updated store with:', {
-          passportNumber,
-          dateOfBirth: formatDateToYYMMDD(dateOfBirth),
-          dateOfExpiry: formatDateToYYMMDD(dateOfExpiry),
-        });
-      } else {
-        store.update({
-          passportNumber,
-          dateOfBirth,
-          dateOfExpiry,
-        });
-        console.log('Updated store with:', {
-          passportNumber,
-          dateOfBirth,
-          dateOfExpiry,
-        });
-      }
+      store.update({
+        passportNumber,
+        dateOfBirth: formattedDateOfBirth,
+        dateOfExpiry: formattedDateOfExpiry,
+      });
+      console.log('Updated store with:', {
+        passportNumber,
+        dateOfBirth: formattedDateOfBirth,
+        dateOfExpiry: formattedDateOfExpiry,
+      });
       navigation.navigate('PassportNFCScan');
     },
     [store, navigation],
