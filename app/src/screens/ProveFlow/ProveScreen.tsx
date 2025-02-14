@@ -24,7 +24,6 @@ const ProveScreen: React.FC = () => {
   const { getPassportDataAndSecret } = usePassport();
   const { selectedApp, setStatus } = useProofInfo();
 
-
   // Add effect to log when selectedApp changes
   useEffect(() => {
     console.log('[ProveScreen] Selected app updated:', selectedApp);
@@ -72,7 +71,7 @@ const ProveScreen: React.FC = () => {
         setStatus(ProofStatusEnum.ERROR);
         return;
       }
-      const { passportData, secret } = passportDataAndSecret.data;  
+      const { passportData, secret } = passportDataAndSecret.data;
       await sendVcAndDisclosePayload(secret, passportData, selectedApp);
     } catch (e) {
       console.log('Error sending VC and disclose payload', e);

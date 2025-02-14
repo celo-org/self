@@ -52,24 +52,32 @@ const HomeScreen: React.FC = () => {
         <PrivacyNote />
       </YStack>
       <YStack ai="center" gap={20} justifyContent="flex-end">
-        <ScanButton onPress={onScanButtonPress} hitSlop={100} pressStyle={pressStyle}>
+        <ScanButton
+          onPress={onScanButtonPress}
+          hitSlop={100}
+          pressStyle={pressStyle}
+        >
           <ScanIcon color={amber500} />
         </ScanButton>
         <Caption
-            onPress={onScanButtonPress} 
-            color={amber500}
-            textTransform="uppercase"
-            backgroundColor={black}
-            pressStyle={{backgroundColor: 'transparent'}}
-          >
-            Prove your SELF
-          </Caption>
+          onPress={onScanButtonPress}
+          color={amber500}
+          textTransform="uppercase"
+          backgroundColor={black}
+          pressStyle={{ backgroundColor: 'transparent' }}
+        >
+          Prove your SELF
+        </Caption>
       </YStack>
     </YStack>
   );
 };
 
-const pressStyle = {opacity: 1, backgroundColor: 'transparent', transform: [{scale: 0.95}]} as const
+const pressStyle = {
+  opacity: 1,
+  backgroundColor: 'transparent',
+  transform: [{ scale: 0.95 }],
+} as const;
 
 function PrivacyNote() {
   const { hasPrivacyNoteBeenDismissed } = useSettingStore();
