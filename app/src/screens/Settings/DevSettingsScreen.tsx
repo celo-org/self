@@ -23,7 +23,6 @@ const items: (keyof RootStackParamList)[] = [
   'AccountVerifiedSuccess',
   'ConfirmBelongingScreen',
   'CreateMock',
-  'NextScreen',
   'Home',
   'Disclaimer',
   'QRCodeViewFinder',
