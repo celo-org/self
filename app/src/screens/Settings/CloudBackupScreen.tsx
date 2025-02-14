@@ -17,7 +17,6 @@ import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { black, white } from '../../utils/colors';
-import { DEVICE_BIOMETRICS_INCOMPATIBILITY_ERROR_MESSAGE } from '../../utils/errors';
 
 interface CloudBackupScreenProps
   extends StaticScreenProps<
@@ -113,7 +112,8 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
               </>
             ) : (
               <>
-                Your device doesn't support biometrics or is disabled for apps.
+                Your device doesn't support biometrics or is disabled for apps
+                and is required for cloud storage.
               </>
             )}
           </Caption>
@@ -122,7 +122,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
             {cloudBackupEnabled ? (
               <SecondaryButton
                 onPress={disableCloudBackups}
-                disabled={pending || biometricsAvailable}
+                disabled={pending || !biometricsAvailable}
               >
                 {pending ? 'Disabling' : 'Disable'} {STORAGE_NAME} backups
                 {pending ? '…' : ''}
