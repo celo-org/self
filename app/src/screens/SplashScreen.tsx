@@ -17,7 +17,7 @@ const SplashScreen: React.FC = ({}) => {
     if (userLoaded && passportData) {
       navigation.navigate('Home');
     } else {
-      navigation.navigate('Home');
+      navigation.navigate('Launch');
     }
   }, [passportData, userLoaded]);
 
