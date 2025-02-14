@@ -12,6 +12,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
 
+import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
 import passportVerifyAnimation from '../../assets/animations/passport_verify.json';
 import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
@@ -23,13 +24,12 @@ import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import NFC_IMAGE from '../../images/nfc.png';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import useNavigationStore from '../../stores/navigationStore';
+import { storePassportData } from '../../stores/passportDataProvider';
 import useUserStore from '../../stores/userStore';
 import { black, slate100, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { parseScanResponse, scan } from '../../utils/nfcScannerNew';
-import useNavigationStore from '../../stores/navigationStore';
-import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
-import { storePassportData } from '../../stores/passportDataProvider';
 
 interface PassportNFCScanScreenProps {}
 
@@ -78,7 +78,11 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
       setIsNfcSheetOpen(true);
 
       try {
-        const scanResponse = await scan({ passportNumber, dateOfBirth, dateOfExpiry });
+        const scanResponse = await scan({
+          passportNumber,
+          dateOfBirth,
+          dateOfExpiry,
+        });
         console.log('NFC Scan Successful');
         trackEvent('NFC Scan Successful');
 
@@ -108,7 +112,8 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           csca_signature_algorithm: passportMetadata.cscaSignatureAlgorithm,
           csca_salt_length: passportMetadata.cscaSaltLength,
           csca_curve_or_exponent: passportMetadata.cscaCurveOrExponent,
-          csca_signature_algorithm_bits: passportMetadata.cscaSignatureAlgorithmBits,
+          csca_signature_algorithm_bits:
+            passportMetadata.cscaSignatureAlgorithmBits,
           dsc: passportMetadata.dsc,
         });
 
@@ -121,14 +126,18 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
           error: e.message,
         });
 
-        if (e.message.includes('InvalidMRZKey')) { // iOS
+        if (e.message.includes('InvalidMRZKey')) {
+          // iOS
           // This works and even says "MRZ key not valid for this document"
           navigation.navigate('PassportCamera');
-        } else if (e.message.includes('Tag response error / no response')) { // iOS
+        } else if (e.message.includes('Tag response error / no response')) {
+          // iOS
           navigation.navigate('PassportNFCTrouble');
-        } else if (e.message.includes('UserCanceled')) { // iOS
+        } else if (e.message.includes('UserCanceled')) {
+          // iOS
           // Do nothing
-        } else if (e.message.includes('UnexpectedError')) { // iOS
+        } else if (e.message.includes('UnexpectedError')) {
+          // iOS
           // Timeout reached, do nothing
         } else {
           // TODO: Handle other error types

@@ -18,10 +18,11 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import Bulb from '../../images/icons/passport_camera_bulb.svg';
 import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
+import useNavigationStore from '../../stores/navigationStore';
 import useUserStore from '../../stores/userStore';
 import { black, slate800, white } from '../../utils/colors';
 import { checkScannedInfo, formatDateToYYMMDD } from '../../utils/utils';
-import useNavigationStore from '../../stores/navigationStore';
+
 interface PassportNFCScanScreen {}
 
 const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
@@ -45,10 +46,18 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
 
       const { passportNumber, dateOfBirth, dateOfExpiry } = result;
 
-      const formattedDateOfBirth = Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfBirth) : dateOfBirth;
-      const formattedDateOfExpiry = Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfExpiry) : dateOfExpiry;
+      const formattedDateOfBirth =
+        Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfBirth) : dateOfBirth;
+      const formattedDateOfExpiry =
+        Platform.OS === 'ios' ? formatDateToYYMMDD(dateOfExpiry) : dateOfExpiry;
 
-      if (!checkScannedInfo(passportNumber, formattedDateOfBirth, formattedDateOfExpiry)) {
+      if (
+        !checkScannedInfo(
+          passportNumber,
+          formattedDateOfBirth,
+          formattedDateOfExpiry,
+        )
+      ) {
         trackEvent('Passport Camera Scan Failed', {
           passportNumberLength: passportNumber.length,
           dateOfBirthLength: formattedDateOfBirth.length,
@@ -79,11 +88,11 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
   return (
     <ExpandableBottomLayout.Layout backgroundColor={white}>
       <ExpandableBottomLayout.TopSection roundTop backgroundColor={black}>
-      <PassportCamera
-        key={isFocused ? 'active' : 'inactive'}
-        onPassportRead={onPassportRead}
-        isMounted={isFocused}
-      />
+        <PassportCamera
+          key={isFocused ? 'active' : 'inactive'}
+          onPassportRead={onPassportRead}
+          isMounted={isFocused}
+        />
         <LottieView
           autoPlay
           loop

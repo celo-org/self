@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NativeModules, Platform } from 'react-native';
 import PassportReader from 'react-native-passport-reader';
 
 import { Buffer } from 'buffer';
+
 import { PassportData } from '../../../common/src/utils/types';
 
 interface Inputs {
@@ -9,7 +11,6 @@ interface Inputs {
   dateOfBirth: string;
   dateOfExpiry: string;
 }
-
 
 export const scan = async (inputs: Inputs) => {
   return Platform.OS === 'android'
@@ -130,5 +131,5 @@ const handleResponseAndroid = (response: any) => {
     eContent: JSON.parse(encapContent),
     signedAttr: JSON.parse(eContent),
     encryptedDigest: JSON.parse(encryptedDigest),
-  } as PassportData
+  } as PassportData;
 };
