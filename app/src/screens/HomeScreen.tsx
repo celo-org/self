@@ -1,7 +1,13 @@
 import React from 'react';
+import { Linking } from 'react-native';
+import { checkVersion } from 'react-native-check-version';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { usePreventRemove } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  usePreventRemove,
+} from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
 
 import { BodyText } from '../components/typography/BodyText';
@@ -25,6 +31,32 @@ const ScanButton = styled(Button, {
 });
 
 const HomeScreen: React.FC = () => {
+  const navigation = useNavigation();
+
+  // TODO is this the best place to put it?
+  useFocusEffect(() => {
+    checkVersion().then(version => {
+      // TODO true + timeout just for testing
+      if (version.needsUpdate || true) {
+        setTimeout(() => {
+          navigation.navigate('Modal', {
+            titleText: 'New Version Available',
+            bodyText:
+              'We’ve improved performance, fixed bugs, and added new features. Update now to install the latest version of Self.',
+            buttonText: 'Update and restart',
+            onPress: () => {
+              Linking.openURL(
+                version.url,
+                // TODO or use
+                // Platform.OS === 'ios' ? appStoreUrl : playStoreUrl
+              );
+            },
+          });
+        }, 5000);
+      }
+    });
+  });
+
   const onCaptionPress = useHapticNavigation('ConfirmBelongingScreen');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
