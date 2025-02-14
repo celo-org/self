@@ -12,6 +12,7 @@ import { getCircuitNameFromPassportData } from '../../../common/src/utils/circui
 import { getLeafDscTreeFromParsedDsc } from '../../../common/src/utils/trees';
 import { parseCertificateSimple } from '../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 import { parseDscCertificateData } from '../../../common/src/utils/passports/passport_parsing/parseDscCertificateData';
+import serialized_csca_tree from '../../../common/pubkeys/serialized_csca_tree.json';
 dotenv.config();
 
 const testSuite = process.env.FULL_TEST_SUITE === 'true' ? fullSigAlgs : sigAlgs;
@@ -34,7 +35,7 @@ testSuite.forEach(({ sigAlg, hashFunction, domainParameter, keyLength }) => {
     this.timeout(0); // Disable timeout
     let circuit;
 
-    const inputs = generateCircuitInputsDSC(passportData.dsc, true);
+    const inputs = generateCircuitInputsDSC(passportData.dsc, serialized_csca_tree);
 
     before(async () => {
       circuit = await wasm_tester(

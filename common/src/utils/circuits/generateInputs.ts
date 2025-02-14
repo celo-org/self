@@ -30,11 +30,10 @@ import { generateMerkleProof, generateSMTProof } from '../trees';
 import { parseCertificateSimple } from '../certificate_parsing/parseCertificateSimple';
 import { parseDscCertificateData } from '../passports/passport_parsing/parseDscCertificateData';
 
-export async function generateCircuitInputsDSC(
+export function generateCircuitInputsDSC(
   dscCertificate: string,
-  devMode: boolean = true
+  serializedCscaTree: string[][],
 ) {
-  const serialized_csca_tree = (await getCSCATree(devMode) as any);
   const dscParsed = parseCertificateSimple(dscCertificate);
   const dscMetadata = parseDscCertificateData(dscParsed);
   const cscaParsed = parseCertificateSimple(dscMetadata.csca);
@@ -50,7 +49,7 @@ export async function generateCircuitInputsDSC(
   );
 
   const leaf = getLeafCscaTree(cscaParsed);
-  const [root, path, siblings] = getCscaTreeInclusionProof(leaf, serialized_csca_tree);
+  const [root, path, siblings] = getCscaTreeInclusionProof(leaf, serializedCscaTree);
 
   // Parse CSCA certificate and get its public key
   const csca_pubKey_formatted = getCertificatePubKey(
@@ -86,12 +85,11 @@ export async function generateCircuitInputsDSC(
   };
 }
 
-export async function generateCircuitInputsRegister(
+export function generateCircuitInputsRegister(
   secret: string,
   passportData: PassportData,
-  devMode: boolean = false
+  serializedDscTree: string,
 ) {
-  const serialized_dsc_tree = await getDSCTree(devMode);
 
   if (!passportData.parsed) {
     throw new Error('Passport data is not parsed');
@@ -127,7 +125,7 @@ export async function generateCircuitInputsRegister(
   );
 
   const dsc_leaf = getLeafDscTree(dscParsed, passportData.csca_parsed); // TODO: WRONG 
-  const [root, path, siblings, leaf_depth] = getDscTreeInclusionProof(dsc_leaf, serialized_dsc_tree);
+  const [root, path, siblings, leaf_depth] = getDscTreeInclusionProof(dsc_leaf, serializedDscTree);
   const csca_tree_leaf = getLeafCscaTree(passportData.csca_parsed);
 
   // Get start index of DSC pubkey based on algorithm

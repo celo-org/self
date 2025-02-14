@@ -6,7 +6,7 @@ import { genMockPassportData } from "../../../common/src/utils/passports/genMock
 import { initPassportDataParsing } from "../../../common/src/utils/passports/passport";
 import { RegisterVerifierId, DscVerifierId } from "../../../common/src/constants/constants";
 import { getCscaTreeRoot } from "../../../common/src/utils/trees";
-
+import serialized_csca_tree from "../../../common/pubkeys/serialized_csca_tree.json";
 import {
     DeployedActors,
     VcAndDiscloseVerifier,
@@ -146,7 +146,7 @@ export async function deploySystemFixtures(): Promise<DeployedActors> {
     ) as IdentityVerificationHubImplV1;
 
     // Initialize roots
-    const csca_root = getCscaTreeRoot();
+    const csca_root = getCscaTreeRoot(serialized_csca_tree);
     await registryContract.updateCscaRoot(csca_root, { from: owner });
 
     const {

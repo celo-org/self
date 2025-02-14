@@ -28,6 +28,7 @@ import {
 import { generateCommitment } from '../../../../common/src/utils/passports/passport';
 import {
   getCommitmentTree,
+  getCSCATree,
   getDSCTree,
   getLeafDscTree,
 } from '../../../../common/src/utils/trees';
@@ -38,7 +39,8 @@ async function generateTeeInputsRegister(
   secret: string,
   passportData: PassportData,
 ) {
-  const inputs = await generateCircuitInputsRegister(secret, passportData);
+  const serialized_dsc_tree = await getDSCTree();
+  const inputs = generateCircuitInputsRegister(secret, passportData, serialized_dsc_tree);
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -108,8 +110,9 @@ export async function sendRegisterPayload(
   );
 }
 
-function generateTeeInputsDsc(passportData: PassportData) {
-  const inputs = generateCircuitInputsDSC(passportData.dsc, false);
+async function generateTeeInputsDsc(passportData: PassportData) {
+  const serialized_csca_tree = await getCSCATree();
+  const inputs = generateCircuitInputsDSC(passportData.dsc, serialized_csca_tree);
   const circuitName = getCircuitNameFromPassportData(passportData, 'dsc');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -126,7 +129,7 @@ export async function sendDscPayload(passportData: PassportData): Promise<any> {
     console.log('Passport not supported'); //TODO: show a screen explaining that the passport is not supported.
     return false;
   }
-  const { inputs, circuitName } = generateTeeInputsDsc(passportData);
+  const { inputs, circuitName } = await generateTeeInputsDsc(passportData);
   console.log('circuitName', circuitName);
   const result = await sendPayload(
     inputs,
@@ -262,7 +265,7 @@ function isUserRegistered(_passportData: PassportData, _secret: string) {
 
 async function checkIdPassportDscIsInTree(passportData: PassportData) {
   // download the dsc tree and check if the passport leaf is in the tree
-  const dscTree = await getDSCTree(false);
+  const dscTree = await getDSCTree();
   const hashFunction = (a: any, b: any) => poseidon2([a, b]);
   const tree = LeanIMT.import(hashFunction, dscTree);
   const leaf = getLeafDscTree(
