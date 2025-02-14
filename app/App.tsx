@@ -9,12 +9,12 @@ import { YStack } from 'tamagui';
 // Adjust the import path as needed
 import AppNavigation from './src/Navigation';
 import { createSegmentClient } from './src/Segment';
+import { useInAppUpdate } from './src/hooks/useInAppUpdate';
 import { AppProvider } from './src/stores/appProvider';
 import { AuthProvider } from './src/stores/authProvider';
 import { PassportProvider } from './src/stores/passportDataProvider';
 import { ProofProvider } from './src/stores/proofProvider';
 import useUserStore from './src/stores/userStore';
-import { useInAppUpdate } from './src/hooks/useInAppUpdate';
 
 global.Buffer = Buffer;
 

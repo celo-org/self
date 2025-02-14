@@ -1,11 +1,12 @@
 import { Platform } from 'react-native';
+
 import SpInAppUpdates, {
   IAUUpdateKind,
   StartUpdateOptions,
 } from 'sp-react-native-in-app-updates';
 
 const inAppUpdates = new SpInAppUpdates(
-  __DEV__ // isDebug
+  __DEV__, // isDebug
 );
 
 export const useInAppUpdate = () => {
@@ -16,16 +17,16 @@ export const useInAppUpdate = () => {
 
     try {
       const result = await inAppUpdates.checkNeedsUpdate();
-      
+
       if (result.shouldUpdate || forceTest) {
         const updateOptions: StartUpdateOptions = {
           updateType: IAUUpdateKind.IMMEDIATE,
         };
-        
+
         await inAppUpdates.startUpdate(updateOptions);
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Error checking for updates:', error);
@@ -50,8 +51,8 @@ export const useInAppUpdate = () => {
     }
   };
 
-  return { 
+  return {
     checkForUpdates,
-    startFlexibleUpdate
+    startFlexibleUpdate,
   };
-}; 
+};
