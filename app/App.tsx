@@ -14,6 +14,7 @@ import { AuthProvider } from './src/stores/authProvider';
 import { PassportProvider } from './src/stores/passportDataProvider';
 import { ProofProvider } from './src/stores/proofProvider';
 import useUserStore from './src/stores/userStore';
+import { useInAppUpdate } from './src/hooks/useInAppUpdate';
 
 global.Buffer = Buffer;
 
@@ -24,6 +25,7 @@ function App(): React.JSX.Element {
   // const toast = useToastController();
   // const setToast = useNavigationStore(state => state.setToast);
   const initUserStore = useUserStore(state => state.initUserStore);
+  const { checkForUpdates } = useInAppUpdate();
   // const setSelectedTab = useNavigationStore(state => state.setSelectedTab);
 
   // useEffect(() => {
@@ -35,15 +37,27 @@ function App(): React.JSX.Element {
   // }, [setSelectedTab]);
 
   useEffect(() => {
-    // init
-    initUserStore();
-    segmentClient = createSegmentClient();
-    Orientation.lockToPortrait();
+    const init = async () => {
+      // init
+      await initUserStore();
+      segmentClient = createSegmentClient();
+      Orientation.lockToPortrait();
+
+      // Check for updates
+      try {
+        await checkForUpdates();
+      } catch (error) {
+        console.error('Failed to check for updates:', error);
+      }
+    };
+
+    init();
+
     // cleanup
     return () => {
       Orientation.unlockAllOrientations();
     };
-  }, [initUserStore]);
+  }, [initUserStore, checkForUpdates]);
 
   return (
     <YStack f={1} h="100%" w="100%">
