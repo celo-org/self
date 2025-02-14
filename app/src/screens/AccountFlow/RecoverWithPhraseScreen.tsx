@@ -9,6 +9,7 @@ import { Text, TextArea, View, XStack, YStack } from 'tamagui';
 import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import Description from '../../components/typography/Description';
 import Paste from '../../images/icons/paste.svg';
+import { useAuth } from '../../stores/authProvider';
 import {
   black,
   slate300,
@@ -17,7 +18,7 @@ import {
   slate700,
   white,
 } from '../../utils/colors';
-import { useAuth } from '../../stores/authProvider';
+
 interface RecoverWithPhraseScreenProps {}
 
 const RecoverWithPhraseScreen: React.FC<

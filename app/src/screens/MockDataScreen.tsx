@@ -21,6 +21,7 @@ import {
 import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
 import CustomButton from '../components/CustomButton';
+import { usePassport } from '../stores/passportDataProvider';
 import {
   bgWhite,
   borderColor,
@@ -28,7 +29,6 @@ import {
   textBlack,
 } from '../utils/colors';
 import { buttonTap, selectionChange } from '../utils/haptic';
-import { usePassport } from '../stores/passportDataProvider';
 
 interface MockDataScreenProps {}
 

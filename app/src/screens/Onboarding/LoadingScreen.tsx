@@ -10,9 +10,9 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
+import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import { registerPassport } from '../../utils/proving/payload';
-import { usePassport } from '../../stores/passportDataProvider';
 
 const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
@@ -30,7 +30,6 @@ const LoadingScreen: React.FC = () => {
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { status, setStatus } = useProofInfo();
   const { getPassportDataAndSecret } = usePassport();
-
 
   // Ensure we only set the initial status once on mount (if needed)
   useEffect(() => {
@@ -68,7 +67,7 @@ const LoadingScreen: React.FC = () => {
             '000101',
             '300101',
           );
-          await registerPassport(passportData, "0");
+          await registerPassport(passportData, '0');
 
           // const passportDataAndSecret = await getPassportDataAndSecret();
           // if (!passportDataAndSecret) {
@@ -77,7 +76,7 @@ const LoadingScreen: React.FC = () => {
 
           // const { passportData, secret } = passportDataAndSecret.data;
 
-          // // This will trigger sendPayload(), which updates global status via your tee.ts code.  
+          // // This will trigger sendPayload(), which updates global status via your tee.ts code.
           // registerPassport(passportData, secret);
         } catch (error) {
           console.error('Error processing payload:', error);

@@ -27,8 +27,8 @@ import {
 } from '../../../../common/src/utils/circuits/generateInputs';
 import { generateCommitment } from '../../../../common/src/utils/passports/passport';
 import {
-  getCommitmentTree,
   getCSCATree,
+  getCommitmentTree,
   getDSCTree,
   getLeafDscTree,
 } from '../../../../common/src/utils/trees';
@@ -40,7 +40,11 @@ async function generateTeeInputsRegister(
   passportData: PassportData,
 ) {
   const serialized_dsc_tree = await getDSCTree();
-  const inputs = generateCircuitInputsRegister(secret, passportData, serialized_dsc_tree);
+  const inputs = generateCircuitInputsRegister(
+    secret,
+    passportData,
+    serialized_dsc_tree,
+  );
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -108,7 +112,10 @@ export async function sendRegisterPayload(
 
 async function generateTeeInputsDsc(passportData: PassportData) {
   const serialized_csca_tree = await getCSCATree();
-  const inputs = generateCircuitInputsDSC(passportData.dsc, serialized_csca_tree);
+  const inputs = generateCircuitInputsDSC(
+    passportData.dsc,
+    serialized_csca_tree,
+  );
   const circuitName = getCircuitNameFromPassportData(passportData, 'dsc');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -278,7 +285,10 @@ async function checkIdPassportDscIsInTree(passportData: PassportData) {
   }
 }
 
-export async function registerPassport(passportData: PassportData, secret: string) {
+export async function registerPassport(
+  passportData: PassportData,
+  secret: string,
+) {
   // check if user is already registered
   const isRegistered = isUserRegistered(passportData, secret);
   if (isRegistered) {

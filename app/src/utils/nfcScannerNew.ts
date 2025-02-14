@@ -11,8 +11,8 @@ import { initPassportDataParsing } from '../../../common/src/utils/passports/pas
 import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
-import { checkInputs } from '../utils/utils';
 import { storePassportData } from '../stores/passportDataProvider';
+import { checkInputs } from '../utils/utils';
 
 interface Inputs {
   passportNumber: string;

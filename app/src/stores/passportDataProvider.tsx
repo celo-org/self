@@ -8,8 +8,8 @@ import React, {
 import Keychain from 'react-native-keychain';
 
 import { PassportData } from '../../../common/src/utils/types';
-import { useAuth } from './authProvider';
 import { loadSecretOrCreateIt } from '../stores/authProvider';
+import { useAuth } from './authProvider';
 
 async function loadPassportData() {
   const passportDataCreds = await Keychain.getGenericPassword({
@@ -21,10 +21,10 @@ async function loadPassportData() {
 async function loadPassportDataAndSecret() {
   const passportData = await loadPassportData();
   const secret = await loadSecretOrCreateIt();
-  if (!secret || !passportData) return false;
+  if (!secret || !passportData) {return false;}
   return JSON.stringify({
     secret,
-    passportData: JSON.parse(passportData)
+    passportData: JSON.parse(passportData),
   });
 }
 
@@ -42,7 +42,10 @@ interface PassportProviderProps extends PropsWithChildren {
 interface IPassportContext {
   getData: () => Promise<{ signature: string; data: PassportData } | null>;
   setData: (data: PassportData) => Promise<void>;
-  getPassportDataAndSecret: () => Promise<{ data: { passportData: PassportData; secret: string }, signature: string } | null>;
+  getPassportDataAndSecret: () => Promise<{
+    data: { passportData: PassportData; secret: string };
+    signature: string;
+  } | null>;
 }
 
 export const PassportContext = createContext<IPassportContext>({
@@ -60,7 +63,11 @@ export const PassportProvider = ({ children }: PassportProviderProps) => {
   );
 
   const getPassportDataAndSecret = useCallback(
-    () => _getSecurely<{ passportData: PassportData; secret: string }>(loadPassportDataAndSecret, str => JSON.parse(str)),
+    () =>
+      _getSecurely<{ passportData: PassportData; secret: string }>(
+        loadPassportDataAndSecret,
+        str => JSON.parse(str),
+      ),
     [_getSecurely],
   );
 

@@ -90,10 +90,7 @@ const ScreenSelector = ({}) => {
 };
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
-  const {
-    clearPassportDataFromStorage,
-    setRegistered,
-  } = useUserStore();
+  const { clearPassportDataFromStorage, setRegistered } = useUserStore();
 
   const nav = useNavigation();
 
