@@ -269,8 +269,8 @@ async function checkIdPassportDscIsInTree(passportData: PassportData) {
   const hashFunction = (a: any, b: any) => poseidon2([a, b]);
   const tree = LeanIMT.import(hashFunction, dscTree);
   const leaf = getLeafDscTree(
-    passportData.dsc_parsed,
-    passportData.csca_parsed,
+    passportData.dsc_parsed!,
+    passportData.csca_parsed!,
   );
   console.log('DSC leaf:', leaf);
   const index = tree.indexOf(BigInt(leaf));
