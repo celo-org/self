@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 import { Anchor, Text, XStack, YStack } from 'tamagui';
 
@@ -29,8 +29,10 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
           paddingVertical="$2"
           gap="$4"
         >
-          <TouchableWithoutFeedback onPress={() => __DEV__ ? createMock() : null}>
-            <View style={styles.cardContainer} >
+          <TouchableWithoutFeedback
+            onPress={() => (__DEV__ ? createMock() : null)}
+          >
+            <View style={styles.cardContainer}>
               <GetStartedCard style={styles.card} />
             </View>
           </TouchableWithoutFeedback>
@@ -42,7 +44,12 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
               gap="$4"
             >
               <Logo style={styles.logo} />
-              <Text onPress={() => __DEV__ ? skipToHome() : null} style={styles.selfText}>Self</Text>
+              <Text
+                onPress={() => (__DEV__ ? skipToHome() : null)}
+                style={styles.selfText}
+              >
+                Self
+              </Text>
             </XStack>
           </YStack>
         </YStack>
