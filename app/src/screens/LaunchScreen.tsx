@@ -18,7 +18,7 @@ interface LaunchScreenProps {}
 
 const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
   const onStartPress = useHapticNavigation('PassportOnboarding');
-  const skiptoHome = useHapticNavigation('Home');
+  const skipToHome = useHapticNavigation('Home');
   const createMock = useHapticNavigation('CreateMock');
   return (
     <ExpandableBottomLayout.Layout backgroundColor={black}>
@@ -42,7 +42,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
               gap="$4"
             >
               <Logo style={styles.logo} />
-              <Text onPress={() => __DEV__ ? skiptoHome() : null} style={styles.selfText}>Self</Text>
+              <Text onPress={() => __DEV__ ? skipToHome() : null} style={styles.selfText}>Self</Text>
             </XStack>
           </YStack>
         </YStack>
