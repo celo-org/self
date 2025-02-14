@@ -20,24 +20,6 @@ const _getSecurely = async function <T>(
   if (dataString === false) {
     return null;
   }
-  if (!(await biometrics.biometricKeysExist()).keysExist) {
-    console.log(
-      'No enrolled public key. Creating a public key from biometrics',
-    );
-    try {
-      await biometrics.createKeys();
-    } catch (e) {
-      const { available } = await biometrics.isSensorAvailable();
-      if (available) {
-        console.error(
-          "User has biometrics but somehow it wasn't able to create keys",
-        );
-        return null;
-      } else {
-        throw e;
-      }
-    }
-  }
 
   const result = await biometrics.createSignature({
     payload: dataString,
@@ -61,6 +43,31 @@ const _getSecurely = async function <T>(
     data: formatter(dataString),
   };
 };
+
+async function createSigningKeyPair(): Promise<boolean> {
+  const { available } = await biometrics.isSensorAvailable();
+  if (!available) {
+    return false;
+  }
+
+  if ((await biometrics.biometricKeysExist()).keysExist) {
+    return true;
+  }
+  console.log('No enrolled public key. Creating a public key from biometrics');
+  try {
+    await biometrics.createKeys();
+    return true;
+  } catch (e) {
+    if (available) {
+      console.error(
+        "User has biometrics but somehow it wasn't able to create keys",
+      );
+      return false;
+    } else {
+      throw e;
+    }
+  }
+}
 
 async function loadSecret() {
   const secretCreds = await Keychain.getGenericPassword({ service: 'secret' });
@@ -110,6 +117,7 @@ interface IAuthContext {
   restoreAccountFromPrivateKey: (
     privKey: string,
   ) => Promise<SignedPayload<string> | null>;
+  createSigningKeyPair: () => Promise<boolean>;
 }
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
@@ -119,6 +127,7 @@ export const AuthContext = createContext<IAuthContext>({
   getOrCreatePrivateKey: () => Promise.resolve(null),
   restoreAccountFromMnemonic: () => Promise.resolve(null),
   restoreAccountFromPrivateKey: () => Promise.resolve(null),
+  createSigningKeyPair: () => Promise.resolve(false),
 });
 
 export const AuthProvider = ({
@@ -195,6 +204,7 @@ export const AuthProvider = ({
       getOrCreatePrivateKey,
       restoreAccountFromMnemonic,
       restoreAccountFromPrivateKey,
+      createSigningKeyPair,
       _getSecurely,
     }),
     [isAuthenticated, isAuthenticatingPromise, loginWithBiometrics],

@@ -77,9 +77,10 @@ async function upload(privateKey: string) {
 
   await addAccessTokenForGoogleDrive();
   try {
-    await withRetries(() => CloudStorage.mkdir(FOLDER));
+    await CloudStorage.mkdir(FOLDER);
   } catch (e) {
-    if (!(e as Error).message.includes('already exists')) {
+    console.error(e);
+    if (!(e as Error).message.includes('already')) {
       throw e;
     }
   }
