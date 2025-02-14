@@ -20,7 +20,6 @@ import {
 
 import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
-import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import CustomButton from '../components/CustomButton';
 import {
   bgWhite,
@@ -108,9 +107,8 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
             randomPassportNumber,
           );
         }
-        const passportDataInit = initPassportDataParsing(mockPassportData);
 
-        setData(passportDataInit);
+        setData(mockPassportData);
         resolve(null);
       }, 0),
     );

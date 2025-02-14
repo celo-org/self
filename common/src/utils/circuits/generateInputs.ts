@@ -90,10 +90,6 @@ export function generateCircuitInputsRegister(
   passportData: PassportData,
   serializedDscTree: string,
 ) {
-
-  if (!passportData.parsed) {
-    throw new Error('Passport data is not parsed');
-  }
   const { mrz, eContent, signedAttr } = passportData;
   const passportMetadata = passportData.passportMetadata;
   const dscParsed = passportData.dsc_parsed;

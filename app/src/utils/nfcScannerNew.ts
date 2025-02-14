@@ -164,7 +164,7 @@ const handleResponseIOS = async (response: any) => {
   };
 
   try {
-    parsePassportDataAsync(passportData);
+    parseAndStorePassportData(passportData);
   } catch (e: any) {
     console.log('error during parsing:', e);
     trackEvent('Passport ParseFailed', {
@@ -215,11 +215,10 @@ const handleResponseAndroid = async (response: any) => {
     signedAttr: JSON.parse(eContent),
     encryptedDigest: JSON.parse(encryptedDigest),
     photoBase64: '',
-    parsed: false,
   };
 
   try {
-    parsePassportDataAsync(passportData);
+    parseAndStorePassportData(passportData);
   } catch (e: any) {
     console.log('error during parsing:', e);
     trackEvent('Passport ParseFailed', {
@@ -229,7 +228,7 @@ const handleResponseAndroid = async (response: any) => {
   }
 };
 
-async function parsePassportDataAsync(passportData: PassportData) {
+async function parseAndStorePassportData(passportData: PassportData) {
   const { trackEvent } = useNavigationStore.getState();
   const parsedPassportData = initPassportDataParsing(passportData);
   await storePassportData(parsedPassportData);

@@ -7,7 +7,6 @@ import { Image, Text, View, YStack } from 'tamagui';
 
 import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
-import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
 import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
@@ -83,8 +82,7 @@ const ProveScreen: React.FC = () => {
       '000101',
       '300101',
     );
-    const passportDataInit = initPassportDataParsing(passportData);
-    await sendVcAndDisclosePayload('0', passportDataInit, selectedApp);
+    await sendVcAndDisclosePayload('0', passportData, selectedApp);
   }
 
   return (

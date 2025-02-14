@@ -11,7 +11,6 @@ import { sigAlgs, fullSigAlgs } from './test_cases';
 import {
   generateCommitment,
   generateNullifier,
-  initPassportDataParsing,
 } from '../../../common/src/utils/passports/passport';
 import { poseidon6 } from 'poseidon-lite';
 import { PASSPORT_ATTESTATION_ID } from '../../../common/src/constants/constants';
@@ -29,7 +28,7 @@ testSuite.forEach(
       this.timeout(0);
       let circuit: any;
 
-      let passportData = genMockPassportData(
+      const passportData = genMockPassportData(
         dgHashAlgo,
         eContentHashAlgo,
         `${sigAlg}_${hashFunction}_${domainParameter}_${keyLength}` as SignatureAlgorithm,
@@ -37,7 +36,6 @@ testSuite.forEach(
         '000101',
         '300101'
       );
-      passportData = initPassportDataParsing(passportData);
 
       const secret = poseidon6('SECRET'.split('').map((x) => BigInt(x.charCodeAt(0)))).toString();
 

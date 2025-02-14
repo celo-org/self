@@ -49,10 +49,6 @@ async function generateTeeInputsRegister(
 }
 
 function checkPassportSupported(passportData: PassportData) {
-  if (!passportData.parsed) {
-    console.log('Passport data is not parsed');
-    return false;
-  }
   const passportMetadata = passportData.passportMetadata;
   if (!passportMetadata) {
     console.log('Passport metadata is null');

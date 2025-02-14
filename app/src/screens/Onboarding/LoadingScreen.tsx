@@ -5,7 +5,6 @@ import LottieView from 'lottie-react-native';
 
 // Import passport data generation and payload functions from common
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
-import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
 // Import animations
 import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
@@ -69,8 +68,7 @@ const LoadingScreen: React.FC = () => {
             '000101',
             '300101',
           );
-          const passportDataInit = initPassportDataParsing(passportData);
-          await registerPassport(passportDataInit, "0");
+          await registerPassport(passportData, "0");
 
           // const passportDataAndSecret = await getPassportDataAndSecret();
           // if (!passportDataAndSecret) {
