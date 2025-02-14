@@ -6,6 +6,8 @@ import LottieView from 'lottie-react-native';
 import { Image, Text, View, YStack } from 'tamagui';
 
 import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
+import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
+import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
 import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
@@ -34,7 +36,9 @@ const ProveScreen: React.FC = () => {
 
   // Format the base64 image string correctly
   const logoSource = useMemo(() => {
-    if (!selectedApp?.logoBase64) { return null; }
+    if (!selectedApp?.logoBase64) {
+      return null;
+    }
     // Ensure the base64 string has the correct data URI prefix
     const base64String = selectedApp.logoBase64.startsWith('data:image')
       ? selectedApp.logoBase64
@@ -43,7 +47,9 @@ const ProveScreen: React.FC = () => {
   }, [selectedApp?.logoBase64]);
 
   const url = useMemo(() => {
-    if (!selectedApp?.endpoint) { return null; }
+    if (!selectedApp?.endpoint) {
+      return null;
+    }
     const urlFormatted = selectedApp.endpoint
       .replace(/^https?:\/\//, '')
       .split('/')[0];
@@ -55,12 +61,26 @@ const ProveScreen: React.FC = () => {
     navigate('ProofRequestStatusScreen');
     try {
       const passportData = await getData();
-      await sendVcAndDisclosePayload(passportData!.data);
+      await sendVcAndDisclosePayload('0', passportData!.data, selectedApp);
     } catch (e) {
       console.log('Error sending VC and disclose payload', e);
       setStatus(ProofStatusEnum.ERROR);
     }
   }, []);
+
+  async function sendMockPayload() {
+    console.log('sendMockPayload, start by generating mockPassport data');
+    const passportData = genMockPassportData(
+      'sha1',
+      'sha256',
+      'rsa_sha256_65537_2048',
+      'FRA',
+      '000101',
+      '300101',
+    );
+    const passportDataInit = initPassportDataParsing(passportData);
+    await sendVcAndDisclosePayload('0', passportDataInit, selectedApp);
+  }
 
   return (
     <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
@@ -84,10 +104,11 @@ const ProveScreen: React.FC = () => {
               <BodyText fontSize={12} color={slate300} mb={20}>
                 {url}
               </BodyText>
-
               <BodyText fontSize={24} color={slate300} textAlign="center">
-                <Text color={white}>{selectedApp.appName}</Text> is requesting
-                that you prove the following information:
+                <Text color={white} onPress={sendMockPayload}>
+                  {selectedApp.appName}
+                </Text>{' '}
+                is requesting that you prove the following information:
               </BodyText>
             </YStack>
           )}

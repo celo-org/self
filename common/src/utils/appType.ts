@@ -34,7 +34,7 @@ type DisclosureBoolOption = {
 }
 
 type DisclosureMatchKeys = 'nationality' | 'minimumAge'
-interface DisclosureMatchOption<T = DisclosureMatchKeys> {
+export interface DisclosureMatchOption<T = DisclosureMatchKeys> {
   enabled: boolean;
   key: T;
   value: string;
