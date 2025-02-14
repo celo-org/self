@@ -34,8 +34,6 @@ import {
 import { PassportData } from '../../../../common/src/utils/types';
 import { sendPayload } from './tee';
 
-const mock_secret = '0'; //TODO: retrieve the secret from keychain
-
 async function generateTeeInputsRegister(
   secret: string,
   passportData: PassportData,
