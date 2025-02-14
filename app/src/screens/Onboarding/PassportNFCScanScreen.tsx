@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Linking,
   NativeEventEmitter,
@@ -46,6 +46,12 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   const [isNfcSupported, setIsNfcSupported] = useState(true);
   const [isNfcEnabled, setIsNfcEnabled] = useState(true);
   const [isNfcSheetOpen, setIsNfcSheetOpen] = useState(false);
+
+  const animationRef = useRef<LottieView>(null);
+
+  useEffect(() => {
+    animationRef.current?.play();
+  }, []);
 
   const checkNfcSupport = useCallback(async () => {
     const isSupported = await NfcManager.isSupported();
@@ -170,8 +176,14 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
     <ExpandableBottomLayout.Layout backgroundColor={black}>
       <ExpandableBottomLayout.TopSection roundTop backgroundColor={slate100}>
         <LottieView
-          autoPlay
+          ref={animationRef}
+          autoPlay={false}
           loop={false}
+          onAnimationFinish={() => {
+            setTimeout(() => {
+              animationRef.current?.play();
+            }, 5000); // Pause 5 seconds before playing again
+          }}
           source={passportVerifyAnimation}
           style={styles.animation}
           cacheComposition={true}
