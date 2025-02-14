@@ -261,6 +261,4 @@ async function parsePassportDataAsync(passportData: PassportData) {
     csca_signature_algorithm_bits: passportMetadata.cscaSignatureAlgorithmBits,
     dsc: passportMetadata.dsc,
   });
-
-  useNavigationStore.getState().setSelectedTab('next');
 }
