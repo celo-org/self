@@ -12,7 +12,6 @@ import { PassportMetadata } from '../../../common/src/utils/passports/passport_p
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
 import { storePassportData } from '../stores/passportDataProvider';
-import { checkInputs } from '../utils/utils';
 
 interface Inputs {
   passportNumber: string;
@@ -25,14 +24,6 @@ export const scan = async (inputs: Inputs) => {
   console.log('passportNumber', passportNumber);
   console.log('dateOfBirth', dateOfBirth);
   console.log('dateOfExpiry', dateOfExpiry);
-  const check = checkInputs(passportNumber, dateOfBirth, dateOfExpiry);
-  if (!check.success) {
-    amplitude.track('inputs_invalid', { error: check.message });
-    throw new Error(
-      'Invalid inputs, please rescan the passport with the camera',
-    ); // TODO: toast message
-    //useHapticNavigation('PassportCamera', 'cancel'); TODO: move user back to the previous screen
-  }
   console.log('SCANNING');
   if (Platform.OS === 'android') {
     await scanAndroid(inputs);
