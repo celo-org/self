@@ -27,7 +27,7 @@ const AccountRecoveryChoiceScreen: React.FC<
   const { download } = useBackupPrivateKey();
 
   const onRestoreFromCloudNext = useHapticNavigation('AccountVerifiedSuccess');
-  const onEnterRecoveryPress = useHapticNavigation('SaveRecoveryPhrase');
+  const onEnterRecoveryPress = useHapticNavigation('RecoverWithPhrase');
 
   const onRestoreFromCloudPress = useCallback(async () => {
     setRestoring(true);

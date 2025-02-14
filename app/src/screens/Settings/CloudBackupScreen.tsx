@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { YStack } from 'tamagui';
@@ -32,19 +32,26 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   const { getOrCreatePrivateKey } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled } = useSettingStore();
   const { upload, disableBackup } = useBackupPrivateKey();
+  const [pending, setPending] = useState(false);
 
   const toggleBackup = useCallback(async () => {
+    setPending(true);
     const privKey = await getOrCreatePrivateKey();
     if (!privKey) {
+      setPending(false);
       return;
     }
 
-    if (cloudBackupEnabled) {
-      await disableBackup();
-    } else {
-      await upload(privKey.data);
+    try {
+      if (cloudBackupEnabled) {
+        await disableBackup();
+      } else {
+        await upload(privKey.data);
+      }
+      toggleCloudBackupEnabled();
+    } finally {
+      setPending(false);
     }
-    toggleCloudBackupEnabled();
   }, [cloudBackupEnabled, upload, getOrCreatePrivateKey]);
 
   return (
@@ -73,12 +80,14 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
 
           <YStack gap="$2.5" width="100%" pt="$6">
             {cloudBackupEnabled ? (
-              <SecondaryButton onPress={toggleBackup}>
-                Disable {STORAGE_NAME} backups
+              <SecondaryButton onPress={toggleBackup} disabled={pending}>
+                {pending ? 'Disabling' : 'Disable'} {STORAGE_NAME} backups
+                {pending ? '…' : ''}
               </SecondaryButton>
             ) : (
-              <PrimaryButton onPress={toggleBackup}>
-                Enable {STORAGE_NAME} backups
+              <PrimaryButton onPress={toggleBackup} disabled={pending}>
+                {pending ? 'Enabling' : 'Enable'} {STORAGE_NAME} backups
+                {pending ? '…' : ''}
               </PrimaryButton>
             )}
 

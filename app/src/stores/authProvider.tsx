@@ -20,13 +20,7 @@ const _getSecurely = async function <T>(
   if (dataString === false) {
     return null;
   }
-
-  const args = {
-    payload: dataString,
-    promptMessage: 'Allow access to account private key',
-  };
-
-  if (!biometrics.biometricKeysExist()) {
+  if (!(await biometrics.biometricKeysExist()).keysExist) {
     console.log(
       'No enrolled public key. Creating a public key from biometrics',
     );
@@ -35,7 +29,9 @@ const _getSecurely = async function <T>(
     } catch (e) {
       const { available } = await biometrics.isSensorAvailable();
       if (available) {
-        // console.log(prompt user to enable biometrics)
+        console.error(
+          "User has biometrics but somehow it wasn't able to create keys",
+        );
         return null;
       } else {
         throw e;
@@ -43,10 +39,16 @@ const _getSecurely = async function <T>(
     }
   }
 
-  const result = await biometrics.createSignature(args);
+  const result = await biometrics.createSignature({
+    payload: dataString,
+    promptMessage: 'Allow access to account private key',
+    // @ts-expect-error
+    allowDeviceCredentials: true,
+  });
   const { error, success, signature } = result;
   if (error) {
     // handle error
+    console.log(result, error, success, signature);
     throw error;
   }
   if (!success) {

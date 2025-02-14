@@ -143,7 +143,6 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
             break;
 
           default:
-            // @ts-expect-error - weird typing?
             navigation.navigate(menuRoute);
             break;
         }
