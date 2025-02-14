@@ -12,7 +12,10 @@ import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
-import { checkPassportSupported, registerPassport } from '../../utils/proving/payload';
+import {
+  checkPassportSupported,
+  registerPassport,
+} from '../../utils/proving/payload';
 
 const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
@@ -84,7 +87,7 @@ const LoadingScreen: React.FC = () => {
 
           const {
             // passportData,
-            secret
+            secret,
           } = passportDataAndSecret.data;
 
           const isSupported = checkPassportSupported(passportData);
@@ -96,7 +99,6 @@ const LoadingScreen: React.FC = () => {
             clearPassportData();
             return;
           }
-
 
           // This will trigger sendPayload(), which updates global status via your tee.ts code.
           registerPassport(passportData, secret);
