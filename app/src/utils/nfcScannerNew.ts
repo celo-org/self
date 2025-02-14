@@ -87,7 +87,6 @@ const handleResponseIOS = (response: any) => {
     eContent: concatenatedDataHashesArraySigned,
     signedAttr: signedEContentArray,
     encryptedDigest: encryptedDigestArray,
-    photoBase64: '',
     parsed: false,
   };
 };
@@ -131,6 +130,5 @@ const handleResponseAndroid = (response: any) => {
     eContent: JSON.parse(encapContent),
     signedAttr: JSON.parse(eContent),
     encryptedDigest: JSON.parse(encryptedDigest),
-    photoBase64: '',
   } as PassportData
 };
