@@ -1,90 +1,64 @@
 import { useMemo } from 'react';
-import { NativeModules, Platform } from 'react-native';
-import { CloudStorage, CloudStorageScope } from 'react-native-cloud-storage';
-import RNFS from 'react-native-fs';
+import { Platform } from 'react-native';
+import {
+  CloudStorage,
+  CloudStorageProvider,
+  CloudStorageScope,
+} from 'react-native-cloud-storage';
 
-// Note: also defined in app/android/app/src/main/res/xml/backup_rules.xml
-const ENCRYPTED_FILE_PATH =
-  RNFS.DocumentDirectoryPath + '/encrypted-private-key';
+import { name } from '../../../package.json';
+import { googleSignIn } from './google';
+
+const ENCRYPTED_FILE_PATH = `/${name}/encrypted-private-key`;
+CloudStorage.setProviderOptions({ scope: CloudStorageScope.AppData });
 
 export const STORAGE_NAME =
   Platform.OS === 'ios' ? 'iCloud Backup' : 'Android Backup';
 
-export const useBackupPrivateKey =
-  Platform.OS === 'ios'
-    ? useICloudBackupPrivateKey
-    : useAndroidBackupPrivateKey;
-
-/// ANDROID
-function useAndroidBackupPrivateKey() {
+export function useBackupPrivateKey() {
   return useMemo(
     () => ({
-      upload: (privateKey: string) => backupWithAndroidBackup(privateKey),
-      download: () => downloadFromAndroidBackup(),
-      disableBackup: () => disableBackupToAndroidBackup,
+      upload,
+      download,
+      disableBackup,
     }),
     [],
   );
 }
 
-async function backupWithAndroidBackup(privateKey: string) {
+async function addAccessTokenForGoogleDrive() {
+  if (CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
+    const response = await googleSignIn();
+    if (!response) {
+      // user canceled
+      return;
+    }
+    CloudStorage.setProviderOptions({
+      accessToken: response.accessToken,
+    });
+  }
+}
+
+async function upload(privateKey: string) {
   if (!privateKey) {
     throw new Error(
       'Private key not set yet. Did the user see the recovery phrase?',
     );
   }
 
-  const { BackupModule } = NativeModules;
-  await RNFS.write(ENCRYPTED_FILE_PATH, privateKey);
-  await BackupModule.backupNow();
+  await addAccessTokenForGoogleDrive();
+  await CloudStorage.mkdir(`/${name}`);
+  await CloudStorage.writeFile(ENCRYPTED_FILE_PATH, privateKey);
 }
 
-async function downloadFromAndroidBackup() {
-  const { BackupModule } = NativeModules;
-  await BackupModule.restoreNow();
-  const privateKey = await RNFS.readFile(ENCRYPTED_FILE_PATH);
+async function download() {
+  await addAccessTokenForGoogleDrive();
+  console.log(await CloudStorage.exists(ENCRYPTED_FILE_PATH));
+  const privateKey = await CloudStorage.readFile(ENCRYPTED_FILE_PATH);
   return privateKey;
 }
 
-async function disableBackupToAndroidBackup() {
-  const { BackupModule } = NativeModules;
-  await RNFS.unlink(ENCRYPTED_FILE_PATH);
-  await BackupModule.backupNow();
-}
-
-/// IOS
-function useICloudBackupPrivateKey() {
-  return useMemo(
-    () => ({
-      upload: (privateKey: string) => backupWithICloud(privateKey),
-      download: () => downloadFromICloud(),
-      disableBackup: () => disableBackupToICloud,
-    }),
-    [],
-  );
-}
-
-async function backupWithICloud(privateKey: string) {
-  if (!privateKey) {
-    throw new Error(
-      'Private key not set yet. Did the user see the recovery phrase?',
-    );
-  }
-
-  await CloudStorage.writeFile(
-    ENCRYPTED_FILE_PATH,
-    privateKey,
-    CloudStorageScope.AppData,
-  );
-}
-async function downloadFromICloud() {
-  const privateKey = await CloudStorage.readFile(
-    ENCRYPTED_FILE_PATH,
-    CloudStorageScope.AppData,
-  );
-  return privateKey;
-}
-
-async function disableBackupToICloud() {
-  await CloudStorage.unlink(ENCRYPTED_FILE_PATH, CloudStorageScope.AppData);
+async function disableBackup() {
+  await addAccessTokenForGoogleDrive();
+  await CloudStorage.unlink(ENCRYPTED_FILE_PATH);
 }

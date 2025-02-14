@@ -68,10 +68,9 @@ const AccountRecoveryChoiceScreen: React.FC<
           <YStack gap="$2.5" width="100%" pt="$6">
             <PrimaryButton
               onPress={onRestoreFromCloudPress}
-              // disabled={restoring}
-              disabled
+              disabled={restoring}
             >
-              Restore from {STORAGE_NAME} (soon)
+              Restore from {STORAGE_NAME}
             </PrimaryButton>
             <XStack gap={64} ai="center" justifyContent="space-between">
               <Separator flexGrow={1} />
