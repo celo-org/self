@@ -21,21 +21,29 @@ const _getSecurely = async function <T>(
     return null;
   }
 
-  let result: Awaited<ReturnType<typeof biometrics.createSignature>>;
   const args = {
     payload: dataString,
     promptMessage: 'Allow access to account private key',
   };
-  try {
-    result = await biometrics.createSignature(args);
-  } catch (e) {
+
+  if (!biometrics.biometricKeysExist()) {
     console.log(
       'No enrolled public key. Creating a public key from biometrics',
     );
-    await biometrics.createKeys();
-    result = await biometrics.createSignature(args);
+    try {
+      await biometrics.createKeys();
+    } catch (e) {
+      const { available } = await biometrics.isSensorAvailable();
+      if (available) {
+        // console.log(prompt user to enable biometrics)
+        return null;
+      } else {
+        throw e;
+      }
+    }
   }
 
+  const result = await biometrics.createSignature(args);
   const { error, success, signature } = result;
   if (error) {
     // handle error
