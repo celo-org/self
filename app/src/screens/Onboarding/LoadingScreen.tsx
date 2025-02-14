@@ -10,7 +10,7 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-import { usePassport } from '../../stores/passportDataProvider';
+// import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import { registerPassport } from '../../utils/proving/payload';
 
@@ -29,7 +29,7 @@ const LoadingScreen: React.FC = () => {
   };
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { status, setStatus } = useProofInfo();
-  const { getPassportDataAndSecret } = usePassport();
+  // const { getPassportDataAndSecret } = usePassport();
 
   // Ensure we only set the initial status once on mount (if needed)
   useEffect(() => {

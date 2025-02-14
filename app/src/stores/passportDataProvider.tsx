@@ -21,7 +21,9 @@ async function loadPassportData() {
 async function loadPassportDataAndSecret() {
   const passportData = await loadPassportData();
   const secret = await loadSecretOrCreateIt();
-  if (!secret || !passportData) {return false;}
+  if (!secret || !passportData) {
+    return false;
+  }
   return JSON.stringify({
     secret,
     passportData: JSON.parse(passportData),
