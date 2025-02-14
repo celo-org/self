@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Text, View, YStack } from 'tamagui';
+import { Image, Text, View, YStack } from 'tamagui';
 
 import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
 import miscAnimation from '../../assets/animations/loading/misc.json';
@@ -21,8 +21,34 @@ import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { getData } = usePassport();
-
   const { selectedApp, setStatus } = useProofInfo();
+
+  // Add effect to log when selectedApp changes
+  useEffect(() => {
+    console.log('[ProveScreen] Selected app updated:', selectedApp);
+  }, [selectedApp]);
+
+  const disclosureOptions = useMemo(() => {
+    return (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || [];
+  }, [selectedApp?.args]);
+
+  // Format the base64 image string correctly
+  const logoSource = useMemo(() => {
+    if (!selectedApp?.logoBase64) { return null; }
+    // Ensure the base64 string has the correct data URI prefix
+    const base64String = selectedApp.logoBase64.startsWith('data:image')
+      ? selectedApp.logoBase64
+      : `data:image/png;base64,${selectedApp.logoBase64}`;
+    return { uri: base64String };
+  }, [selectedApp?.logoBase64]);
+
+  const url = useMemo(() => {
+    if (!selectedApp?.endpoint) { return null; }
+    const urlFormatted = selectedApp.endpoint
+      .replace(/^https?:\/\//, '')
+      .split('/')[0];
+    return urlFormatted;
+  }, [selectedApp?.endpoint]);
 
   const onVerify = useCallback(async function () {
     buttonTap();
@@ -35,9 +61,6 @@ const ProveScreen: React.FC = () => {
       setStatus(ProofStatusEnum.ERROR);
     }
   }, []);
-
-  const disclosureOptions =
-    (selectedApp?.args as ArgumentsDisclose)?.disclosureOptions || [];
 
   return (
     <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
@@ -54,10 +77,19 @@ const ProveScreen: React.FC = () => {
               style={styles.animation}
             />
           ) : (
-            <BodyText fontSize={24} color={slate300} textAlign="center">
-              <Text color={white}>{selectedApp.appName}</Text> is requesting
-              that you prove the following information:
-            </BodyText>
+            <YStack alignItems="center" justifyContent="center">
+              {logoSource && (
+                <Image mb={20} source={logoSource} width={100} height={100} />
+              )}
+              <BodyText fontSize={12} color={slate300} mb={20}>
+                {url}
+              </BodyText>
+
+              <BodyText fontSize={24} color={slate300} textAlign="center">
+                <Text color={white}>{selectedApp.appName}</Text> is requesting
+                that you prove the following information:
+              </BodyText>
+            </YStack>
           )}
         </YStack>
       </ExpandableBottomLayout.TopSection>
