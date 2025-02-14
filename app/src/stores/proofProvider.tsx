@@ -7,8 +7,6 @@ import React, {
   useState,
 } from 'react';
 
-import io, { Socket } from 'socket.io-client';
-
 import { SelfApp } from '../../../common/src/utils/appType';
 import { setupUniversalLinkListener } from '../utils/qrCodeNew';
 
