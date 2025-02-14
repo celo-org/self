@@ -13,6 +13,7 @@ import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import { registerPassport } from '../../utils/proving/payload';
+import { usePassport } from '../../stores/passportDataProvider';
 
 const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
@@ -29,6 +30,8 @@ const LoadingScreen: React.FC = () => {
   };
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { status, setStatus } = useProofInfo();
+  const { getPassportDataAndSecret } = usePassport();
+
 
   // Ensure we only set the initial status once on mount (if needed)
   useEffect(() => {
@@ -58,16 +61,29 @@ const LoadingScreen: React.FC = () => {
       const processPayload = async () => {
         try {
           // Generate passport data and update the store.
-          const passportData = genMockPassportData(
-            'sha1',
-            'sha256',
-            'rsa_sha256_65537_2048',
-            'FRA',
-            '000101',
-            '300101',
-          );
-          const passportDataInit = initPassportDataParsing(passportData);
-          await registerPassport(passportDataInit);
+          // const passportData = genMockPassportData(
+          //   'sha1',
+          //   'sha256',
+          //   'rsa_sha256_65537_2048',
+          //   'FRA',
+          //   '000101',
+          //   '300101',
+          // );
+          // const passportDataInit = initPassportDataParsing(passportData);
+          // await registerPassport(passportDataInit, "0");
+
+          const passportDataAndSecret = await getPassportDataAndSecret();
+          console.log('passportDataAndSecret', passportDataAndSecret);
+          if (!passportDataAndSecret) {
+            return;
+          }
+
+          const { passportData, secret } = passportDataAndSecret.data;
+          console.log('passportData', passportData);
+          console.log('secret', secret);
+
+          // This will trigger sendPayload(), which updates global status via your tee.ts code.  
+          registerPassport(passportData, secret);
         } catch (error) {
           console.error('Error processing payload:', error);
           setStatus(ProofStatusEnum.ERROR);

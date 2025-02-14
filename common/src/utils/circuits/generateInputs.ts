@@ -40,7 +40,7 @@ export async function generateCircuitInputsDSC(
   const cscaParsed = parseCertificateSimple(dscMetadata.csca);
 
   // CSCA is padded with 0s to max_csca_bytes
-  const cscaTbsBytesPadded = padWithZeroes(Array.from(cscaParsed.tbsBytes), max_csca_bytes);
+  const cscaTbsBytesPadded = padWithZeroes(cscaParsed.tbsBytes, max_csca_bytes);
   const dscTbsBytes = dscParsed.tbsBytes;
 
   // DSC is padded using sha padding because it will be hashed in the circuit
@@ -118,11 +118,11 @@ export async function generateCircuitInputsRegister(
   }
 
   const [eContentPadded, eContentLen] = pad(passportMetadata.eContentHashFunction)(
-    new Uint8Array(eContent),
+    eContent,
     MAX_PADDED_ECONTENT_LEN[passportMetadata.dg1HashFunction]
   );
   const [signedAttrPadded, signedAttrPaddedLen] = pad(passportMetadata.signedAttrHashFunction)(
-    new Uint8Array(signedAttr),
+    signedAttr,
     MAX_PADDED_SIGNED_ATTR_LEN[passportMetadata.eContentHashFunction]
   );
 
@@ -134,7 +134,7 @@ export async function generateCircuitInputsRegister(
   const [startIndex, keyLength] = findStartPubKeyIndex(dscParsed, dscTbsBytesPadded, dscParsed.signatureAlgorithm);
 
   const inputs = {
-    raw_dsc: Array.from(dscTbsBytesPadded).map(x => x.toString()),
+    raw_dsc: dscTbsBytesPadded.map(x => x.toString()),
     raw_dsc_actual_length: [BigInt(dscParsed.tbsBytes.length).toString()],
     dsc_pubKey_offset: startIndex,
     dsc_pubKey_actual_size: [BigInt(keyLength).toString()],

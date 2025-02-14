@@ -29,8 +29,7 @@ import {
   textBlack,
 } from '../utils/colors';
 import { buttonTap, selectionChange } from '../utils/haptic';
-import { storePassportData } from '../stores/passportDataProvider';
-
+import { usePassport } from '../stores/passportDataProvider';
 
 interface MockDataScreenProps {}
 
@@ -49,6 +48,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
       date.toISOString().slice(8, 10)
     ).toString();
   };
+  const { setData } = usePassport();
 
   const [selectedCountry, setSelectedCountry] = useState('USA');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('rsa sha256');
@@ -110,7 +110,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
         }
         const passportDataInit = initPassportDataParsing(mockPassportData);
 
-        storePassportData(passportDataInit);
+        setData(passportDataInit);
         resolve(null);
       }, 0),
     );

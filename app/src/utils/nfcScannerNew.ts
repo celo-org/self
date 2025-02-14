@@ -160,7 +160,6 @@ const handleResponseIOS = async (response: any) => {
     signedAttr: signedEContentArray,
     encryptedDigest: encryptedDigestArray,
     photoBase64: '',
-    mockUser: false,
     parsed: false,
   };
 
@@ -216,7 +215,6 @@ const handleResponseAndroid = async (response: any) => {
     signedAttr: JSON.parse(eContent),
     encryptedDigest: JSON.parse(encryptedDigest),
     photoBase64: '',
-    mockUser: false,
     parsed: false,
   };
 

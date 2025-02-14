@@ -35,7 +35,7 @@ import { findStartIndex, findStartIndexEC } from '../csca';
 import { formatInput } from '../circuits/generateInputs';
 import { getLeafDscTree } from '../trees';
 
-/// @dev will brutforce passport and dsc signature — needs to be trigerred after generating mock passport data
+/// @dev will brutforce passport and dsc signature — needs to be triggered after generating mock passport data
 export function initPassportDataParsing(passportData: PassportData) {
   const passportMetadata = parsePassportData(passportData);
   passportData.passportMetadata = passportMetadata;
