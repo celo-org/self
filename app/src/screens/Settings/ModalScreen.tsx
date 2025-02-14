@@ -28,20 +28,18 @@ const ModalDescription = styled(Description, {
 });
 
 interface ModalScreenProps
-  extends StaticScreenProps<
-    | {
-        titleText: string;
-        bodyText: string;
-        buttonText: string;
-        onPress: () => void;
-      }
-    | undefined
-  > {}
+  extends StaticScreenProps<{
+    titleText: string;
+    bodyText: string;
+    buttonText: string;
+    onButtonPress: () => void;
+    onModalDismiss: () => void;
+  }> {}
 
 const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
   const navigateBack = useHapticNavigation('Home', { action: 'cancel' });
   const onButtonPressed = () => {
-    params?.onPress();
+    params?.onButtonPress();
     navigateBack();
   };
 
@@ -51,7 +49,12 @@ const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
         <YStack gap={40}>
           <XStack alignItems="center" justifyContent="space-between">
             <LogoInversed />
-            <ModalClose onPress={navigateBack} />
+            <ModalClose
+              onPress={() => {
+                navigateBack();
+                params?.onModalDismiss();
+              }}
+            />
           </XStack>
           <YStack gap={20}>
             <Title textAlign="left">{params?.titleText}</Title>
