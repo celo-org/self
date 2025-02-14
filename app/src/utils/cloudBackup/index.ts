@@ -12,8 +12,7 @@ import { googleSignIn } from './google';
 const ENCRYPTED_FILE_PATH = `/${name}/encrypted-private-key`;
 CloudStorage.setProviderOptions({ scope: CloudStorageScope.AppData });
 
-export const STORAGE_NAME =
-  Platform.OS === 'ios' ? 'iCloud Backup' : 'Android Backup';
+export const STORAGE_NAME = Platform.OS === 'ios' ? 'iCloud' : 'Google Drive';
 
 export function useBackupPrivateKey() {
   return useMemo(

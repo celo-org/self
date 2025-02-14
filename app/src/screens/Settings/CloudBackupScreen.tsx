@@ -20,7 +20,7 @@ import { black, white } from '../../utils/colors';
 interface CloudBackupScreenProps
   extends StaticScreenProps<
     | {
-        nextScreen: keyof RootStackParamList;
+        nextScreen?: Omit<'CloudBackupSettings', keyof RootStackParamList>;
       }
     | undefined
   > {}
@@ -74,11 +74,11 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
           <YStack gap="$2.5" width="100%" pt="$6">
             {cloudBackupEnabled ? (
               <SecondaryButton onPress={toggleBackup}>
-                Disable {STORAGE_NAME}
+                Disable {STORAGE_NAME} backups
               </SecondaryButton>
             ) : (
               <PrimaryButton onPress={toggleBackup}>
-                Enable {STORAGE_NAME}
+                Enable {STORAGE_NAME} backups
               </PrimaryButton>
             )}
 
