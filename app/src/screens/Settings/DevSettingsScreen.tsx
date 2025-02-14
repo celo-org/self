@@ -92,14 +92,12 @@ const ScreenSelector = ({}) => {
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
   const {
     clearPassportDataFromStorage,
-    clearPassportMetadataFromStorage,
     setRegistered,
   } = useUserStore();
 
   const nav = useNavigation();
 
   function handleRestart() {
-    clearPassportMetadataFromStorage();
     clearPassportDataFromStorage();
     setRegistered(false);
     nav.navigate('Launch');

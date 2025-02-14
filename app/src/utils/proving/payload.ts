@@ -81,7 +81,10 @@ function checkPassportSupported(passportData: PassportData) {
   return true;
 }
 
-export async function sendRegisterPayload(passportData: PassportData) {
+export async function sendRegisterPayload(
+  passportData: PassportData,
+  secret: string,
+) {
   if (!passportData) {
     return null;
   }
@@ -91,8 +94,9 @@ export async function sendRegisterPayload(passportData: PassportData) {
     console.log('Passport not supported');
     return;
   }
+
   const { inputs, circuitName } = await generateTeeInputsRegister(
-    mock_secret,
+    secret,
     passportData,
   );
   console.log('WS_RPC_URL_REGISTER', WS_RPC_URL_REGISTER);
@@ -251,7 +255,7 @@ export async function sendVcAndDisclosePayload(
 
 /*** Logic Flow ****/
 
-function isUserRegistered(_passportData: PassportData) {
+function isUserRegistered(_passportData: PassportData, _secret: string) {
   // check if user is already registered
   // if registered, return true
   // if not registered, return false
@@ -277,14 +281,14 @@ async function checkIdPassportDscIsInTree(passportData: PassportData) {
   }
 }
 
-export async function registerPassport(passportData: PassportData) {
+export async function registerPassport(passportData: PassportData, secret: string) {
   // check if user is already registered
-  const isRegistered = isUserRegistered(passportData);
+  const isRegistered = isUserRegistered(passportData, secret);
   if (isRegistered) {
     return; // TODO: show a screen explaining that the passport is already registered, needs to bring passphrase or secret from icloud backup
   }
   // download the dsc tree and check if the passport leaf is in the tree
   await checkIdPassportDscIsInTree(passportData);
   // send the register payload
-  await sendRegisterPayload(passportData);
+  await sendRegisterPayload(passportData, secret);
 }

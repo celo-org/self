@@ -22,7 +22,7 @@ import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
-  const { getData } = usePassport();
+  const { getPassportDataAndSecret } = usePassport();
   const { selectedApp, setStatus } = useProofInfo();
 
   // Add effect to log when selectedApp changes
@@ -60,8 +60,13 @@ const ProveScreen: React.FC = () => {
     buttonTap();
     navigate('ProofRequestStatusScreen');
     try {
-      const passportData = await getData();
-      await sendVcAndDisclosePayload('0', passportData!.data, selectedApp);
+      const passportDataAndSecret = await getPassportDataAndSecret();
+      if (!passportDataAndSecret) {
+        return;
+      }
+
+      const { passportData, secret } = passportDataAndSecret.data;
+      await sendVcAndDisclosePayload(secret, passportData, selectedApp);
     } catch (e) {
       console.log('Error sending VC and disclose payload', e);
       setStatus(ProofStatusEnum.ERROR);

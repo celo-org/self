@@ -11,8 +11,8 @@ import { initPassportDataParsing } from '../../../common/src/utils/passports/pas
 import { PassportMetadata } from '../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { PassportData } from '../../../common/src/utils/types';
 import useNavigationStore from '../stores/navigationStore';
-import useUserStore from '../stores/userStore';
 import { checkInputs } from '../utils/utils';
+import { storePassportData } from '../stores/passportDataProvider';
 
 interface Inputs {
   passportNumber: string;
@@ -234,9 +234,11 @@ const handleResponseAndroid = async (response: any) => {
 async function parsePassportDataAsync(passportData: PassportData) {
   const { trackEvent } = useNavigationStore.getState();
   const parsedPassportData = initPassportDataParsing(passportData);
-  const passportMetadata: PassportMetadata =
+  await storePassportData(parsedPassportData);
+
+  const passportMetadata =
     parsedPassportData.passportMetadata as PassportMetadata;
-  await useUserStore.getState().registerPassportData(parsedPassportData);
+
   trackEvent('Passport Parsed', {
     success: true,
     data_groups: passportMetadata.dataGroups,

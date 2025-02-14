@@ -22,7 +22,6 @@ import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
 import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import CustomButton from '../components/CustomButton';
-import useUserStore from '../stores/userStore';
 import {
   bgWhite,
   borderColor,
@@ -30,6 +29,8 @@ import {
   textBlack,
 } from '../utils/colors';
 import { buttonTap, selectionChange } from '../utils/haptic';
+import { storePassportData } from '../stores/passportDataProvider';
+
 
 interface MockDataScreenProps {}
 
@@ -91,7 +92,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
             castDate(-age),
             castDate(expiryYears),
             randomPassportNumber,
-            'HENAO MONTOYA', // this name is the OFAC list
+            'HENAO MONTOYA', // this name is on the OFAC list
             'ARCANGEL DE JESUS',
           );
         } else {
@@ -108,14 +109,14 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
           );
         }
         const passportDataInit = initPassportDataParsing(mockPassportData);
-        useUserStore.getState().registerPassportData(passportDataInit);
-        useUserStore.getState().setRegistered(true);
+
+        storePassportData(passportDataInit);
         resolve(null);
       }, 0),
     );
 
     await new Promise(resolve => setTimeout(resolve, 1000));
-    navigation.navigate('NextScreen');
+    navigation.navigate('ConfirmBelongingScreen');
   }, [selectedAlgorithm, selectedCountry, age, expiryYears, isInOfacList]);
 
   return (
