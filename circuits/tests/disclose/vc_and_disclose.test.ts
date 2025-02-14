@@ -20,9 +20,7 @@ import {
   formatAndUnpackForbiddenCountriesList,
   getAttributeFromUnpackedReveal,
 } from '../../../common/src/utils/circuits/formatOutputs';
-import {
-  generateCommitment,
-} from '../../../common/src/utils/passports/passport';
+import { generateCommitment } from '../../../common/src/utils/passports/passport';
 
 describe('Disclose', function () {
   this.timeout(0);
