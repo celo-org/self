@@ -65,6 +65,8 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
       return;
     }
 
+    setPending(true);
+
     const privKey = await getOrCreatePrivateKey();
     if (!privKey) {
       setPending(false);
@@ -130,7 +132,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
             ) : (
               <PrimaryButton
                 onPress={enableCloudBackups}
-                disabled={pending || biometricsAvailable}
+                disabled={pending || !biometricsAvailable}
               >
                 {pending ? 'Enabling' : 'Enable'} {STORAGE_NAME} backups
                 {pending ? '…' : ''}

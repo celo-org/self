@@ -18,7 +18,6 @@ const SplashScreen: React.FC = ({}) => {
   const { userLoaded, passportData } = useUserStore();
 
   useEffect(() => {
-    console.log('hello');
     createSigningKeyPair()
       .then(setBiometricsAvailable)
       .catch(err => {
