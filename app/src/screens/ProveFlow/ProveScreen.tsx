@@ -24,6 +24,7 @@ const ProveScreen: React.FC = () => {
   const { getPassportDataAndSecret } = usePassport();
   const { selectedApp, setStatus } = useProofInfo();
 
+
   // Add effect to log when selectedApp changes
   useEffect(() => {
     console.log('[ProveScreen] Selected app updated:', selectedApp);
@@ -57,20 +58,27 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(async function () {
     buttonTap();
-    navigate('ProofRequestStatusScreen');
     try {
-      const passportDataAndSecret = await getPassportDataAndSecret();
+      // getData first because that triggers biometric authentication and feels nicer to do before navigating
+      // then wait a second and navigate to the status screen. use finally so that any errors thrown here dont prevent the navigate
+      // importantly we are NOT awaiting the navigate call because 
+      // we Do NOT want to delay the callsendVcAndDisclosePayload
+      const passportDataAndSecret = await getPassportDataAndSecret().finally(() => {
+        setTimeout(() => {
+          navigate('ProofRequestStatusScreen');
+        }, 1000);
+      })
       if (!passportDataAndSecret) {
+        setStatus(ProofStatusEnum.ERROR);
         return;
       }
-
-      const { passportData, secret } = passportDataAndSecret.data;
+      const { passportData, secret } = passportDataAndSecret.data;  
       await sendVcAndDisclosePayload(secret, passportData, selectedApp);
     } catch (e) {
       console.log('Error sending VC and disclose payload', e);
       setStatus(ProofStatusEnum.ERROR);
     }
-  }, []);
+  }, [navigate, getPassportDataAndSecret, sendVcAndDisclosePayload, setStatus, buttonTap]);
 
   async function sendMockPayload() {
     console.log('sendMockPayload, start by generating mockPassport data');
@@ -137,7 +145,7 @@ const ProveScreen: React.FC = () => {
           </Caption>
           <HeldPrimaryButton
             onPress={onVerify}
-            disabled={!selectedApp.sessionId}
+            // disabled={!selectedApp.sessionId}
           >
             Hold To Verify
           </HeldPrimaryButton>
