@@ -10,7 +10,7 @@ export const useAppUpdates = (): [boolean, () => void, boolean] => {
   const [isModalDismissed, setIsModalDismissed] = useState(false);
 
   checkVersion().then(version => {
-    if (version.needsUpdate || true) {
+    if (version.needsUpdate) {
       setNewVersionUrl(version.url);
     }
   });
