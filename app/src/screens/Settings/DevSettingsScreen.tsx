@@ -23,7 +23,6 @@ const items: (keyof RootStackParamList)[] = [
   'AccountVerifiedSuccess',
   'ConfirmBelongingScreen',
   'CreateMock',
-  'NextScreen',
   'Home',
   'Disclaimer',
   'QRCodeViewFinder',
@@ -33,7 +32,6 @@ const items: (keyof RootStackParamList)[] = [
   'AccountRecovery',
   'SaveRecoveryPhrase',
   'RecoverWithPhrase',
-  'AccountVerifiedSuccess',
   'ShowRecoveryPhrase',
   'CloudBackupSettings',
 ];
@@ -92,16 +90,11 @@ const ScreenSelector = ({}) => {
 };
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
-  const {
-    clearPassportDataFromStorage,
-    clearPassportMetadataFromStorage,
-    setRegistered,
-  } = useUserStore();
+  const { clearPassportDataFromStorage, setRegistered } = useUserStore();
 
   const nav = useNavigation();
 
   function handleRestart() {
-    clearPassportMetadataFromStorage();
     clearPassportDataFromStorage();
     setRegistered(false);
     nav.navigate('Launch');

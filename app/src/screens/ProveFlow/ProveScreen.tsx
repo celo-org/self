@@ -7,7 +7,6 @@ import { Image, Text, View, YStack } from 'tamagui';
 
 import { ArgumentsDisclose } from '../../../../common/src/utils/appType';
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
-import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
 import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
@@ -22,7 +21,7 @@ import { sendVcAndDisclosePayload } from '../../utils/proving/payload';
 
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
-  const { getData } = usePassport();
+  const { getPassportDataAndSecret } = usePassport();
   const { selectedApp, setStatus } = useProofInfo();
 
   // Add effect to log when selectedApp changes
@@ -56,17 +55,40 @@ const ProveScreen: React.FC = () => {
     return urlFormatted;
   }, [selectedApp?.endpoint]);
 
-  const onVerify = useCallback(async function () {
-    buttonTap();
-    navigate('ProofRequestStatusScreen');
-    try {
-      const passportData = await getData();
-      await sendVcAndDisclosePayload('0', passportData!.data, selectedApp);
-    } catch (e) {
-      console.log('Error sending VC and disclose payload', e);
-      setStatus(ProofStatusEnum.ERROR);
-    }
-  }, []);
+  const onVerify = useCallback(
+    async function () {
+      buttonTap();
+      try {
+        // getData first because that triggers biometric authentication and feels nicer to do before navigating
+        // then wait a second and navigate to the status screen. use finally so that any errors thrown here dont prevent the navigate
+        // importantly we are NOT awaiting the navigate call because
+        // we Do NOT want to delay the callsendVcAndDisclosePayload
+        const passportDataAndSecret = await getPassportDataAndSecret().finally(
+          () => {
+            setTimeout(() => {
+              navigate('ProofRequestStatusScreen');
+            }, 1000);
+          },
+        );
+        if (!passportDataAndSecret) {
+          setStatus(ProofStatusEnum.ERROR);
+          return;
+        }
+        const { passportData, secret } = passportDataAndSecret.data;
+        await sendVcAndDisclosePayload(secret, passportData, selectedApp);
+      } catch (e) {
+        console.log('Error sending VC and disclose payload', e);
+        setStatus(ProofStatusEnum.ERROR);
+      }
+    },
+    [
+      navigate,
+      getPassportDataAndSecret,
+      sendVcAndDisclosePayload,
+      setStatus,
+      buttonTap,
+    ],
+  );
 
   async function sendMockPayload() {
     console.log('sendMockPayload, start by generating mockPassport data');
@@ -78,8 +100,7 @@ const ProveScreen: React.FC = () => {
       '000101',
       '300101',
     );
-    const passportDataInit = initPassportDataParsing(passportData);
-    await sendVcAndDisclosePayload('0', passportDataInit, selectedApp);
+    await sendVcAndDisclosePayload('0', passportData, selectedApp);
   }
 
   return (

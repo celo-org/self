@@ -77,7 +77,7 @@ async function restoreFromPrivateKey(privateKey: string) {
   return loadSecret();
 }
 
-async function loadSecretOrCreateIt() {
+export async function loadSecretOrCreateIt() {
   const secret = await loadSecret();
   if (secret) {
     return secret;

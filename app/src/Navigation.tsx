@@ -20,7 +20,6 @@ import DisclaimerScreen from './screens/DisclaimerScreen';
 import HomeScreen from './screens/HomeScreen';
 import LaunchScreen from './screens/LaunchScreen';
 import MockDataScreen from './screens/MockDataScreen';
-import NextScreen from './screens/NextScreen';
 import ConfirmBelongingScreen from './screens/Onboarding/ConfirmBelongingScreen';
 import LoadingScreen from './screens/Onboarding/LoadingScreen';
 import PassportCameraScreen from './screens/Onboarding/PassportCameraScreen';
@@ -117,13 +116,6 @@ const AppNavigation = createNativeStackNavigator({
         title: 'Mock Passport',
       },
     },
-    // TODO: rename ? maybe summary
-    NextScreen: {
-      screen: NextScreen,
-      options: {
-        title: 'TODO: NextScreen',
-      },
-    },
     /**
      * HOME SECTION
      */
@@ -171,7 +163,6 @@ const AppNavigation = createNativeStackNavigator({
       options: {
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'containedModal',
       },
     },
     /**
