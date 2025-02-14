@@ -35,6 +35,7 @@ export const saltLengths = [64, 48, 32];
 export const MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
 export const DEPLOYED_CIRCUITS_REGISTER = [
   'register_sha1_sha256_sha256_rsa_65537_4096',
+  'register_sha256_sha256_sha256_rsa_65537_4096',
 ]
 
 export const OFAC_TREE_LEVELS = 64;

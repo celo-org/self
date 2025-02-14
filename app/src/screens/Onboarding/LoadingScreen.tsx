@@ -120,6 +120,7 @@ const LoadingScreen: React.FC = () => {
         } catch (error) {
           console.error('Error processing payload:', error);
           setStatus(ProofStatusEnum.ERROR);
+          setTimeout(() => resetProof(), 1000);
         }
       };
       processPayload();
