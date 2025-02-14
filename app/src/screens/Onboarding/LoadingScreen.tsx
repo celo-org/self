@@ -10,13 +10,14 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-// import { usePassport } from '../../stores/passportDataProvider';
+import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
-import { registerPassport } from '../../utils/proving/payload';
+import { checkPassportSupported, registerPassport } from '../../utils/proving/payload';
 
 const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
   const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
+  const goToUnsupportedScreen = useHapticNavigation('UnsupportedPassport');
   const goToSuccessScreenWithDelay = () => {
     setTimeout(() => {
       goToSuccessScreen();
@@ -29,7 +30,7 @@ const LoadingScreen: React.FC = () => {
   };
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { status, setStatus, resetProof } = useProofInfo();
-  // const { getPassportDataAndSecret } = usePassport();
+  const { getPassportDataAndSecret, clearPassportData } = usePassport();
 
   // Ensure we only set the initial status once on mount (if needed)
   useEffect(() => {
@@ -68,24 +69,37 @@ const LoadingScreen: React.FC = () => {
         try {
           // Generate passport data and update the store.
           const passportData = genMockPassportData(
-            'sha1',
+            'sha256', // sha1
             'sha256',
             'rsa_sha256_65537_2048',
             'FRA',
             '000101',
             '300101',
           );
-          await registerPassport(passportData, '0');
 
-          // const passportDataAndSecret = await getPassportDataAndSecret();
-          // if (!passportDataAndSecret) {
-          //   return;
-          // }
+          const passportDataAndSecret = await getPassportDataAndSecret();
+          if (!passportDataAndSecret) {
+            return;
+          }
 
-          // const { passportData, secret } = passportDataAndSecret.data;
+          const {
+            // passportData,
+            secret
+          } = passportDataAndSecret.data;
 
-          // // This will trigger sendPayload(), which updates global status via your tee.ts code.
-          // registerPassport(passportData, secret);
+          const isSupported = checkPassportSupported(passportData);
+          if (!isSupported) {
+            goToUnsupportedScreen();
+            console.log('Passport not supported');
+            // passport data has not been fully parsed correctly
+            // so we clear it from the keychain
+            clearPassportData();
+            return;
+          }
+
+
+          // This will trigger sendPayload(), which updates global status via your tee.ts code.
+          registerPassport(passportData, secret);
         } catch (error) {
           console.error('Error processing payload:', error);
           setStatus(ProofStatusEnum.ERROR);

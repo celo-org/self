@@ -53,7 +53,7 @@ async function generateTeeInputsRegister(
   return { inputs, circuitName };
 }
 
-function checkPassportSupported(passportData: PassportData) {
+export function checkPassportSupported(passportData: PassportData) {
   const passportMetadata = passportData.passportMetadata;
   if (!passportMetadata) {
     console.log('Passport metadata is null');
@@ -86,16 +86,6 @@ export async function sendRegisterPayload(
   passportData: PassportData,
   secret: string,
 ) {
-  if (!passportData) {
-    return null;
-  }
-  const isSupported = checkPassportSupported(passportData);
-  if (!isSupported) {
-    // TODO: show a screen explaining that the passport is not supported.
-    console.log('Passport not supported');
-    return;
-  }
-
   const { inputs, circuitName } = await generateTeeInputsRegister(
     secret,
     passportData,

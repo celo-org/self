@@ -11,7 +11,6 @@ interface UserState {
   registered: boolean;
   userLoaded: boolean;
   initUserStore: () => void;
-  clearPassportDataFromStorage: () => void;
   clearSecretFromStorage: () => void;
   update: (patch: any) => void;
   deleteMrzFields: () => void;
@@ -79,10 +78,6 @@ const useUserStore = create<UserState>((set, get) => ({
     //   registered: true,
     //   userLoaded: true,
     // });
-  },
-
-  clearPassportDataFromStorage: async () => {
-    await resetGenericPassword({ service: 'passportData' });
   },
 
   clearSecretFromStorage: async () => {
