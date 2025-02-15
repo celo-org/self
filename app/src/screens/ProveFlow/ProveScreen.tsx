@@ -101,7 +101,15 @@ const ProveScreen: React.FC = () => {
           return;
         }
 
-        await sendVcAndDisclosePayload(secret, passportData, selectedApp);
+        const status = await sendVcAndDisclosePayload(
+          secret,
+          passportData,
+          selectedApp,
+        );
+        handleProofVerified(
+          currentApp.sessionId,
+          status === ProofStatusEnum.SUCCESS,
+        );
       } catch (e) {
         console.log('Error sending VC and disclose payload', e);
         setStatus(ProofStatusEnum.ERROR);
