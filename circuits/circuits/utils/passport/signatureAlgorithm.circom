@@ -99,9 +99,6 @@ function getHashLength(signatureAlgorithm) {
     if (signatureAlgorithm == 19) {
         return 256;
     }
-    if (signatureAlgorithm == 20) {
-        return 256;
-    }
     if (signatureAlgorithm == 21) { 
         return 256;
     }
