@@ -4,9 +4,6 @@ import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
-// Import passport data generation and payload functions from common
-import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
-// Import animations
 import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
@@ -81,10 +78,7 @@ const LoadingScreen: React.FC = () => {
             return;
           }
 
-          const {
-            passportData,
-            secret,
-          } = passportDataAndSecret.data;
+          const { passportData, secret } = passportDataAndSecret.data;
 
           const isSupported = checkPassportSupported(passportData);
           if (!isSupported) {
