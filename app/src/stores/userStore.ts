@@ -7,7 +7,6 @@ interface UserState {
   passportNumber: string;
   dateOfBirth: string;
   dateOfExpiry: string;
-  clearPassportDataFromStorage: () => void;
   clearSecretFromStorage: () => void;
   update: (patch: any) => void;
   deleteMrzFields: () => void;
@@ -17,10 +16,6 @@ const useUserStore = create<UserState>((set, get) => ({
   passportNumber: DEFAULT_PNUMBER ?? '',
   dateOfBirth: DEFAULT_DOB ?? '',
   dateOfExpiry: DEFAULT_DOE ?? '',
-
-  clearPassportDataFromStorage: async () => {
-    await resetGenericPassword({ service: 'passportData' });
-  },
 
   clearSecretFromStorage: async () => {
     await resetGenericPassword({ service: 'secret' });

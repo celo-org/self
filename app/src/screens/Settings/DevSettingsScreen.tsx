@@ -5,6 +5,7 @@ import { Check, ChevronDown, Eraser, IterationCw } from '@tamagui/lucide-icons';
 import { Adapt, Button, Fieldset, Label, Select, Sheet, YStack } from 'tamagui';
 
 import { RootStackParamList } from '../../Navigation';
+import { usePassport } from '../../stores/passportDataProvider';
 import useUserStore from '../../stores/userStore';
 import { borderColor, textBlack } from '../../utils/colors';
 
@@ -93,12 +94,12 @@ const ScreenSelector = ({}) => {
 };
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
-  const { clearPassportDataFromStorage } = useUserStore();
+  const { clearPassportData } = usePassport();
 
   const nav = useNavigation();
 
   function handleRestart() {
-    clearPassportDataFromStorage();
+    clearPassportData();
     nav.navigate('Launch');
   }
 
