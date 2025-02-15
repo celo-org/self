@@ -1,7 +1,3 @@
-// Function to extract information from a two-line MRZ.
-import { countryCodes } from '../../../common/src/constants/constants';
-import { Proof } from '../../../common/src/utils/types';
-
 // The actual parsing would depend on the standard being used (TD1, TD2, TD3, MRVA, MRVB).
 export function extractMRZInfo(mrzString: string) {
   const mrzLines = mrzString.split('\n');
