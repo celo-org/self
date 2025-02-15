@@ -172,8 +172,8 @@ export async function sendPayload(
               const data =
                 typeof message === 'string' ? JSON.parse(message) : message;
               console.log('SocketIO message:', data);
-              if (data.status === 2) {
-                console.log('Proof generation completed');
+              if (data.status === 5) {
+                console.log('Proof verified');
                 socket?.disconnect();
                 if (ws.readyState === WebSocket.OPEN) {
                   ws.close();
