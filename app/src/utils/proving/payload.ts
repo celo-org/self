@@ -189,11 +189,7 @@ async function generateTeeInputsVCAndDisclose(
   passportData: PassportData,
   selfApp: SelfApp,
 ) {
-  const {
-    scope,
-    userId,
-    disclosures,
-  } = selfApp;
+  const { scope, userId, disclosures } = selfApp;
 
   const selector_dg1 = Array(88).fill('0');
 
@@ -202,12 +198,15 @@ async function generateTeeInputsVCAndDisclose(
       return;
     }
     if (reveal) {
-      const [start, end] = attributeToPosition[attribute as keyof typeof attributeToPosition];
+      const [start, end] =
+        attributeToPosition[attribute as keyof typeof attributeToPosition];
       selector_dg1.fill('1', start, end + 1);
     }
   });
 
-  const majority = disclosures.minimumAge ? disclosures.minimumAge.toString() : DEFAULT_MAJORITY;
+  const majority = disclosures.minimumAge
+    ? disclosures.minimumAge.toString()
+    : DEFAULT_MAJORITY;
   const selector_older_than = disclosures.minimumAge ? '1' : '0';
 
   const selector_ofac = disclosures.ofac ? 1 : 0;
