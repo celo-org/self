@@ -23,7 +23,6 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@amplitude/analytics-react-native": "^1.4.7",
     "@ethersproject/shims": "^5.7.0",
     "@openpassport/zk-kit-lean-imt": "^0.0.6",
     "@openpassport/zk-kit-smt": "^0.0.1",
