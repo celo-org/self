@@ -20,7 +20,6 @@ global.Buffer = Buffer;
 export let segmentClient: ReturnType<typeof createClient> | null = null;
 
 function App(): React.JSX.Element {
-
   useEffect(() => {
     // init
     segmentClient = createSegmentClient();

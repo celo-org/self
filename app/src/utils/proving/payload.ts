@@ -284,8 +284,15 @@ export async function sendVcAndDisclosePayload(
 
 /*** Logic Flow ****/
 
-export async function isUserRegistered(passportData: PassportData, secret: string) {
-  const commitment = generateCommitment(secret, PASSPORT_ATTESTATION_ID, passportData);
+export async function isUserRegistered(
+  passportData: PassportData,
+  secret: string,
+) {
+  const commitment = generateCommitment(
+    secret,
+    PASSPORT_ATTESTATION_ID,
+    passportData,
+  );
   const serializedTree = await getCommitmentTree();
   const tree = LeanIMT.import((a, b) => poseidon2([a, b]), serializedTree);
   const index = tree.indexOf(BigInt(commitment));

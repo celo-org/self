@@ -6,10 +6,10 @@ import LottieView from 'lottie-react-native';
 
 import splashAnimation from '../assets/animations/splash.json';
 import { loadSecret, useAuth } from '../stores/authProvider';
+import { loadPassportData } from '../stores/passportDataProvider';
 import { useSettingStore } from '../stores/settingStore';
 import { black } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
-import { loadPassportData } from '../stores/passportDataProvider';
 
 const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
@@ -26,7 +26,6 @@ const SplashScreen: React.FC = ({}) => {
         );
       });
   }, []);
-
 
   const handleAnimationFinish = useCallback(() => {
     setTimeout(async () => {
