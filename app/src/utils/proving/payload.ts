@@ -284,21 +284,18 @@ export async function sendVcAndDisclosePayload(
 
 /*** Logic Flow ****/
 
-function isUserRegistered(_passportData: PassportData, _secret: string) {
-  // check if user is already registered
-  // if registered, return true
-  // if not registered, return false
-  return false;
+export async function isUserRegistered(passportData: PassportData, secret: string) {
+  const commitment = generateCommitment(secret, PASSPORT_ATTESTATION_ID, passportData);
+  const serializedTree = await getCommitmentTree();
+  const tree = LeanIMT.import((a, b) => poseidon2([a, b]), serializedTree);
+  const index = tree.indexOf(BigInt(commitment));
+  return index !== -1;
 }
 
 export async function registerPassport(
   passportData: PassportData,
   secret: string,
 ) {
-  const isRegistered = isUserRegistered(passportData, secret);
-  if (isRegistered) {
-    return; // TODO: show a screen explaining that the passport is already registered, needs to bring passphrase or secret from icloud backup
-  }
   const dscOk = await checkIdPassportDscIsInTree(passportData);
   if (!dscOk) {
     return;
