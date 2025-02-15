@@ -1,7 +1,5 @@
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
-//@ts-ignore
-import * as asn1 from 'asn1.js';
 import * as asn1js from 'asn1js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
@@ -15,7 +13,7 @@ import cose from './cose';
 /**
  * @notice An array specifying the required fields for a valid attestation.
  */
-export const requiredFields = [
+const requiredFields = [
   'module_id',
   'digest',
   'timestamp',
@@ -23,32 +21,6 @@ export const requiredFields = [
   'certificate',
   'cabundle',
 ];
-
-/**
- * @notice ASN.1 context interface for use with asn1js.js.
- */
-interface ASN1Context {
-  seq(): ASN1Context;
-  obj(...args: any[]): ASN1Context;
-  key(name: string): ASN1Context;
-  objid(): ASN1Context;
-  bitstr(): ASN1Context;
-}
-
-/**
- * @notice ASN.1 definition for an Elliptic Curve Public Key.
- */
-export const ECPublicKeyASN = asn1.define(
-  'ECPublicKey',
-  function (this: ASN1Context) {
-    this.seq().obj(
-      this.key('algo')
-        .seq()
-        .obj(this.key('id').objid(), this.key('curve').objid()),
-      this.key('pubKey').bitstr(),
-    );
-  },
-);
 
 /**
  * @notice Utility function to check if a number is within (start, end] range.
@@ -239,7 +211,7 @@ export function getPublicKey(attestation: Array<number>) {
  * @return The PEM-formatted certificate string.
  * @throws Error if the conversion fails.
  */
-export function derToPem(der: Buffer): string {
+function derToPem(der: Buffer): string {
   try {
     const base64 = Buffer.from(der).toString('base64');
     return (
@@ -260,7 +232,7 @@ export function derToPem(der: Buffer): string {
  * @throws Error if the COSE_Sign1 format is invalid or PCR0 is missing/incorrect.
  * @see https://docs.aws.amazon.com/enclaves/latest/user/set-up-attestation.html
  */
-export function getImageHash(attestation: Array<number>) {
+function getImageHash(attestation: Array<number>) {
   const coseSign1 = decode(Buffer.from(attestation));
 
   if (!Array.isArray(coseSign1) || coseSign1.length !== 4) {
@@ -328,7 +300,7 @@ function getPublicKeyFromPem(pem: string) {
  * @dev The function strips the PEM header/footer and line breaks, decodes the base64 content into binary,
  *      creates an ArrayBuffer, and then parses the ASN.1 structure using asn1js.fromBER. Throws an error if parsing fails.
  */
-export function getCertificateFromPem(pemContent: string): Certificate {
+function getCertificateFromPem(pemContent: string): Certificate {
   const pemFormatted = pemContent.replace(
     /(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g,
     '',
@@ -375,7 +347,7 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
   return key_csca.verify(tbsHash, signature_crypto);
 }
 
-export function getTBSHash(pem: string): string {
+function getTBSHash(pem: string): string {
   const certBuffer = Buffer.from(
     pem.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
