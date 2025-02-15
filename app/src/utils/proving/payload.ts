@@ -267,11 +267,6 @@ export async function sendVcAndDisclosePayload(
   if (!passportData) {
     return null;
   }
-  const isSupported = checkPassportSupported(passportData);
-  if (!isSupported) {
-    // TODO: show a screen explaining that the passport is not supported.
-    return;
-  }
   const { inputs, circuitName } = await generateTeeInputsVCAndDisclose(
     secret,
     passportData,
