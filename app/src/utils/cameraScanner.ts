@@ -1,7 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 
-import * as amplitude from '@amplitude/analytics-react-native';
-
+import useNavigationStore from '../stores/navigationStore';
 import { extractMRZInfo, formatDateToYYMMDD } from './utils';
 
 type Callback = (
@@ -14,7 +13,18 @@ type Callback = (
 ) => void;
 type CancelScan = () => void;
 
+const handleCameraError = (
+  e: Error,
+  callback: Callback,
+  trackEvent: (eventName: string, properties?: Record<string, any>) => void,
+) => {
+  console.error('Camera Activity Error:', e);
+  trackEvent('Camera Activity Error', { error: e.message });
+  callback(e);
+};
+
 export const startCameraScan = (callback: Callback): CancelScan => {
+  const { trackEvent } = useNavigationStore.getState();
   if (Platform.OS === 'ios') {
     NativeModules.MRZScannerModule.startScanning()
       .then(
@@ -35,11 +45,7 @@ export const startCameraScan = (callback: Callback): CancelScan => {
           });
         },
       )
-      .catch((e: Error) => {
-        console.error(e);
-        amplitude.track('camera_scan_error', { error: e });
-        callback(e as Error);
-      });
+      .catch((e: Error) => handleCameraError(e, callback, trackEvent));
 
     return () => {
       // TODO
@@ -59,19 +65,14 @@ export const startCameraScan = (callback: Callback): CancelScan => {
           });
         } catch (e) {
           console.error('Invalid MRZ format:', (e as Error).message);
-          amplitude.track('invalid_mrz_format', {
+          trackEvent('Invalid MRZ format', {
             error: (e as Error).message,
           });
 
           callback(e as Error);
         }
       })
-      .catch((e: Error) => {
-        console.error('Camera Activity Error:', e);
-        amplitude.track('camera_scan_error', { error: e.message });
-
-        callback(e);
-      });
+      .catch((e: Error) => handleCameraError(e, callback, trackEvent));
 
     return () => {
       // TODO

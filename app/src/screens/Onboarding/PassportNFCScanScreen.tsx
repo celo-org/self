@@ -86,9 +86,16 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
         console.log('NFC Scan Successful');
         trackEvent('NFC Scan Successful');
 
-        const passportData = parseScanResponse(scanResponse);
-        const parsedPassportData = initPassportDataParsing(passportData);
-        await storePassportData(parsedPassportData);
+        try {
+          const passportData = parseScanResponse(scanResponse);
+          const parsedPassportData = initPassportDataParsing(passportData);
+          await storePassportData(parsedPassportData);
+        } catch (e: any) {
+          console.error('error_parsing_nfc_response');
+          trackEvent('Error Parsing NFC Response', {
+            error: e.message,
+          });
+        }
 
         const passportMetadata = parsedPassportData.passportMetadata!;
         trackEvent('Passport Parsed', {
