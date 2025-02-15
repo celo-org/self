@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 // Import passport data generation and payload functions from common
@@ -14,6 +15,8 @@ import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import {
   checkPassportSupported,
+  isPassportNullified,
+  isUserRegistered,
   registerPassport,
 } from '../../utils/proving/payload';
 
@@ -21,6 +24,8 @@ const LoadingScreen: React.FC = () => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
   const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
   const goToUnsupportedScreen = useHapticNavigation('UnsupportedPassport');
+  const navigation = useNavigation();
+
   const goToSuccessScreenWithDelay = () => {
     setTimeout(() => {
       goToSuccessScreen();
@@ -72,7 +77,7 @@ const LoadingScreen: React.FC = () => {
         try {
           // Generate passport data and update the store.
           const passportData = genMockPassportData(
-            'sha256', // sha1
+            'sha1',
             'sha256',
             'rsa_sha256_65537_2048',
             'FRA',
@@ -97,6 +102,16 @@ const LoadingScreen: React.FC = () => {
             // passport data has not been fully parsed correctly
             // so we clear it from the keychain
             clearPassportData();
+            return;
+          }
+
+          const isRegistered = await isUserRegistered(passportData, secret);
+          const isNullifierOnchain = await isPassportNullified(passportData);
+          if (isNullifierOnchain && !isRegistered) {
+            console.log(
+              'Passport is nullified, but not registered with this secret. Prompt to restore secret from iCloud or manual backup',
+            );
+            navigation.navigate('AccountRecoveryChoice');
             return;
           }
 

@@ -25,7 +25,10 @@ import {
   generateCircuitInputsRegister,
   generateCircuitInputsVCandDisclose,
 } from '../../../../common/src/utils/circuits/generateInputs';
-import { generateCommitment } from '../../../../common/src/utils/passports/passport';
+import {
+  generateCommitment,
+  generateNullifier,
+} from '../../../../common/src/utils/passports/passport';
 import {
   getCSCATree,
   getCommitmentTree,
@@ -287,6 +290,13 @@ export async function isUserRegistered(
   const tree = LeanIMT.import((a, b) => poseidon2([a, b]), serializedTree);
   const index = tree.indexOf(BigInt(commitment));
   return index !== -1;
+}
+
+export async function isPassportNullified(passportData: PassportData) {
+  const nullifier = generateNullifier(passportData);
+  console.log('nullifier', nullifier);
+  // TODO: check if the nullifier is onchain
+  return false;
 }
 
 export async function registerPassport(
