@@ -40,7 +40,7 @@ const ProveScreen: React.FC = () => {
   }, [selectedApp]);
 
   const disclosureOptions = useMemo(() => {
-    return selectedApp?.disclosures as SelfAppDisclosureConfig || [];
+    return (selectedApp?.disclosures as SelfAppDisclosureConfig) || [];
   }, [selectedApp?.disclosures]);
 
   // Format the base64 image string correctly

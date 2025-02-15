@@ -21,7 +21,6 @@ function listToString(list: string[]): string {
 }
 
 export default function Disclosures({ disclosures }: DisclosureProps) {
-
   // Define the order in which disclosures should appear.
   const ORDERED_KEYS = [
     'issuing_state',
@@ -34,7 +33,6 @@ export default function Disclosures({ disclosures }: DisclosureProps) {
     'ofac',
     'excludedCountries',
     'minimumAge',
-
   ] as const;
 
   return (
@@ -52,7 +50,7 @@ export default function Disclosures({ disclosures }: DisclosureProps) {
             break;
           case 'excludedCountries':
             text = `I am not a resident of any of the following countries: ${listToString(
-              disclosures.excludedCountries || []
+              disclosures.excludedCountries || [],
             )}`;
             break;
           case 'minimumAge':
