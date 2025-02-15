@@ -76,22 +76,13 @@ const LoadingScreen: React.FC = () => {
       const processPayload = async () => {
         try {
           // Generate passport data and update the store.
-          const passportData = genMockPassportData(
-            'sha1',
-            'sha256',
-            'rsa_sha256_65537_2048',
-            'FRA',
-            '000101',
-            '300101',
-          );
-
           const passportDataAndSecret = await getPassportDataAndSecret();
           if (!passportDataAndSecret) {
             return;
           }
 
           const {
-            // passportData,
+            passportData,
             secret,
           } = passportDataAndSecret.data;
 
