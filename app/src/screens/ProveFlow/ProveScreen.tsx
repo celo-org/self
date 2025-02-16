@@ -104,7 +104,7 @@ const ProveScreen: React.FC = () => {
         const status = await sendVcAndDisclosePayload(
           secret,
           passportData,
-          selectedApp,
+          currentApp,
         );
         handleProofVerified(
           currentApp.sessionId,
