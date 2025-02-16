@@ -30,6 +30,7 @@ import useUserStore from '../../stores/userStore';
 import { black, slate100, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { parseScanResponse, scan } from '../../utils/nfcScannerNew';
+import { PassportData } from '../../../../common/src/utils/types';
 
 interface PassportNFCScanScreenProps {}
 
@@ -86,12 +87,15 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
         console.log('NFC Scan Successful');
         trackEvent('NFC Scan Successful');
 
-        const passportData = parseScanResponse(scanResponse);
-        const parsedPassportData = initPassportDataParsing(passportData);
-
-        if (!parsedPassportData) {
-          trackEvent('Parsing NFC Response Unsuccessful');
+        let parsedPassportData: PassportData | null = null;
+        try {
+          const passportData = parseScanResponse(scanResponse);
+          parsedPassportData = initPassportDataParsing(passportData);
+        } catch (e: any) {
           console.error('Parsing NFC Response Unsuccessful');
+          trackEvent('Parsing NFC Response Unsuccessful', {
+            error: e.message,
+          });
           return;
         }
 
