@@ -5871,13 +5871,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/crypto-js@npm:^4.1.1":
-  version: 4.2.2
-  resolution: "@types/crypto-js@npm:4.2.2"
-  checksum: 10c0/760a2078f36f2a3a1089ef367b0d13229876adcf4bcd6e8824d00d9e9bfad8118dc7e6a3cc66322b083535e12be3a29044ccdc9603bfb12519ff61551a3322c6
-  languageName: node
-  linkType: hard
-
 "@types/elliptic@npm:^6":
   version: 6.4.18
   resolution: "@types/elliptic@npm:6.4.18"
@@ -11862,7 +11855,6 @@ __metadata:
     "@tamagui/types": "npm:1.110.0"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
     "@tsconfig/react-native": "npm:^3.0.0"
-    "@types/crypto-js": "npm:^4.1.1"
     "@types/elliptic": "npm:^6"
     "@types/events": "npm:^3"
     "@types/jest": "npm:^29.5.14"
@@ -11897,7 +11889,6 @@ __metadata:
     react-native-bundle-visualizer: "npm:^3.1.3"
     react-native-check-version: "npm:^1.3.0"
     react-native-cloud-storage: "npm:^2.2.2"
-    react-native-date-picker: "https://github.com/norman-kapschefsky/react-native-date-picker#07b13884e392f386611248bab0f2f9b1093b2f35"
     react-native-device-info: "npm:^14.0.4"
     react-native-dotenv: "npm:^3.4.11"
     react-native-fs: "npm:^2.20.0"
@@ -12476,16 +12467,6 @@ __metadata:
     expo:
       optional: true
   checksum: 10c0/c6aa7f4c3d29cc96433806f90717d3f87df661d11c651ad67dd349de618f9a14e6284b3a5608d0fed03bb2e4c880cb44ee5054dba8e0d789d9928f3a6f607103
-  languageName: node
-  linkType: hard
-
-"react-native-date-picker@https://github.com/norman-kapschefsky/react-native-date-picker#07b13884e392f386611248bab0f2f9b1093b2f35":
-  version: 4.3.7
-  resolution: "react-native-date-picker@https://github.com/norman-kapschefsky/react-native-date-picker.git#commit=07b13884e392f386611248bab0f2f9b1093b2f35"
-  peerDependencies:
-    react: ">= 17.0.1"
-    react-native: ">= 0.64.3"
-  checksum: 10c0/ebb3dfb9a111bf6082866999d31e10f952fcd12bcf2a81210ff9f44a4cb4d25e1b4caac5fdec512b367685e56a37e61de3e6648c2af45b93fcbaf704355dbaa6
   languageName: node
   linkType: hard
 
