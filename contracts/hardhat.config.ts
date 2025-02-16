@@ -52,8 +52,8 @@ const config: HardhatUserConfig = {
     },
     celo: {
       chainId: 42220,
-      url: process.env.CELO_RPC_URL as string,
-      accounts: [process.env.PRIVATE_KEY as string],
+      url: process.env.CELO_RPC_URL || "https://forno.celo.org",
+      accounts: [process.env.CELO_KEY as string],
     },
     celoAlfajores: {
       chainId: 44787,
