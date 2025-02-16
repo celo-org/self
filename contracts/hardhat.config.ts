@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       chainId: 1,
-      url: process.env.MAINNET_RPC_URL as string,
+      url: process.env.MAINNET_RPC_URL || "https://eth.llamarpc.com",
       accounts: [process.env.PRIVATE_KEY as string],
     },
     sepolia: {
@@ -57,12 +57,12 @@ const config: HardhatUserConfig = {
     },
     celoAlfajores: {
       chainId: 44787,
-      url: process.env.CELO_ALFAJORES_RPC_URL as string,
+      url: process.env.CELO_ALFAJORES_RPC_URL || "https://alfajores-forno.celo-testnet.org",
       accounts: [process.env.PRIVATE_KEY as string],
     },
     celoBaklava: {
       chainId: 62320,
-      url: process.env.CELO_BAKLAVA_RPC_URL as string,
+      url: process.env.CELO_BAKLAVA_RPC_URL || "https://baklava-forno.celo-testnet.org",
       accounts: [process.env.PRIVATE_KEY as string],
     },
   },
