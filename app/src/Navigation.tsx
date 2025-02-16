@@ -336,11 +336,7 @@ const NavigationWithTracking = () => {
     }
   };
 
-  return (
-    <SafeAreaProvider>
-      <Navigation ref={navigationRef} onStateChange={trackScreenView} />
-    </SafeAreaProvider>
-  );
+  return <Navigation ref={navigationRef} onStateChange={trackScreenView} />;
 };
 
 export default NavigationWithTracking;
