@@ -172,13 +172,20 @@ export async function sendPayload(
               const data =
                 typeof message === 'string' ? JSON.parse(message) : message;
               console.log('SocketIO message:', data);
-              if (data.status === 5) {
+              if (data.status === 4) {
                 console.log('Proof verified');
                 socket?.disconnect();
                 if (ws.readyState === WebSocket.OPEN) {
                   ws.close();
                 }
                 finalize(ProofStatusEnum.SUCCESS);
+              } else if (data.status === 5) {
+                console.log('Failed to verify proof');
+                socket?.disconnect();
+                if (ws.readyState === WebSocket.OPEN) {
+                  ws.close();
+                }
+                finalize(ProofStatusEnum.FAILURE);
               }
             });
             socket.on('disconnect', reason => {
