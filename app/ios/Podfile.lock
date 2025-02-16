@@ -1533,8 +1533,6 @@ PODS:
     - React-Core
   - RNDeviceInfo (14.0.4):
     - React-Core
-  - RNFS (2.20.0):
-    - React-Core
   - RNGestureHandler (2.22.1):
     - DoubleConversion
     - glog
@@ -1693,7 +1691,6 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNKeychain (from `../node_modules/react-native-keychain`)
@@ -1861,8 +1858,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
-  RNFS:
-    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
@@ -1973,7 +1968,6 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 03861ec2e1e46b20e51963c62c51dc288beb7c43
   RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
-  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: e705387b01bba53f4643bdff381ee08c7b9679a1
   RNGoogleSignin: 9e68b9bcc3888219357924e32ee563624745647d
   RNKeychain: bfe3d12bf4620fe488771c414530bf16e88f3678
@@ -1988,6 +1982,6 @@ SPEC CHECKSUMS:
   SwiftyTesseract: 1f3d96668ae92dc2208d9842c8a59bea9fad2cbb
   Yoga: b05994d1933f507b0a28ceaa4fdb968dc18da178
 
-PODFILE CHECKSUM: 25704f1dbb82370ab76e89f27dbbb767901f31f4
+PODFILE CHECKSUM: bb88cf7d6b3add1093ce81781efdb84e78ac6c04
 
 COCOAPODS: 1.16.2
