@@ -13,6 +13,7 @@ import LottieView from 'lottie-react-native';
 import { Image } from 'tamagui';
 
 import { initPassportDataParsing } from '../../../../common/src/utils/passports/passport';
+import { PassportData } from '../../../../common/src/utils/types';
 import passportVerifyAnimation from '../../assets/animations/passport_verify.json';
 import ButtonsContainer from '../../components/ButtonsContainer';
 import TextsContainer from '../../components/TextsContainer';
@@ -30,7 +31,6 @@ import useUserStore from '../../stores/userStore';
 import { black, slate100, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { parseScanResponse, scan } from '../../utils/nfcScannerNew';
-import { PassportData } from '../../../../common/src/utils/types';
 
 interface PassportNFCScanScreenProps {}
 
