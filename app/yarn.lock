@@ -6803,7 +6803,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.0.2, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
+"base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 10c0/f23823513b63173a001030fae4f2dabe283b99a9d324ade3ad3d148e218134676f1ee8568c877cd79ec1c53158dcf2d2ba527a97c606618928ba99dd930102bf
@@ -6986,17 +6986,6 @@ __metadata:
   version: 1.0.3
   resolution: "buffer-xor@npm:1.0.3"
   checksum: 10c0/fd269d0e0bf71ecac3146187cfc79edc9dbb054e2ee69b4d97dfb857c6d997c33de391696d04bdd669272751fa48e7872a22f3a6c7b07d6c0bc31dbe02a4075c
-  languageName: node
-  linkType: hard
-
-"buffer@npm:^4.9.1":
-  version: 4.9.2
-  resolution: "buffer@npm:4.9.2"
-  dependencies:
-    base64-js: "npm:^1.0.2"
-    ieee754: "npm:^1.1.4"
-    isarray: "npm:^1.0.0"
-  checksum: 10c0/dc443d7e7caab23816b58aacdde710b72f525ad6eecd7d738fcaa29f6d6c12e8d9c13fed7219fd502be51ecf0615f5c077d4bdc6f9308dde2e53f8e5393c5b21
   languageName: node
   linkType: hard
 
@@ -9430,7 +9419,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ieee754@npm:^1.1.13, ieee754@npm:^1.1.4, ieee754@npm:^1.1.8, ieee754@npm:^1.2.1":
+"ieee754@npm:^1.1.13, ieee754@npm:^1.1.8, ieee754@npm:^1.2.1":
   version: 1.2.1
   resolution: "ieee754@npm:1.2.1"
   checksum: 10c0/b0782ef5e0935b9f12883a2e2aa37baa75da6e66ce6515c168697b42160807d9330de9a32ec1ed73149aea02e0d822e572bca6f1e22bdcbd2149e13b050b17bb
@@ -12164,13 +12153,10 @@ __metadata:
     react-native-nfc-manager: "npm:^3.15.1"
     react-native-orientation-locker: "npm:^1.7.0"
     react-native-passport-reader: "npm:^1.0.3"
-    react-native-randombytes: "npm:^3.6.1"
     react-native-safe-area-context: "npm:^5.2.0"
     react-native-screens: "npm:^4.6.0"
     react-native-svg: "npm:^15.11.1"
     react-native-svg-transformer: "npm:^1.5.0"
-    react-native-tracking-transparency: "npm:^0.1.2"
-    react-native-zip-archive: "npm:^6.1.0"
     socket.io-client: "npm:^4.7.5"
     stream-browserify: "npm:^3.0.0"
     tamagui: "npm:1.110.0"
@@ -12969,16 +12955,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-randombytes@npm:^3.6.1":
-  version: 3.6.1
-  resolution: "react-native-randombytes@npm:3.6.1"
-  dependencies:
-    buffer: "npm:^4.9.1"
-    sjcl: "npm:^1.0.3"
-  checksum: 10c0/8a209dbd9f046221c1fdcd2ff2602f68ae0e1e67e78a4b96d65aaa1c96e20a9f6eef7a2b769f3794fe589ddaccf90a00962d058d751cce2be31c9c95c3309aef
-  languageName: node
-  linkType: hard
-
 "react-native-safe-area-context@npm:^5.2.0":
   version: 5.2.0
   resolution: "react-native-safe-area-context@npm:5.2.0"
@@ -13028,26 +13004,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/b93d995e459b0e9250639a0f2171ed8c3d580d57b93400c5f2696ab0b24d1babf9c20099e904964f93c6c44597b9cc5e8c87ee248c24c63d4dbc3250b04b57b9
-  languageName: node
-  linkType: hard
-
-"react-native-tracking-transparency@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "react-native-tracking-transparency@npm:0.1.2"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/53fda60d617a7a46f6a84b6b44ce5694354574672c88dc346698e4b03a8d962cfd64dc5a8fb340bd9456cb65db0bdca6c53c6ab7653216e6e5b5ae1e997ac0cf
-  languageName: node
-  linkType: hard
-
-"react-native-zip-archive@npm:^6.1.0":
-  version: 6.1.2
-  resolution: "react-native-zip-archive@npm:6.1.2"
-  peerDependencies:
-    react: ">=16.8.6"
-    react-native: ">=0.60.0"
-  checksum: 10c0/e2cd9f10f6a49fc4432dbbae9dd9db975e7207573773b28f946dc593c96d5d5223445fd805705a2e4de703336c68216425b9d705e7dcaf192e1b9a339e4d25ba
   languageName: node
   linkType: hard
 
@@ -13915,13 +13871,6 @@ __metadata:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: 10c0/230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
-  languageName: node
-  linkType: hard
-
-"sjcl@npm:^1.0.3":
-  version: 1.0.8
-  resolution: "sjcl@npm:1.0.8"
-  checksum: 10c0/deac03b931a26b710a521fc9dd5a10b124fb63970b7f5e22a91460ac46b14dd4ccfc2edbee4d553b8d586da332d9013a9ff40f5adfdb58050b73ebcd90235cba
   languageName: node
   linkType: hard
 
