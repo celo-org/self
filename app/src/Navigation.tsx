@@ -40,8 +40,8 @@ import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScree
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
-import { black, slate300, white } from './utils/colors';
 import useNavigationStore from './stores/navigationStore';
+import { black, slate300, white } from './utils/colors';
 
 // Create a ref that we can use to access the navigation state
 export const navigationRef = createNavigationContainerRef();
