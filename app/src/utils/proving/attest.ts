@@ -1,6 +1,6 @@
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
-import * as asn1js from 'asn1js';
+import { fromBER } from 'asn1js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
 import { sha384 } from 'js-sha512';
@@ -298,7 +298,7 @@ function getPublicKeyFromPem(pem: string) {
  * @param pemContent A string containing the PEM formatted certificate including header/footer markers.
  * @return A Certificate object parsed from the PEM content.
  * @dev The function strips the PEM header/footer and line breaks, decodes the base64 content into binary,
- *      creates an ArrayBuffer, and then parses the ASN.1 structure using asn1js.fromBER. Throws an error if parsing fails.
+ *      creates an ArrayBuffer, and then parses the ASN.1 structure using fromBER. Throws an error if parsing fails.
  */
 function getCertificateFromPem(pemContent: string): Certificate {
   const pemFormatted = pemContent.replace(
@@ -312,7 +312,7 @@ function getCertificateFromPem(pemContent: string): Certificate {
     view[i] = binary[i];
   }
 
-  const asn1Data = asn1js.fromBER(arrayBuffer);
+  const asn1Data = fromBER(arrayBuffer);
   if (asn1Data.offset === -1) {
     throw new Error(`ASN.1 parsing error: ${asn1Data.result.error}`);
   }
@@ -325,7 +325,7 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
     parent.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_csca = asn1js.fromBER(certBuffer_csca);
+  const asn1Data_csca = fromBER(certBuffer_csca);
   const cert_csca = new Certificate({ schema: asn1Data_csca.result });
   const publicKeyInfo_csca = cert_csca.subjectPublicKeyInfo;
   const publicKeyBuffer_csca =
@@ -340,7 +340,7 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
     child.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_dsc = asn1js.fromBER(certBuffer_dsc);
+  const asn1Data_dsc = fromBER(certBuffer_dsc);
   const cert_dsc = new Certificate({ schema: asn1Data_dsc.result });
   const signatureValue = cert_dsc.signatureValue.valueBlock.valueHexView;
   const signature_crypto = Buffer.from(signatureValue).toString('hex');
@@ -352,7 +352,7 @@ function getTBSHash(pem: string): string {
     pem.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_cert = asn1js.fromBER(certBuffer);
+  const asn1Data_cert = fromBER(certBuffer);
   const cert = new Certificate({ schema: asn1Data_cert.result });
   const tbsAsn1 = cert.encodeTBS();
   const tbsDer = tbsAsn1.toBER(false);
