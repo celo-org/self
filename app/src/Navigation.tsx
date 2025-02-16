@@ -41,6 +41,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import { black, slate300, white } from './utils/colors';
+import useNavigationStore from './stores/navigationStore';
 
 // Create a ref that we can use to access the navigation state
 export const navigationRef = createNavigationContainerRef();
@@ -322,19 +323,22 @@ declare global {
 
 const Navigation = createStaticNavigation(AppNavigation);
 const NavigationWithTracking = () => {
-  const handleStateChange = () => {
+  const { trackEvent } = useNavigationStore();
+
+  const trackScreenView = () => {
     const currentRoute = navigationRef.getCurrentRoute();
     if (currentRoute) {
-      // You can add your tracking logic here
-      console.log('@@@ Screen changed to:', currentRoute.name);
-      // Example analytics call
-      // analytics.trackScreen(currentRoute.name, currentRoute.params);
+      console.log(`Screen View: ${currentRoute.name}`);
+      trackEvent(`Screen View: ${currentRoute.name}`, {
+        screenName: currentRoute.name,
+        params: currentRoute.params,
+      });
     }
   };
 
   return (
     <SafeAreaProvider>
-      <Navigation ref={navigationRef} onStateChange={handleStateChange} />
+      <Navigation ref={navigationRef} onStateChange={trackScreenView} />
     </SafeAreaProvider>
   );
 };
