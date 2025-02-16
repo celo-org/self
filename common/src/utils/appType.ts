@@ -62,7 +62,7 @@ export class SelfAppBuilder {
       endpointType : 'https',
       header: "",
       logoBase64: "",
-      disclosureOptions: [],
+      disclosures: {},
       ...config,
     } as SelfApp;
   }
