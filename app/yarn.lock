@@ -11848,7 +11848,6 @@ __metadata:
     "@segment/analytics-react-native": "npm:^2.20.3"
     "@segment/sovran-react-native": "npm:^1.1.3"
     "@stablelib/cbor": "npm:^2.0.1"
-    "@tamagui/colors": "npm:1.110.0"
     "@tamagui/config": "npm:1.110.0"
     "@tamagui/lucide-icons": "npm:1.110.0"
     "@tamagui/toast": "npm:1.110.0"
