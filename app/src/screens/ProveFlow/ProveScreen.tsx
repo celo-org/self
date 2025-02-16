@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -30,12 +30,12 @@ const ProveScreen: React.FC = () => {
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
+  const isProcessingRef = useRef(false);
   useEffect(() => {
+    if (!selectedApp || selectedAppRef.current?.sessionId === selectedApp.sessionId) {
+      return; // Avoid unnecessary updates
+    }
     selectedAppRef.current = selectedApp;
-  }, [selectedApp]);
-
-  // Add effect to log when selectedApp changes
-  useEffect(() => {
     console.log('[ProveScreen] Selected app updated:', selectedApp);
   }, [selectedApp]);
 
@@ -68,6 +68,9 @@ const ProveScreen: React.FC = () => {
   const onVerify = useCallback(
     async function () {
       buttonTap();
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
+
       const currentApp = selectedAppRef.current;
       try {
         // getData first because that triggers biometric authentication and feels nicer to do before navigating
@@ -113,6 +116,8 @@ const ProveScreen: React.FC = () => {
       } catch (e) {
         console.log('Error sending VC and disclose payload', e);
         setStatus(ProofStatusEnum.ERROR);
+      } finally {
+        isProcessingRef.current = false;
       }
     },
     [
@@ -121,7 +126,6 @@ const ProveScreen: React.FC = () => {
       sendVcAndDisclosePayload,
       setStatus,
       buttonTap,
-      selectedAppRef,
     ],
   );
 
