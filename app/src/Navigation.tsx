@@ -43,9 +43,6 @@ import StartScreen from './screens/StartScreen';
 import useNavigationStore from './stores/navigationStore';
 import { black, slate300, white } from './utils/colors';
 
-// Create a ref that we can use to access the navigation state
-export const navigationRef = createNavigationContainerRef();
-
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
   orientation: 'portrait_up',
@@ -320,6 +317,9 @@ declare global {
     interface RootParamList extends RootStackParamList {}
   }
 }
+
+// Create a ref that we can use to access the navigation state
+export const navigationRef = createNavigationContainerRef();
 
 const Navigation = createStaticNavigation(AppNavigation);
 const NavigationWithTracking = () => {
