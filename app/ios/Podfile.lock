@@ -1280,8 +1280,6 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-netinfo (11.4.1):
-    - React-Core
   - react-native-nfc-manager (3.16.1):
     - React-Core
   - react-native-orientation-locker (1.7.0):
@@ -1667,7 +1665,6 @@ DEPENDENCIES:
   - react-native-cloud-storage (from `../node_modules/react-native-cloud-storage`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
-  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-nfc-manager (from `../node_modules/react-native-nfc-manager`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1807,8 +1804,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
-  react-native-netinfo:
-    :path: "../node_modules/@react-native-community/netinfo"
   react-native-nfc-manager:
     :path: "../node_modules/react-native-nfc-manager"
   react-native-orientation-locker:
@@ -1953,7 +1948,6 @@ SPEC CHECKSUMS:
   react-native-cloud-storage: 4c68bc6025c3624164461e15231efb28576f78a8
   react-native-date-picker: 5637f417bb0c1981bc9d483324d5eb5929a1651c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
-  react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-nfc-manager: 5213321cf6c18d879c8092c0bf56806b771ec5ac
   react-native-orientation-locker: 5819fd23ca89cbac0d736fb4314745f62716d517
   react-native-safe-area-context: 849d7df29ecb2a7155c769c0b76849ba952c2aa3
