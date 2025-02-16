@@ -5,7 +5,6 @@ import Orientation from 'react-native-orientation-locker';
 import { Buffer } from 'buffer';
 import { YStack } from 'tamagui';
 
-// Adjust the import path as needed
 import AppNavigation from './src/Navigation';
 import { AppProvider } from './src/stores/appProvider';
 import { AuthProvider } from './src/stores/authProvider';

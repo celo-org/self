@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   StaticParamList,
+  createNavigationContainerRef,
   createStaticNavigation,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -40,6 +41,9 @@ import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import { black, slate300, white } from './utils/colors';
+
+// Create a ref that we can use to access the navigation state
+export const navigationRef = createNavigationContainerRef();
 
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
@@ -316,4 +320,23 @@ declare global {
   }
 }
 
-export default createStaticNavigation(AppNavigation);
+const Navigation = createStaticNavigation(AppNavigation);
+const NavigationWithTracking = () => {
+  const handleStateChange = () => {
+    const currentRoute = navigationRef.getCurrentRoute();
+    if (currentRoute) {
+      // You can add your tracking logic here
+      console.log('@@@ Screen changed to:', currentRoute.name);
+      // Example analytics call
+      // analytics.trackScreen(currentRoute.name, currentRoute.params);
+    }
+  };
+
+  return (
+    <SafeAreaProvider>
+      <Navigation ref={navigationRef} onStateChange={handleStateChange} />
+    </SafeAreaProvider>
+  );
+};
+
+export default NavigationWithTracking;
