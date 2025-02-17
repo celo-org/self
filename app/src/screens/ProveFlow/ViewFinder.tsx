@@ -1,7 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { View, XStack, YStack } from 'tamagui';
 
@@ -44,6 +48,13 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
   const [doneScanningQR, setDoneScanningQR] = useState(false);
   const { startAppListener } = useApp();
 
+  // This resets to the default state when we navigate back to this screen
+  useFocusEffect(
+    useCallback(() => {
+      setDoneScanningQR(false);
+    }, []),
+  );
+
   const onQRData = useCallback<QRCodeScannerViewProps['onQRData']>(
     async (error, uri) => {
       if (doneScanningQR) {
@@ -55,16 +66,32 @@ const QRCodeViewFinderScreen: React.FC<QRCodeViewFinderScreenProps> = ({}) => {
         setDoneScanningQR(true);
         const encodedData = parseUrlParams(uri!);
         const sessionId = encodedData.get('sessionId');
-        cleanSelfApp();
-        if (sessionId) {
-          startAppListener(sessionId, setSelectedApp);
+        if (!sessionId) {
+          console.error('No sessionId found in QR code');
+          return;
         }
-        navigation.navigate('ProveScreen');
+
+        // Clean up first
+        cleanSelfApp();
+
+        // Start the app listener and wait a moment for the connection
+        startAppListener(sessionId, setSelectedApp);
+
+        // Small delay to ensure the websocket connection is established
+        setTimeout(() => {
+          navigation.navigate('ProveScreen');
+        }, 100);
       }
     },
-    [doneScanningQR, navigation, startAppListener],
+    [
+      doneScanningQR,
+      navigation,
+      startAppListener,
+      cleanSelfApp,
+      setSelectedApp,
+    ],
   );
-  const onCancelPress = useHapticNavigation('Home', 'cancel');
+  const onCancelPress = useHapticNavigation('Home', { action: 'cancel' });
 
   return (
     <>

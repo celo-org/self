@@ -1,3 +1,4 @@
+import { CertificateData } from "./certificate_parsing/dataStructure";
 import { PassportMetadata } from "./passports/passport_parsing/parsePassportData";
 
 export type PassportData = {
@@ -9,12 +10,9 @@ export type PassportData = {
   eContent: number[];
   signedAttr: number[];
   encryptedDigest: number[];
-  photoBase64: string;
-  mockUser?: boolean;
-  parsed: boolean;
   passportMetadata?: PassportMetadata;
-  dsc_parsed?: any;
-  csca_parsed?: any;
+  dsc_parsed?: CertificateData;
+  csca_parsed?: CertificateData;
 };
 
 // Define the signature algorithm in "algorithm_hashfunction_domainPapameter_keyLength"

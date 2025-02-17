@@ -1,19 +1,23 @@
 import { UserIdType } from "./circuits/uuid";
 
 export type Mode = 'register' | 'dsc' | 'vc_and_disclose';
+export type EndpointType = 'https' | 'celo';
+
+import { v4 } from 'uuid';
 
 // SelfAppType
 export interface SelfAppPartial {
   appName: string;
   logoBase64: string;
+  endpointType: EndpointType;
+  endpoint: string;
+  header: string;
   scope: string;
   sessionId: string;
   userId: string;
   userIdType: UserIdType;
   devMode: boolean;
 }
-
-
 
 export interface SelfApp extends SelfAppPartial {
   args: ArgumentsDisclose;
@@ -30,7 +34,7 @@ type DisclosureBoolOption = {
 }
 
 type DisclosureMatchKeys = 'nationality' | 'minimumAge'
-interface DisclosureMatchOption<T = DisclosureMatchKeys> {
+export interface DisclosureMatchOption<T = DisclosureMatchKeys> {
   enabled: boolean;
   key: T;
   value: string;
@@ -49,7 +53,7 @@ export type DisclosureOptions = Array<DisclosureOption>
 
 export type GetDisclosure<T extends DisclosureAttributes> = T extends DisclosureMatchKeys ? DisclosureMatchOption : T extends DisclosureListKeys ? DisclosureListOption : DisclosureBoolOption
 
-
+// {"appName": "Mock App2", "args": {"disclosureOptions": [[Object]]}, "devMode": false, "endpoint": "https://mock-app2.com", "endpointType": "https", "header": "", "logoBase64": "", "scope": "scope", "sessionId": "05ce9b3f-cf20-4eca-8bf1-df2694967787", "userId": "06e946f1-485c-4af4-97c4-74a61cf47724", "userIdType": "uuid"}
 export class SelfAppBuilder {
   appName: string;
   logoBase64: string;
@@ -58,14 +62,25 @@ export class SelfAppBuilder {
   userId: string;
   userIdType: UserIdType;
   devMode: boolean;
+  endpointType: EndpointType;
+  endpoint: string;
+  header: string;
   args: ArgumentsDisclose;
 
-  constructor(appName: string, scope: string) {
+  constructor(appName: string, scope: string, endpoint: string) {
     this.appName = appName;
     this.scope = scope;
     this.args = {
       disclosureOptions: []
     };
+    this.header = '';
+    this.endpoint = endpoint;
+    this.sessionId = v4();
+    this.logoBase64 = '';
+    this.userId = '';
+    this.userIdType = 'uuid';
+    this.devMode = false;
+    this.endpointType = 'https';
   }
 
   setLogoBase64(logoBase64: string) {
@@ -75,6 +90,16 @@ export class SelfAppBuilder {
 
   setUserId(userId: string) {
     this.userId = userId;
+    return this;
+  }
+
+  setEndpointType(endpointType: EndpointType) {
+    this.endpointType = endpointType;
+    return this;
+  }
+
+  setEndpoint(endpoint: string) {
+    this.endpoint = endpoint;
     return this;
   }
 
@@ -124,6 +149,25 @@ export class SelfAppBuilder {
   }
 
   build(): SelfApp {
+    if (!this.appName) {
+      throw new Error('appName is required');
+    }
+    if (!this.scope) {
+      throw new Error('scope is required');
+    }
+    if (!this.sessionId) {
+      throw new Error('sessionId is required');
+    }
+    if (!this.endpoint) {
+      throw new Error('endpoint is required');
+    }
+    if (this.endpointType === 'https' && !this.endpoint.startsWith('https://')) {
+      throw new Error('endpoint must start with https://');
+    }
+    if (this.endpointType === 'celo' && !this.endpoint.startsWith('0x')) {
+      throw new Error('endpoint must be a valid address');
+    }
+
     return {
       appName: this.appName,
       logoBase64: this.logoBase64,
@@ -132,6 +176,9 @@ export class SelfAppBuilder {
       userId: this.userId,
       userIdType: this.userIdType,
       devMode: this.devMode,
+      endpointType: this.endpointType,
+      endpoint: this.endpoint,
+      header: this.header,
       args: this.args
     };
   }

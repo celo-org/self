@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useNavigation } from '@react-navigation/native';
 import { ChevronDown, Cpu, Minus, Plus, X } from '@tamagui/lucide-icons';
@@ -20,14 +21,14 @@ import {
 
 import { countryCodes } from '../../../common/src/constants/constants';
 import { genMockPassportData } from '../../../common/src/utils/passports/genMockPassportData';
-import { initPassportDataParsing } from '../../../common/src/utils/passports/passport';
 import CustomButton from '../components/CustomButton';
-import useUserStore from '../stores/userStore';
+import { usePassport } from '../stores/passportDataProvider';
 import {
   bgWhite,
   borderColor,
   separatorColor,
   textBlack,
+  white,
 } from '../utils/colors';
 import { buttonTap, selectionChange } from '../utils/haptic';
 
@@ -48,6 +49,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
       date.toISOString().slice(8, 10)
     ).toString();
   };
+  const { setData } = usePassport();
 
   const [selectedCountry, setSelectedCountry] = useState('USA');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('rsa sha256');
@@ -91,7 +93,7 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
             castDate(-age),
             castDate(expiryYears),
             randomPassportNumber,
-            'HENAO MONTOYA', // this name is the OFAC list
+            'HENAO MONTOYA', // this name is on the OFAC list
             'ARCANGEL DE JESUS',
           );
         } else {
@@ -107,20 +109,27 @@ const MockDataScreen: React.FC<MockDataScreenProps> = ({}) => {
             randomPassportNumber,
           );
         }
-        const passportDataInit = initPassportDataParsing(mockPassportData);
-        useUserStore.getState().registerPassportData(passportDataInit);
-        useUserStore.getState().setRegistered(true);
+
+        setData(mockPassportData);
         resolve(null);
       }, 0),
     );
 
     await new Promise(resolve => setTimeout(resolve, 1000));
-    navigation.navigate('NextScreen');
+    navigation.navigate('ConfirmBelongingScreen');
   }, [selectedAlgorithm, selectedCountry, age, expiryYears, isInOfacList]);
 
+  const { top, bottom } = useSafeAreaInsets();
   return (
     <>
-      <YStack f={1} gap="$4" px="$4">
+      <YStack
+        f={1}
+        gap="$4"
+        px="$4"
+        backgroundColor={white}
+        paddingTop={top}
+        paddingBottom={bottom}
+      >
         <Text my="$9" textAlign="center" fontSize="$9" color={textBlack}>
           Generate passport data
         </Text>

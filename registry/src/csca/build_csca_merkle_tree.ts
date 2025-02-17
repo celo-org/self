@@ -57,7 +57,7 @@ function processCertificate(pemContent: string, filePath: string) {
 async function buildCscaMerkleTree() {
     const tree = new IMT(poseidon2, CSCA_TREE_DEPTH, 0, 2);
 
-    if (!DEVELOPMENT_MODE) {
+    if (!false) {
         const path_to_pem_files = "outputs/csca/pem_masterlist";
         for (const file of fs.readdirSync(path_to_pem_files)) {
             const file_path = path.join(path_to_pem_files, file);
@@ -73,7 +73,7 @@ async function buildCscaMerkleTree() {
         }
     }
 
-    if (DEVELOPMENT_MODE) {
+    if (true) {
         const dev_pem_path = path.join(__dirname, '..', '..', '..', 'common', 'src', 'mock_certificates');
         const subdirectories = fs.readdirSync(dev_pem_path, { withFileTypes: true })
             .filter(item => item.isDirectory())
@@ -117,6 +117,8 @@ async function buildCscaMerkleTree() {
 
 async function serializeCscaTree(tree: IMT) {
     const serializedTree = tree.nodes.map(layer => layer.map(node => node.toString()));
+    const root = tree.root.toString();
+    console.log('\x1b[34m%s\x1b[0m', "Tree root: ", root);
     await writeFile("outputs/serialized_csca_tree.json", JSON.stringify(serializedTree));
     fs.copyFileSync("outputs/serialized_csca_tree.json", "../common/pubkeys/serialized_csca_tree.json");
     console.log("serialized_csca_tree.json written and copied in common/pubkeys!");

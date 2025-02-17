@@ -1,32 +1,45 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import splashAnimation from '../assets/animations/splash.json';
-import useUserStore from '../stores/userStore';
+import { loadSecret, useAuth } from '../stores/authProvider';
+import { loadPassportData } from '../stores/passportDataProvider';
+import { useSettingStore } from '../stores/settingStore';
 import { black } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
 
 const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
-  const { userLoaded, passportData } = useUserStore();
+  const { createSigningKeyPair } = useAuth();
+  const { setBiometricsAvailable } = useSettingStore();
 
-  const redirect = useCallback(() => {
-    if (userLoaded && passportData) {
-      navigation.navigate('Home');
-    } else {
-      navigation.navigate('Launch');
-    }
-  }, [passportData, userLoaded]);
+  useEffect(() => {
+    createSigningKeyPair()
+      .then(setBiometricsAvailable)
+      .catch(err => {
+        console.warn(
+          'Something ELSE and totally unexpected went wrong during keypair creation',
+          err,
+        );
+      });
+  }, []);
 
   const handleAnimationFinish = useCallback(() => {
-    setTimeout(() => {
+    setTimeout(async () => {
       impactLight();
-      redirect();
+      const secret = await loadSecret();
+      const passportData = await loadPassportData();
+
+      if (secret && passportData) {
+        navigation.navigate('Home');
+      } else {
+        navigation.navigate('Launch');
+      }
     }, 1000);
-  }, [userLoaded]);
+  }, [navigation]);
 
   return (
     <LottieView

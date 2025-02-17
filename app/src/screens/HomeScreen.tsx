@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { usePreventRemove } from '@react-navigation/native';
+import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
 
 import { BodyText } from '../components/typography/BodyText';
 import { Caption } from '../components/typography/Caption';
+import { useAppUpdates } from '../hooks/useAppUpdates';
 import useHapticNavigation from '../hooks/useHapticNavigation';
 import SelfCard from '../images/card-style-1.svg';
 import ScanIcon from '../images/icons/qr_scan.svg';
@@ -25,6 +26,15 @@ const ScanButton = styled(Button, {
 });
 
 const HomeScreen: React.FC = () => {
+  const [isNewVersionAvailable, showAppUpdateModal, isModalDismissed] =
+    useAppUpdates();
+
+  useFocusEffect(() => {
+    if (isNewVersionAvailable && !isModalDismissed) {
+      showAppUpdateModal();
+    }
+  });
+
   const onCaptionPress = useHapticNavigation('ConfirmBelongingScreen');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
@@ -52,14 +62,19 @@ const HomeScreen: React.FC = () => {
         <PrivacyNote />
       </YStack>
       <YStack ai="center" gap={20} justifyContent="flex-end">
-        <ScanButton onPress={onScanButtonPress} hitSlop={50}>
+        <ScanButton
+          onPress={onScanButtonPress}
+          hitSlop={100}
+          pressStyle={pressStyle}
+        >
           <ScanIcon color={amber500} />
         </ScanButton>
         <Caption
+          onPress={onScanButtonPress}
           color={amber500}
           textTransform="uppercase"
-          hitSlop={50}
-          onPress={onScanButtonPress}
+          backgroundColor={black}
+          pressStyle={{ backgroundColor: 'transparent' }}
         >
           Prove your SELF
         </Caption>
@@ -67,6 +82,12 @@ const HomeScreen: React.FC = () => {
     </YStack>
   );
 };
+
+const pressStyle = {
+  opacity: 1,
+  backgroundColor: 'transparent',
+  transform: [{ scale: 0.95 }],
+} as const;
 
 function PrivacyNote() {
   const { hasPrivacyNoteBeenDismissed } = useSettingStore();

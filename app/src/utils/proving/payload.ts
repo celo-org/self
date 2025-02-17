@@ -1,31 +1,54 @@
 import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
 import { SMT } from '@openpassport/zk-kit-smt';
 import { poseidon2 } from 'poseidon-lite';
-import { v4 } from 'uuid';
 
-import namejson from '../../../../common/ofacdata/outputs/nameSMT.json';
+import nameAndDobSMTData from '../../../../common/ofacdata/outputs/nameAndDobSMT.json';
+import nameAndYobSMTData from '../../../../common/ofacdata/outputs/nameAndYobSMT.json';
+import passportNoAndNationalitySMTData from '../../../../common/ofacdata/outputs/passportNoAndNationalitySMT.json';
 import {
+  DEFAULT_MAJORITY,
   DEPLOYED_CIRCUITS_DSC,
   DEPLOYED_CIRCUITS_REGISTER,
   PASSPORT_ATTESTATION_ID,
   WS_RPC_URL_DSC,
   WS_RPC_URL_REGISTER,
   WS_RPC_URL_VC_AND_DISCLOSE,
+  attributeToPosition,
 } from '../../../../common/src/constants/constants';
+import {
+  DisclosureMatchOption,
+  SelfApp,
+} from '../../../../common/src/utils/appType';
 import { getCircuitNameFromPassportData } from '../../../../common/src/utils/circuits/circuitsName';
 import {
   generateCircuitInputsDSC,
   generateCircuitInputsRegister,
   generateCircuitInputsVCandDisclose,
 } from '../../../../common/src/utils/circuits/generateInputs';
-import { generateCommitment } from '../../../../common/src/utils/passports/passport';
+import {
+  generateCommitment,
+  generateNullifier,
+} from '../../../../common/src/utils/passports/passport';
+import {
+  getCSCATree,
+  getCommitmentTree,
+  getDSCTree,
+  getLeafDscTree,
+} from '../../../../common/src/utils/trees';
 import { PassportData } from '../../../../common/src/utils/types';
+import { ProofStatusEnum } from '../../stores/proofProvider';
 import { sendPayload } from './tee';
 
-const mock_secret = '0'; //TODO: retrieve the secret from keychain
-
-function generateTeeInputsRegister(secret: string, passportData: PassportData) {
-  const inputs = generateCircuitInputsRegister(secret, passportData);
+async function generateTeeInputsRegister(
+  secret: string,
+  passportData: PassportData,
+) {
+  const serialized_dsc_tree = await getDSCTree();
+  const inputs = generateCircuitInputsRegister(
+    secret,
+    passportData,
+    serialized_dsc_tree,
+  );
   const circuitName = getCircuitNameFromPassportData(passportData, 'register');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -33,11 +56,7 @@ function generateTeeInputsRegister(secret: string, passportData: PassportData) {
   return { inputs, circuitName };
 }
 
-function checkPassportSupported(passportData: PassportData) {
-  if (!passportData.parsed) {
-    console.log('Passport data is not parsed');
-    return false;
-  }
+export function checkPassportSupported(passportData: PassportData) {
   const passportMetadata = passportData.passportMetadata;
   if (!passportMetadata) {
     console.log('Passport metadata is null');
@@ -66,25 +85,31 @@ function checkPassportSupported(passportData: PassportData) {
   return true;
 }
 
-export async function sendRegisterPayload(passportData: PassportData) {
-  if (!passportData) {
-    return null;
-  }
-  const isSupported = checkPassportSupported(passportData);
-  if (!isSupported) {
-    // TODO: show a screen explaining that the passport is not supported.
-    console.log('Passport not supported');
-    return;
-  }
+export async function sendRegisterPayload(
+  passportData: PassportData,
+  secret: string,
+) {
   const { inputs, circuitName } = await generateTeeInputsRegister(
-    mock_secret,
+    secret,
     passportData,
   );
-  await sendPayload(inputs, circuitName, WS_RPC_URL_REGISTER);
+  console.log('WS_RPC_URL_REGISTER', WS_RPC_URL_REGISTER);
+  await sendPayload(
+    inputs,
+    'register',
+    circuitName,
+    'https',
+    'https://self.xyz',
+    WS_RPC_URL_REGISTER,
+  );
 }
 
-function generateTeeInputsDsc(passportData: PassportData) {
-  const inputs = generateCircuitInputsDSC(passportData.dsc, false);
+async function generateTeeInputsDsc(passportData: PassportData) {
+  const serialized_csca_tree = await getCSCATree();
+  const inputs = generateCircuitInputsDSC(
+    passportData.dsc,
+    serialized_csca_tree,
+  );
   const circuitName = getCircuitNameFromPassportData(passportData, 'dsc');
   if (circuitName == null) {
     throw new Error('Circuit name is null');
@@ -92,53 +117,134 @@ function generateTeeInputsDsc(passportData: PassportData) {
   return { inputs, circuitName };
 }
 
-export async function sendDscPayload(passportData: PassportData): Promise<any> {
+async function checkIdPassportDscIsInTree(
+  passportData: PassportData,
+): Promise<boolean> {
+  const dscTree = await getDSCTree();
+  const hashFunction = (a: any, b: any) => poseidon2([a, b]);
+  const tree = LeanIMT.import(hashFunction, dscTree);
+  const leaf = getLeafDscTree(
+    passportData.dsc_parsed!,
+    passportData.csca_parsed!,
+  );
+  console.log('DSC leaf:', leaf);
+  const index = tree.indexOf(BigInt(leaf));
+  if (index === -1) {
+    console.log('DSC is not found in the tree, sending DSC payload');
+    const dscStatus = await sendDscPayload(passportData);
+    if (dscStatus !== ProofStatusEnum.SUCCESS) {
+      console.log('DSC proof failed');
+      return false;
+    }
+  } else {
+    console.log('DSC is found in the tree, skipping DSC payload');
+  }
+  return true;
+}
+
+export async function sendDscPayload(
+  passportData: PassportData,
+): Promise<ProofStatusEnum | false> {
   if (!passportData) {
     return false;
   }
   const isSupported = checkPassportSupported(passportData);
   if (!isSupported) {
-    console.log('Passport not supported'); //TODO: show a screen explaining that the passport is not supported.
+    console.log('Passport not supported');
     return false;
   }
-  const { inputs, circuitName } = generateTeeInputsDsc(passportData);
+  const { inputs, circuitName } = await generateTeeInputsDsc(passportData);
   console.log('circuitName', circuitName);
-  const result = await sendPayload(inputs, circuitName, WS_RPC_URL_DSC);
-  return result;
+  const dscStatus = await sendPayload(
+    inputs,
+    'dsc',
+    circuitName,
+    'https',
+    'https://self.xyz',
+    WS_RPC_URL_DSC,
+    undefined,
+    { updateGlobalOnSuccess: false },
+  );
+  return dscStatus;
 }
 
-function generateTeeInputsVCAndDisclose(passportData: PassportData) {
-  const majority = '18';
-  // THIS Does not work. need a package for this in react native
-  const user_identifier = v4();
-  const selector_dg1 = Array(88).fill('1');
-  const selector_older_than = '1';
-  const scope = '@coboyApp';
-  const attestation_id = PASSPORT_ATTESTATION_ID;
+/*** DISCLOSURE ***/
 
-  const commitment = generateCommitment(
-    mock_secret,
-    attestation_id,
-    passportData,
+async function getSMT() {
+  // TODO: get the SMT from an endpoint
+  const passportNoAndNationalitySMT = new SMT(poseidon2, true);
+  passportNoAndNationalitySMT.import(passportNoAndNationalitySMTData);
+  const nameAndDobSMT = new SMT(poseidon2, true);
+  nameAndDobSMT.import(nameAndDobSMTData);
+  const nameAndYobSMT = new SMT(poseidon2, true);
+  nameAndYobSMT.import(nameAndYobSMTData);
+  return { passportNoAndNationalitySMT, nameAndDobSMT, nameAndYobSMT };
+}
+
+async function generateTeeInputsVCAndDisclose(
+  secret: string,
+  passportData: PassportData,
+  selfApp: SelfApp,
+) {
+  let majority = DEFAULT_MAJORITY;
+  const minAgeOption = selfApp.args.disclosureOptions.find(
+    opt => opt.key === 'minimumAge',
   );
-  const tree = new LeanIMT<bigint>((a, b) => poseidon2([a, b]), []);
-  tree.insert(BigInt(commitment));
-  let smt = new SMT(poseidon2, true);
-  smt.import(namejson);
+  if (
+    minAgeOption &&
+    minAgeOption.enabled &&
+    minAgeOption.key === 'minimumAge'
+  ) {
+    majority = (minAgeOption as DisclosureMatchOption<'minimumAge'>).value;
+  }
 
-  const selector_ofac = 1;
-  const forbidden_countries_list = ['ABC', 'DEF'];
+  const user_identifier = selfApp.userId;
+
+  let selector_dg1 = new Array(88).fill('0');
+  const nationalityOption = selfApp.args.disclosureOptions.find(
+    opt => opt.key === 'nationality',
+  );
+  if (nationalityOption && nationalityOption.enabled) {
+    const [start, end] = attributeToPosition.nationality;
+    for (let i = start; i <= end && i < selector_dg1.length; i++) {
+      selector_dg1[i] = '1';
+    }
+  }
+  // TODO: add more options, we have to do it to in OpenpassportQrcode.ts
+
+  const selector_older_than = minAgeOption && minAgeOption.enabled ? '1' : '0';
+  const ofacOption = selfApp.args.disclosureOptions.find(
+    opt => opt.key === 'ofac',
+  );
+  const selector_ofac = ofacOption && ofacOption.enabled ? 1 : 0;
+  const { passportNoAndNationalitySMT, nameAndDobSMT, nameAndYobSMT } =
+    await getSMT();
+  const scope = selfApp.scope;
+  const attestation_id = PASSPORT_ATTESTATION_ID;
+  const commitment = generateCommitment(secret, attestation_id, passportData);
+  const _tree = await getCommitmentTree();
+  const tree = LeanIMT.import((a, b) => poseidon2([a, b]), _tree);
+  tree.insert(BigInt(commitment)); // TODO: dont do that! for now we add the commitment as the whole flow is not yet implemented
+  let forbidden_countries_list: string[] = ['ABC', 'DEF']; // TODO: add the countries from the disclosure options
+  const excludedCountriesOption = selfApp.args.disclosureOptions.find(
+    opt => opt.key === 'excludedCountries',
+  ) as { enabled: boolean; key: string; value: string[] } | undefined;
+  if (excludedCountriesOption && excludedCountriesOption.enabled) {
+    forbidden_countries_list = excludedCountriesOption.value;
+  }
 
   const inputs = generateCircuitInputsVCandDisclose(
-    mock_secret,
-    PASSPORT_ATTESTATION_ID,
+    secret,
+    attestation_id,
     passportData,
     scope,
     selector_dg1,
     selector_older_than,
     tree,
     majority,
-    smt,
+    passportNoAndNationalitySMT,
+    nameAndDobSMT,
+    nameAndYobSMT,
     selector_ofac,
     forbidden_countries_list,
     user_identifier,
@@ -147,16 +253,59 @@ function generateTeeInputsVCAndDisclose(passportData: PassportData) {
 }
 
 export async function sendVcAndDisclosePayload(
+  secret: string,
   passportData: PassportData | null,
+  selfApp: SelfApp,
 ) {
   if (!passportData) {
     return null;
   }
-  const isSupported = checkPassportSupported(passportData);
-  if (!isSupported) {
-    // TODO: show a screen explaining that the passport is not supported.
+  const { inputs, circuitName } = await generateTeeInputsVCAndDisclose(
+    secret,
+    passportData,
+    selfApp,
+  );
+  await sendPayload(
+    inputs,
+    'vc_and_disclose',
+    circuitName,
+    selfApp.endpointType,
+    selfApp.endpoint,
+    WS_RPC_URL_VC_AND_DISCLOSE,
+  );
+}
+
+/*** Logic Flow ****/
+
+export async function isUserRegistered(
+  passportData: PassportData,
+  secret: string,
+) {
+  const commitment = generateCommitment(
+    secret,
+    PASSPORT_ATTESTATION_ID,
+    passportData,
+  );
+  const serializedTree = await getCommitmentTree();
+  const tree = LeanIMT.import((a, b) => poseidon2([a, b]), serializedTree);
+  const index = tree.indexOf(BigInt(commitment));
+  return index !== -1;
+}
+
+export async function isPassportNullified(passportData: PassportData) {
+  const nullifier = generateNullifier(passportData);
+  console.log('nullifier', nullifier);
+  // TODO: check if the nullifier is onchain
+  return false;
+}
+
+export async function registerPassport(
+  passportData: PassportData,
+  secret: string,
+) {
+  const dscOk = await checkIdPassportDscIsInTree(passportData);
+  if (!dscOk) {
     return;
   }
-  const { inputs, circuitName } = generateTeeInputsVCAndDisclose(passportData);
-  await sendPayload(inputs, circuitName, WS_RPC_URL_VC_AND_DISCLOSE);
+  await sendRegisterPayload(passportData, secret);
 }

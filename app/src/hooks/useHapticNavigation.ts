@@ -1,31 +1,48 @@
 import { useCallback } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from '../Navigation';
 import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
 
 type NavigationAction = 'default' | 'cancel' | 'confirm';
 
-const useHapticNavigation = (
-  screen: keyof RootStackParamList,
-  action: NavigationAction = 'default',
+const useHapticNavigation = <
+  T extends keyof RootStackParamList,
+  P extends T extends null ? never : RootStackParamList[T],
+>(
+  screen: T,
+  options: {
+    params?: P;
+    action?: NavigationAction;
+  } = {},
 ) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation() as NativeStackScreenProps<RootStackParamList>['navigation'];
 
   return useCallback(() => {
-    switch (action) {
+    switch (options.action) {
       case 'cancel':
         selectionChange();
-        break;
+        // @ts-expect-error - This actually works from outside usage, just unsure how to
+        // make typescript understand that this is correct
+        navigation.popTo(screen, options.params);
+        return;
+
       case 'confirm':
         impactMedium();
         break;
+
+      case 'default':
       default:
         impactLight();
     }
-    navigation.navigate(screen);
-  }, [navigation, screen, action]);
+
+    // @ts-expect-error - This actually works from outside usage, just unsure how to
+    // make typescript understand that this is correct
+    navigation.navigate(screen, options.params);
+  }, [navigation, screen, options.action]);
 };
 
 export default useHapticNavigation;

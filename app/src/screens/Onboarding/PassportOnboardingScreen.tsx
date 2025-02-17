@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 
 import LottieView from 'lottie-react-native';
@@ -13,7 +13,7 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { black, slate100 } from '../../utils/colors';
+import { black, slate100, white } from '../../utils/colors';
 
 interface PassportOnboardingScreenProps {}
 
@@ -21,22 +21,33 @@ const PassportOnboardingScreen: React.FC<
   PassportOnboardingScreenProps
 > = ({}) => {
   const handleCameraPress = useHapticNavigation('PassportCamera');
-  const onCancelPress = useHapticNavigation('Launch', 'cancel');
+  const onCancelPress = useHapticNavigation('Launch', { action: 'cancel' });
+  const animationRef = useRef<LottieView>(null);
+
+  useEffect(() => {
+    animationRef.current?.play();
+  }, []);
 
   return (
     <ExpandableBottomLayout.Layout backgroundColor={black}>
       <StatusBar barStyle="light-content" backgroundColor={black} />
-      <ExpandableBottomLayout.TopSection roundTop>
+      <ExpandableBottomLayout.TopSection roundTop backgroundColor={black}>
         <LottieView
-          autoPlay
+          ref={animationRef}
+          autoPlay={false}
           loop={false}
+          onAnimationFinish={() => {
+            setTimeout(() => {
+              animationRef.current?.play();
+            }, 5000); // Pause 5 seconds before playing again
+          }}
           source={passportOnboardingAnimation}
           style={styles.animation}
           cacheComposition={true}
           renderMode="HARDWARE"
         />
       </ExpandableBottomLayout.TopSection>
-      <ExpandableBottomLayout.BottomSection>
+      <ExpandableBottomLayout.BottomSection backgroundColor={white}>
         <TextsContainer>
           <Title>Scan your passport</Title>
           {/* TODO: consider moving textBreakStrategy to the component itself if we use it more often */}

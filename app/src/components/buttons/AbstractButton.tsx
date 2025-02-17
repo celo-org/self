@@ -1,16 +1,13 @@
 import React from 'react';
-import {
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  ViewStyle,
-} from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
+
+import { Button, Text, ViewProps } from 'tamagui';
 
 import { dinot } from '../../utils/fonts';
 
-export interface ButtonProps extends PressableProps {
+export interface ButtonProps extends ViewProps {
   children: React.ReactNode;
+  animatedComponent?: React.ReactNode;
 }
 
 interface AbstractButtonProps extends ButtonProps {
@@ -31,29 +28,35 @@ export default function AbstractButton({
   color,
   borderColor,
   style,
-  ...pressable
+  animatedComponent,
+  ...props
 }: AbstractButtonProps) {
   const hasBorder = borderColor ? true : false;
   return (
-    <Pressable
-      {...pressable}
+    <Button
+      unstyled
+      {...props}
       style={[
         styles.container,
         { backgroundColor: bgColor, borderColor: borderColor },
         hasBorder ? styles.withBorder : {},
         style as ViewStyle,
       ]}
+      pressStyle={!animatedComponent ? { transform, opacity: 0.85 } : {}}
     >
+      {animatedComponent}
       <Text style={[styles.text, { color: color }]}>{children}</Text>
-    </Pressable>
+    </Button>
   );
 }
+
+const transform = [{ scale: 0.99 }];
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
     justifyContent: 'center',
-    flexDirection: 'column',
+    flexDirection: 'row',
     flexGrow: 0,
     flexShrink: 0,
     width: '100%',

@@ -8,7 +8,7 @@ import {
 import { packBytesAndPoseidon } from './hash';
 import { DscCertificateMetaData, parseDscCertificateData } from './passports/passport_parsing/parseDscCertificateData';
 import { parseCertificateSimple } from './certificate_parsing/parseCertificateSimple';
-import { CSCA_TREE_DEPTH, DSC_TREE_DEPTH, max_csca_bytes, OFAC_TREE_LEVELS } from '../constants/constants';
+import { CSCA_TREE_DEPTH, DSC_TREE_DEPTH, IDENTITY_TREE_URL, max_csca_bytes, OFAC_TREE_LEVELS } from '../constants/constants';
 import { CSCA_TREE_URL, DSC_TREE_URL } from '../constants/constants';
 import { max_dsc_bytes } from '../constants/constants';
 import { IMT } from '@openpassport/zk-kit-imt';
@@ -16,24 +16,20 @@ import { pad } from './passports/passport';
 import countries from "i18n-iso-countries";
 import en from "i18n-iso-countries/langs/en.json";
 countries.registerLocale(en);
-import serialized_csca_tree from '../../pubkeys/serialized_csca_tree.json';
-import serialized_dsc_tree from '../../pubkeys/serialized_dsc_tree.json';
 
-
-export async function getCSCATree(devMode: boolean = false): Promise<string[][]> {
-  if (devMode) {
-    return serialized_csca_tree;
-  }
+export async function getCSCATree(): Promise<string[][]> {
   const response = await fetch(CSCA_TREE_URL);
-  return await response.json().then(data => data);
+  return await response.json().then(data => data.data ? JSON.parse(data.data) : data);
 }
 
-export async function getDSCTree(devMode: boolean = false): Promise<string> {
-  if (devMode) {
-    return serialized_dsc_tree;
-  }
+export async function getDSCTree(): Promise<string> {
   const response = await fetch(DSC_TREE_URL);
-  return await response.json();
+  return await response.json().then(data => data.data ? data.data : data);
+}
+
+export async function getCommitmentTree(): Promise<string> {
+  const response = await fetch(IDENTITY_TREE_URL);
+  return await response.json().then(data => data.data ? data.data : data);
 }
 
 export async function fetchTreeFromUrl(url: string): Promise<LeanIMT> {
@@ -66,7 +62,7 @@ export function getLeaf(parsed: CertificateData, type: 'dsc' | 'csca'): string {
 }
 
 
-export function getLeafDscTreeFromDscCertificateMetadata(dscParsed: CertificateData, dscMetaData: DscCertificateMetaData): string {
+export function getLeafDscTreeFromDscCertificateMetadata(dscParsed: CertificateData, dscMetaData: DscCertificateMetaData): string { // TODO: WRONG  change this function using raw dsc and hashfunctions from passportMetadata
   const cscaParsed = parseCertificateSimple(dscMetaData.csca);
   return getLeafDscTree(dscParsed, cscaParsed);
 }
@@ -97,9 +93,9 @@ export function getDscTreeInclusionProof(leaf: string, serialized_dsc_tree: stri
   return [tree.root, path, siblings, leaf_depth];
 }
 
-export function getCscaTreeInclusionProof(leaf: string, serialized_csca_tree: any[][]) {
+export function getCscaTreeInclusionProof(leaf: string, _serialized_csca_tree: any[][]) {
   let tree = new IMT(poseidon2, CSCA_TREE_DEPTH, 0, 2);
-  tree.setNodes(serialized_csca_tree);
+  tree.setNodes(_serialized_csca_tree);
   const index = tree.indexOf(leaf);
   if (index === -1) {
     throw new Error('Your public key was not found in the registry');
@@ -107,6 +103,7 @@ export function getCscaTreeInclusionProof(leaf: string, serialized_csca_tree: an
   const proof = tree.createProof(index);
   return [tree.root, proof.pathIndices.map(index => index.toString()), proof.siblings.flat().map(sibling => sibling.toString())];
 }
+
 export function getCscaTreeRoot(serialized_csca_tree: any[][]) {
   let tree = new IMT(poseidon2, CSCA_TREE_DEPTH, 0, 2);
   tree.setNodes(serialized_csca_tree);

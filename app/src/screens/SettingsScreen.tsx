@@ -9,6 +9,7 @@ import { Bug } from '@tamagui/lucide-icons';
 import { Button, ScrollView, View, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
+import { RootStackParamList } from '../Navigation';
 import { BodyText } from '../components/typography/BodyText';
 import {
   appStoreUrl,
@@ -43,16 +44,13 @@ interface SocialButtonProps {
 }
 
 const emailFeedback = 'feedback@self.xyz';
-type RouteOption =
-  | keyof ReactNavigation.RootParamList
-  | 'share'
-  | 'email_feedback';
+type RouteOption = keyof RootStackParamList | 'share' | 'email_feedback';
 
 const storeURL = Platform.OS === 'ios' ? appStoreUrl : playStoreUrl;
 const routes = [
   [Data, 'View passport info', 'PassportDataInfo'],
   [Lock, 'Reveal recovery phrase', 'ShowRecoveryPhrase'],
-  [Cloud, 'Enable cloud back up', 'CloudBackupSettingsScreen'],
+  [Cloud, 'Cloud backup', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
 ] as [React.FC<SvgProps>, string, RouteOption][];
@@ -80,6 +78,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({ children, Icon, onPress }) => (
     px={10}
     borderBottomColor={neutral700}
     borderBottomWidth={1}
+    hitSlop={4}
   >
     <Icon height={24} width={21} color={white} />
     <BodyText color={white} fontSize={18} lineHeight={23}>
