@@ -4,11 +4,15 @@ import { verifyAllAbi } from './abi/VerifyAll';
 import { parseSolidityCalldata } from './utils/utils';
 import { ethers } from 'ethers';
 import { groth16, Groth16Proof, PublicSignals } from 'snarkjs';
-import { countryCodes, countryNames, getCountryCode } from '@common/constants/constants';
-import type { SelfVerificationResult } from '@common/utils/selfAttestation';
-import { castToScope } from '@common/utils/circuits/uuid';
-import { CIRCUIT_CONSTANTS, revealedDataTypes } from '@common/constants/constants';
-import { packForbiddenCountriesList } from '@common/utils/contracts/formatCallData';
+import {
+  countryCodes,
+  countryNames,
+  getCountryCode,
+} from '../../../common/src/constants/constants';
+import type { SelfVerificationResult } from '../../../common/src/utils/selfAttestation';
+import { castToScope } from '../../../common/src/utils/circuits/uuid';
+import { CIRCUIT_CONSTANTS, revealedDataTypes } from '../../../common/src/constants/constants';
+import { packForbiddenCountriesList } from '../../../common/src/utils/contracts/formatCallData';
 
 export class SelfBackendVerifier {
   protected scope: string;
