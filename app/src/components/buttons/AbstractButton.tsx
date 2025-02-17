@@ -4,6 +4,7 @@ import { StyleSheet, ViewStyle } from 'react-native';
 import { Button, Text, ViewProps } from 'tamagui';
 
 import { dinot } from '../../utils/fonts';
+import { pressedStyle } from './pressedStyle';
 
 export interface ButtonProps extends ViewProps {
   children: React.ReactNode;
@@ -49,8 +50,6 @@ export default function AbstractButton({
     </Button>
   );
 }
-
-export const  pressedStyle = { transform: [{ scale: 0.99 }], opacity: 0.85 };
 
 const styles = StyleSheet.create({
   container: {

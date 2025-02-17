@@ -13,7 +13,7 @@ import ScanIcon from '../images/icons/qr_scan.svg';
 import WarnIcon from '../images/icons/warning.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { pressedStyle } from '../components/buttons/AbstractButton';
+import { pressedStyle } from '../components/buttons/pressedStyle';
 
 const ScanButton = styled(Button, {
   borderRadius: 20,
