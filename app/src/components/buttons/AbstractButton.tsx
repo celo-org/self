@@ -42,7 +42,7 @@ export default function AbstractButton({
         hasBorder ? styles.withBorder : {},
         style as ViewStyle,
       ]}
-      pressStyle={!animatedComponent ? { transform, opacity: 0.85 } : {}}
+      pressStyle={!animatedComponent ? pressedStyle : {}}
     >
       {animatedComponent}
       <Text style={[styles.text, { color: color }]}>{children}</Text>
@@ -50,7 +50,7 @@ export default function AbstractButton({
   );
 }
 
-const transform = [{ scale: 0.99 }];
+export const  pressedStyle = { transform: [{ scale: 0.99 }], opacity: 0.85 };
 
 const styles = StyleSheet.create({
   container: {

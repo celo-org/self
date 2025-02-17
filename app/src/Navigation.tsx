@@ -39,6 +39,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import { black, slate300, white } from './utils/colors';
+import { StatusBar } from 'react-native';
 
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
@@ -55,7 +56,8 @@ const AppNavigation = createNativeStackNavigator({
     Splash: {
       screen: SplashScreen,
       options: {
-        headerShown: false,
+        header: () => <StatusBar barStyle="light-content" backgroundColor={black} />,
+        navigationBarColor: black,
       },
     },
     Launch: {
@@ -140,12 +142,13 @@ const AppNavigation = createNativeStackNavigator({
       screen: LoadingScreen,
       options: {
         headerShown: false,
+        navigationBarColor: black,
       },
     },
     CreateMock: {
       screen: MockDataScreen,
       options: {
-        if: () => true, // TODO: dev only
+        if: () => __DEV__, // TODO: dev only
         title: 'Mock Passport',
       },
     },

@@ -13,6 +13,7 @@ import ScanIcon from '../images/icons/qr_scan.svg';
 import WarnIcon from '../images/icons/warning.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
+import { pressedStyle } from '../components/buttons/AbstractButton';
 
 const ScanButton = styled(Button, {
   borderRadius: 20,
@@ -98,7 +99,7 @@ function PrivacyNote() {
   }
 
   return (
-    <Card onPressIn={onDisclaimerPress}>
+    <Card onPress={onDisclaimerPress} pressStyle={pressedStyle}>
       <WarnIcon color={white} width={24} height={33} />
       <BodyText color={white} textAlign="center" fontSize={18}>
         A note on protecting your privacy
