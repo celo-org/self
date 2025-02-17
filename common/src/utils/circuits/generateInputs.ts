@@ -184,9 +184,9 @@ export function generateCircuitInputsVCandDisclose(
   );
 
   const dsc_tree_leaf = getLeafDscTree(passportData.dsc_parsed, passportData.csca_parsed);
-  const secretBigIntStr = secret.startsWith('0x') ? BigInt(secret).toString() : BigInt(`0x${secret}`).toString();
+
   const commitment = generateCommitment(
-    secretBigIntStr,
+    secret,
     attestation_id,
     passportData
   );
@@ -223,7 +223,7 @@ export function generateCircuitInputsVCandDisclose(
   } = generateSMTProof(nameAndYob_smt, name_leaf);
 
   return {
-    secret: formatInput(secretBigIntStr),
+    secret: formatInput(secret),
     attestation_id: formatInput(attestation_id),
     dg1: formatInput(formattedMrz),
     eContent_shaBytes_packed_hash: formatInput(eContent_packed_hash),
