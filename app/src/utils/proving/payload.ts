@@ -79,6 +79,7 @@ export function checkPassportSupported(passportData: PassportData) {
     console.log('DSC circuit not supported:', circuitNameDsc);
     return false;
   }
+  console.log('Passport supported');
   return true;
 }
 

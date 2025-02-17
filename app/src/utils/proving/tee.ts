@@ -85,7 +85,6 @@ export async function sendPayload(
         resolve(status);
       }
     }
-    console.log(inputs);
     const uuid = v4();
     const ws = new WebSocket(wsRpcUrl);
     let socket: Socket | null = null;

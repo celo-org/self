@@ -96,6 +96,7 @@ const ProveScreen: React.FC = () => {
         // - registration is ongoing => show a loading screen. TODO detect this?
         // - registration failed => send to ConfirmBelongingScreen to register again
         const isRegistered = await isUserRegistered(passportData, secret);
+        console.log('isRegistered', isRegistered);
         if (!isRegistered) {
           console.log(
             'User is not registered, sending to ConfirmBelongingScreen',
@@ -103,6 +104,7 @@ const ProveScreen: React.FC = () => {
           navigate('ConfirmBelongingScreen');
           return;
         }
+        console.log('currentApp', currentApp);
 
         const status = await sendVcAndDisclosePayload(
           secret,
