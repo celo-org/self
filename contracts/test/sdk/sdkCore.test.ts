@@ -4,7 +4,8 @@ import { deploySystemFixtures } from "../utils/deployment";
 import { DeployedActors } from "../utils/types";
 import { generateRandomFieldElement } from "../utils/utils";
 import { generateCommitment } from "../../../common/src/utils/passports/passport";
-import { ATTESTATION_ID, CIRCUIT_CONSTANTS } from "../utils/constants";
+import { ATTESTATION_ID } from "../utils/constants";
+import { CIRCUIT_CONSTANTS } from "../../../common/src/constants/constants";
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
 import { generateVcAndDiscloseRawProof, parseSolidityCalldata } from "../utils/generateProof";
@@ -156,6 +157,7 @@ describe("VerifyAll with AttestationVerifier", () => {
             rawProof.proof,
             rawProof.publicSignals
         );
+        console.log(result);
         expect(result.isValid).to.be.false;
         expect(result.isValidDetails.isValidProof).to.be.false;
     });

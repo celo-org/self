@@ -69,6 +69,8 @@ export class SelfBackendVerifier {
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
 
+    console.log("niconiconico");
+
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
       olderThan: this.minimumAge.value,
@@ -82,7 +84,9 @@ export class SelfBackendVerifier {
         pubSignals: solidityProof.pubSignals,
       },
     };
+    console.log("vcAndDiscloseHubProof: ", vcAndDiscloseHubProof);
 
+    console.log("11");
     const types = [
       revealedDataTypes.issuing_state,
       revealedDataTypes.name,
@@ -97,10 +101,25 @@ export class SelfBackendVerifier {
       revealedDataTypes.name_and_yob_ofac,
     ];
 
-    const timestamp = this.targetRootTimestamp;
+    // const timestamp = this.targetRootTimestamp;
+    const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
+    console.log("current root: ", currentRoot);
+    const timestamp = await this.registryContract.rootTimestamps(currentRoot);
+    console.log("timestamp: ", timestamp);
+    const ownerVerifyAll = await this.verifyAllContract.owner(); 
+    console.log("ownerVerifyAll: ", ownerVerifyAll);
+
+    console.log("15");
+    const encodedData = this.verifyAllContract.interface.encodeFunctionData(
+      "verifyAll",
+      [timestamp, vcAndDiscloseHubProof, types]
+    );
+    console.log("Raw input data:", encodedData);
 
     const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
+    console.log("result: ", result);
 
+    console.log("12");
     let isValidNationality = true;
     if (this.nationality.enabled) {
       const nationality = result[0][revealedDataTypes.nationality];
@@ -125,6 +144,7 @@ export class SelfBackendVerifier {
       name_and_yob_ofac: result[0][revealedDataTypes.name_and_yob_ofac],
     };
 
+    console.log("14");
     const attestation: SelfVerificationResult = {
       isValid: result[1] && isValidScope && isValidAttestationId && isValidNationality,
       isValidDetails: {
