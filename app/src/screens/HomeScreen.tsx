@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
 
+import { pressedStyle } from '../components/buttons/pressedStyle';
 import { BodyText } from '../components/typography/BodyText';
 import { Caption } from '../components/typography/Caption';
 import { useAppUpdates } from '../hooks/useAppUpdates';
@@ -13,7 +14,6 @@ import ScanIcon from '../images/icons/qr_scan.svg';
 import WarnIcon from '../images/icons/warning.svg';
 import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
-import { pressedStyle } from '../components/buttons/pressedStyle';
 
 const ScanButton = styled(Button, {
   borderRadius: 20,

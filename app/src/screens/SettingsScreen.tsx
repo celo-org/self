@@ -10,6 +10,7 @@ import { Button, ScrollView, View, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
 import { RootStackParamList } from '../Navigation';
+import { pressedStyle } from '../components/buttons/pressedStyle';
 import { BodyText } from '../components/typography/BodyText';
 import {
   appStoreUrl,
@@ -29,7 +30,6 @@ import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
-import { pressedStyle } from '../components/buttons/pressedStyle';
 
 interface SettingsScreenProps {}
 interface MenuButtonProps extends PropsWithChildren {
