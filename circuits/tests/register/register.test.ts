@@ -267,17 +267,18 @@ testSuite.forEach(
           const invalidPrefixes = [
             [0x03, 0x82, 0x01, 0x01, 0x00],
             [0x02, 0x83, 0x01, 0x01, 0x00],
-            [0x02, 0x82, 0x02, 0x02, 0x00]
+            [0x02, 0x82, 0x02, 0x02, 0x00],
           ];
 
           for (const invalidPrefix of invalidPrefixes) {
             try {
               const tamperedInputs = JSON.parse(JSON.stringify(inputs));
               for (let i = 0; i < invalidPrefix.length; i++) {
-                tamperedInputs.raw_dsc[Number(tamperedInputs.dsc_pubKey_offset) - invalidPrefix.length + i] = 
-                  invalidPrefix[i].toString();
+                tamperedInputs.raw_dsc[
+                  Number(tamperedInputs.dsc_pubKey_offset) - invalidPrefix.length + i
+                ] = invalidPrefix[i].toString();
               }
-              
+
               await circuit.calculateWitness(tamperedInputs);
               expect.fail('Expected an error but none was thrown.');
             } catch (error: any) {
@@ -289,17 +290,18 @@ testSuite.forEach(
         it('should pass with valid RSA prefix for the key length', async function () {
           const keyLengthToPrefix = {
             2048: [0x02, 0x82, 0x01, 0x01, 0x00],
-            3072: [0x02, 0x82, 0x01, 0x81, 0x00], 
-            4096: [0x02, 0x82, 0x02, 0x01, 0x00]
+            3072: [0x02, 0x82, 0x01, 0x81, 0x00],
+            4096: [0x02, 0x82, 0x02, 0x01, 0x00],
           };
 
           const expectedPrefix = keyLengthToPrefix[keyLength];
-          
+
           for (let i = 0; i < 5; i++) {
             const prefixByte = parseInt(inputs.raw_dsc[Number(inputs.dsc_pubKey_offset) - 5 + i]);
-            expect(prefixByte)
-              .to.equal(expectedPrefix[i], 
-                `Prefix byte ${i} mismatch for ${keyLength} bit key`);
+            expect(prefixByte).to.equal(
+              expectedPrefix[i],
+              `Prefix byte ${i} mismatch for ${keyLength} bit key`
+            );
           }
         });
       }
