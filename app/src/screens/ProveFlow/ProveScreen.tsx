@@ -78,20 +78,20 @@ const ProveScreen: React.FC = () => {
 
       const currentApp = selectedAppRef.current;
       try {
-        let timetoNavigateToStatusScreen: NodeJS.Timeout;
+        let timeToNavigateToStatusScreen: NodeJS.Timeout;
         // getData first because that triggers biometric authentication and feels nicer to do before navigating
-        // then wait a second and navigate to the status screen. use finally so that any errors thrown here dont prevent the navigate
+        // then wait a second and navigate to the status screen. use finally so that any errors thrown here don't prevent the navigate
         // importantly we are NOT awaiting the navigate call because
         // we Do NOT want to delay the callsendVcAndDisclosePayload
         const passportDataAndSecret = await getPassportDataAndSecret().catch(
           (e: Error) => {
-            // catch here so that the code to navigate to the statys screen will still be called.
+            // catch here so that the code to navigate to the status screen will still be called.
             console.error('Error getPassportDataAndSecret', e);
             setStatus(ProofStatusEnum.ERROR);
           },
         );
         // navigate to the status screen after short delay so it feels more like it waited for the auth to finish
-        timetoNavigateToStatusScreen = setTimeout(() => {
+        timeToNavigateToStatusScreen = setTimeout(() => {
           navigate('ProofRequestStatusScreen');
           // the calls to setStatus change what is shown on this status screen
         }, 1000);
@@ -112,7 +112,7 @@ const ProveScreen: React.FC = () => {
         const isRegistered = await isUserRegistered(passportData, secret);
         console.log('isRegistered', isRegistered);
         if (!isRegistered) {
-          clearTimeout(timetoNavigateToStatusScreen);
+          clearTimeout(timeToNavigateToStatusScreen);
           console.log(
             'User is not registered, sending to ConfirmBelongingScreen',
           );
