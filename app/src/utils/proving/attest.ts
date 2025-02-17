@@ -3,11 +3,10 @@ import { decode } from '@stablelib/cbor';
 import { fromBER } from 'asn1js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
+import { ethers } from 'ethers';
 import { sha384 } from 'js-sha512';
 import { Certificate } from 'pkijs';
-import { ethers } from "ethers";
 
-import { IMAGE_HASH } from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
 
@@ -365,13 +364,12 @@ function getTBSHash(pem: string): string {
   return msgHash as string;
 }
 
-
 // Minimal ABI containing only the view function we need.
 const PCR0ManagerABI = [
-  "function isPCR0Set(bytes calldata pcr0) external view returns (bool)"
+  'function isPCR0Set(bytes calldata pcr0) external view returns (bool)',
 ];
 
-const celoProvider = new ethers.JsonRpcProvider("https://1rpc.io/celo");
+const celoProvider = new ethers.JsonRpcProvider('https://1rpc.io/celo');
 
 /**
  * @notice Queries the PCR0Manager contract to verify that the PCR0 value extracted from the attestation
@@ -379,31 +377,41 @@ const celoProvider = new ethers.JsonRpcProvider("https://1rpc.io/celo");
  * @param attestation An array of numbers representing the COSE_Sign1 encoded attestation document.
  * @return A promise that resolves to true if the PCR0 value is set in the contract, or false otherwise.
  */
-export async function checkPCR0Mapping(attestation: Array<number>): Promise<boolean> {
+export async function checkPCR0Mapping(
+  attestation: Array<number>,
+): Promise<boolean> {
   // Obtain the PCR0 image hash from the attestation
   const imageHashHex = getImageHash(attestation);
 
   // The getImageHash function returns a hex string (without the "0x" prefix)
   // For a SHA384 hash, we expect 96 hex characters (48 bytes)
   if (imageHashHex.length !== 96) {
-    throw new Error(`Invalid PCR0 hash length: expected 96 hex characters, got ${imageHashHex.length}`);
+    throw new Error(
+      `Invalid PCR0 hash length: expected 96 hex characters, got ${imageHashHex.length}`,
+    );
   }
 
   // Convert the PCR0 hash from hex to a byte array, ensuring proper "0x" prefix
   const pcr0Bytes = ethers.getBytes(`0x${imageHashHex}`);
   if (pcr0Bytes.length !== 48) {
-    throw new Error(`Invalid PCR0 bytes length: expected 48, got ${pcr0Bytes.length}`);
+    throw new Error(
+      `Invalid PCR0 bytes length: expected 48, got ${pcr0Bytes.length}`,
+    );
   }
 
-  const PCR0_MANAGER_ADDRESS = "0xE36d4EE5Fd3916e703A46C21Bb3837dB7680C8B8";
+  const PCR0_MANAGER_ADDRESS = '0xE36d4EE5Fd3916e703A46C21Bb3837dB7680C8B8';
   // Create a contract instance for the PCR0Manager
-  const pcr0Manager = new ethers.Contract(PCR0_MANAGER_ADDRESS, PCR0ManagerABI, celoProvider);
+  const pcr0Manager = new ethers.Contract(
+    PCR0_MANAGER_ADDRESS,
+    PCR0ManagerABI,
+    celoProvider,
+  );
 
   try {
     // Query the contract: isPCR0Set returns true if the given PCR0 value is set
     return await pcr0Manager.isPCR0Set(pcr0Bytes);
   } catch (error) {
-    console.error("Error checking PCR0 mapping:", error);
+    console.error('Error checking PCR0 mapping:', error);
     throw error;
   }
 }
@@ -415,7 +423,9 @@ export function formatPCR0Value(pcr0: string): Uint8Array {
 
   // Validate hex string length (96 characters for 48 bytes)
   if (cleanHex.length !== 96) {
-    throw new Error(`Invalid PCR0 length: expected 96 hex characters, got ${cleanHex.length}`);
+    throw new Error(
+      `Invalid PCR0 length: expected 96 hex characters, got ${cleanHex.length}`,
+    );
   }
 
   // Validate hex string format
