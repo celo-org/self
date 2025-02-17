@@ -1,4 +1,5 @@
 import React from 'react';
+import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -39,7 +40,6 @@ import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
 import StartScreen from './screens/StartScreen';
 import { black, slate300, white } from './utils/colors';
-import { StatusBar } from 'react-native';
 
 const AppNavigation = createNativeStackNavigator({
   initialRouteName: 'Splash',
@@ -56,7 +56,9 @@ const AppNavigation = createNativeStackNavigator({
     Splash: {
       screen: SplashScreen,
       options: {
-        header: () => <StatusBar barStyle="light-content" backgroundColor={black} />,
+        header: () => (
+          <StatusBar barStyle="light-content" backgroundColor={black} />
+        ),
         navigationBarColor: black,
       },
     },
