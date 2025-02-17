@@ -26,7 +26,7 @@ export async function getCSCATree(): Promise<string[][]> {
   }
   const tree = data.data ? JSON.parse(data.data) : data;
 
-  console.log('CSCA tsree:', tree);
+  console.log('CSCA tree:', tree);
   return tree;
 }
 
@@ -91,7 +91,7 @@ export function getLeafDscTreeFromParsedDsc(dscParsed: CertificateData): string 
 export function getLeafDscTree(dsc_parsed: CertificateData, csca_parsed: CertificateData): string {
   const dscLeaf = getLeaf(dsc_parsed, 'dsc');
   const cscaLeaf = getLeaf(csca_parsed, 'csca');
-  console.log('cscaLseaf', cscaLeaf);
+  console.log('cscaLeaf', cscaLeaf);
   return poseidon2([dscLeaf, cscaLeaf]).toString();
 }
 
