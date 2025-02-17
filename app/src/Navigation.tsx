@@ -148,7 +148,7 @@ const AppNavigation = createNativeStackNavigator({
     CreateMock: {
       screen: MockDataScreen,
       options: {
-        if: () => __DEV__, // TODO: dev only
+        if: () => __DEV__,
         title: 'Mock Passport',
       },
     },
