@@ -22,7 +22,7 @@ function listToString(list: string[]): string {
 
 export default function Disclosures({ disclosures }: DisclosureProps) {
   // Define the order in which disclosures should appear.
-  const ORDERED_KEYS = [
+  const ORDERED_KEYS: Array<keyof SelfAppDisclosureConfig> = [
     'issuing_state',
     'name',
     'passport_number',

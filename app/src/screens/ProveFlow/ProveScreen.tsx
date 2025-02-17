@@ -94,7 +94,7 @@ const ProveScreen: React.FC = () => {
         timetoNavigateToStatusScreen = setTimeout(() => {
           navigate('ProofRequestStatusScreen');
           // the calls to setStatus change what is shown on this status screen
-        }, 1500);
+        }, 1000);
 
         if (!passportDataAndSecret) {
           // TODO is there another screen to navigate to here? like we do for not registered?
