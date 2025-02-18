@@ -41,8 +41,12 @@ const defaults: IProofContext = {
 
 export const ProofContext = createContext<IProofContext>(defaults);
 
-export let globalSetRegistrationStatus: ((status: ProofStatusEnum) => void) | null = null;
-export let globalSetDisclosureStatus: ((status: ProofStatusEnum) => void) | null = null;
+export let globalSetRegistrationStatus:
+  | ((status: ProofStatusEnum) => void)
+  | null = null;
+export let globalSetDisclosureStatus:
+  | ((status: ProofStatusEnum) => void)
+  | null = null;
 
 /*
  store to manage the proof verification process, including app the is requesting, intemidiate status and final result

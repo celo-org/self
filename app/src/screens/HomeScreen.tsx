@@ -40,7 +40,7 @@ const HomeScreen: React.FC = () => {
 
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
-  usePreventRemove(true, () => { });
+  usePreventRemove(true, () => {});
   const { bottom } = useSafeAreaInsets();
   return (
     <YStack
@@ -53,11 +53,7 @@ const HomeScreen: React.FC = () => {
     >
       <YStack ai="center" gap={20} justifyContent="flex-start">
         <SelfCard width="100%" />
-        <Caption
-          color={amber500}
-          opacity={0.3}
-          textTransform="uppercase"
-        >
+        <Caption color={amber500} opacity={0.3} textTransform="uppercase">
           Only visible to you
         </Caption>
         <PrivacyNote />

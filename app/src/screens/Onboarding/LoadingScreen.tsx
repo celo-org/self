@@ -34,7 +34,8 @@ const LoadingScreen: React.FC = () => {
     }, 3000);
   };
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
-  const { registrationStatus, resetProof, setProofVerificationResult } = useProofInfo();
+  const { registrationStatus, resetProof, setProofVerificationResult } =
+    useProofInfo();
   const { getPassportDataAndSecret, clearPassportData } = usePassport();
 
   useEffect(() => {
@@ -81,7 +82,9 @@ const LoadingScreen: React.FC = () => {
           console.log('User is registered:', isRegistered);
           console.log('Passport is nullified:', isNullifierOnchain);
           if (isRegistered) {
-            console.log('Passport is registered already. Skipping to HomeScreen');
+            console.log(
+              'Passport is registered already. Skipping to HomeScreen',
+            );
             navigation.navigate('Home');
             return;
           }

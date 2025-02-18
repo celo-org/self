@@ -10,8 +10,8 @@ import {
 import { EndpointType } from '../../../../common/src/utils/appType';
 import {
   ProofStatusEnum,
-  globalSetRegistrationStatus,
   globalSetDisclosureStatus,
+  globalSetRegistrationStatus,
 } from '../../stores/proofProvider';
 import { getPublicKey, verifyAttestation } from './attest';
 
@@ -65,7 +65,7 @@ export async function sendPayload(
     updateGlobalOnSuccess?: boolean;
     updateGlobalOnFailure?: boolean;
     flow?: 'registration' | 'disclosure';
-  }
+  },
 ): Promise<ProofStatusEnum> {
   const opts = {
     updateGlobalOnSuccess: true,

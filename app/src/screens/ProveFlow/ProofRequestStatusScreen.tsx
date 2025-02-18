@@ -18,7 +18,8 @@ import { black, white } from '../../utils/colors';
 import { notificationError, notificationSuccess } from '../../utils/haptic';
 
 const SuccessScreen: React.FC = () => {
-  const { selectedApp, proofVerificationResult, disclosureStatus } = useProofInfo();
+  const { selectedApp, proofVerificationResult, disclosureStatus } =
+    useProofInfo();
   const appName = selectedApp?.appName;
   const goHome = useHapticNavigation('Home');
 
@@ -77,7 +78,10 @@ const SuccessScreen: React.FC = () => {
           <Title size="large">{getTitle(disclosureStatus)}</Title>
           <Info status={disclosureStatus} appName={appName} />
         </View>
-        <PrimaryButton disabled={disclosureStatus === 'pending'} onPress={onOkPress}>
+        <PrimaryButton
+          disabled={disclosureStatus === 'pending'}
+          onPress={onOkPress}
+        >
           OK
         </PrimaryButton>
       </ExpandableBottomLayout.BottomSection>
