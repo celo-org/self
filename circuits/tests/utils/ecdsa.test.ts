@@ -135,7 +135,7 @@ describe('ecdsa', () => {
       }
     });
   });
-  it.only('should not accept invalid chunks in the signature', async function () {
+  it('should not accept invalid chunks in the signature', async function () {
     this.timeout(0);
     const circuit = await wasmTester(
       path.join(__dirname, `../../circuits/tests/utils/ecdsa/test_p256.circom`),
