@@ -28,6 +28,7 @@ export interface ModalParams extends Record<string, any> {
   buttonText: string;
   onButtonPress: (() => Promise<void>) | (() => void);
   onModalDismiss: () => void;
+  preventDismiss?: boolean;
 }
 
 interface ModalScreenProps extends StaticScreenProps<ModalParams> {}
@@ -45,18 +46,19 @@ const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
     }
   }, []);
 
+  const onClose = useCallback(() => {
+    navigation.goBack();
+    params?.onModalDismiss();
+  }, [params]);
+
+  console.log(onButtonPressed, pending);
   return (
     <ModalBackDrop>
       <View backgroundColor={white} padding={20} borderRadius={10} mx={8}>
         <YStack gap={40}>
           <XStack alignItems="center" justifyContent="space-between">
             <LogoInversed />
-            <ModalClose
-              onPress={() => {
-                navigation.goBack();
-                params?.onModalDismiss();
-              }}
-            />
+            {params?.preventDismiss ? null : <ModalClose onPress={onClose} />}
           </XStack>
           <YStack gap={20}>
             <Title textAlign="left">{params?.titleText}</Title>
