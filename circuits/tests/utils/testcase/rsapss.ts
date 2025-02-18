@@ -22,11 +22,7 @@ export const fullAlgorithms: { algo: SignatureAlgorithm; saltLength: number }[] 
 ];
 
 export const sigAlgs: { algo: SignatureAlgorithm; saltLength: number }[] = [
-  { algo: 'rsapss_sha256_65537_4096', saltLength: 32 },
-  { algo: 'rsapss_sha256_3_3072', saltLength: 64 },
-  { algo: 'rsapss_sha512_3_2048', saltLength: 64 },
-  { algo: 'rsapss_sha384_65537_3072', saltLength: 48 },
-
+  { algo: 'rsapss_sha256_65537_2048', saltLength: 64 },
   { algo: 'rsapss_sha256_3_2048', saltLength: 64 },
 ];
 
