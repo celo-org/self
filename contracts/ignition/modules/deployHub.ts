@@ -36,7 +36,7 @@ export default buildModule("DeployHub", (m) => {
         ],
         [registerVerifierAddress, registerVerifierAddress2, registerVerifierAddress3],
         [
-            DscVerifierId.rsa_sha256_65537_4096
+            DscVerifierId.dsc_sha256_rsa_65537_4096
         ],
         [dscVerifierAddress]
     ]);
