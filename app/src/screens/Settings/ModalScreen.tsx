@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { View, XStack, YStack, styled } from 'tamagui';
@@ -35,14 +35,12 @@ interface ModalScreenProps extends StaticScreenProps<ModalParams> {}
 
 const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
   const navigation = useNavigation();
-  const [pending, setPending] = useState(false);
   const onButtonPressed = useCallback(async () => {
-    setPending(true);
     try {
       await params?.onButtonPress();
       navigation.goBack();
-    } finally {
-      setPending(false);
+    } catch (error) {
+      console.error(error);
     }
   }, []);
 
@@ -65,7 +63,7 @@ const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
               {params?.bodyText}
             </Description>
           </YStack>
-          <PrimaryButton onPress={onButtonPressed} disabled={pending}>
+          <PrimaryButton onPress={onButtonPressed}>
             {params?.buttonText}
           </PrimaryButton>
         </YStack>
