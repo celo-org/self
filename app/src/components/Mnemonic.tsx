@@ -41,9 +41,10 @@ const WordPill = ({ index, word }: WordPill) => {
       </Text>
     </XStack>
   );
-
 };
-const REDACTED = new Array(24).fill('').map((_) => '*'.repeat(Math.max(4, Math.floor((Math.random() * 10)))));
+const REDACTED = new Array(24)
+  .fill('')
+  .map(_ => '*'.repeat(Math.max(4, Math.floor(Math.random() * 10))));
 const Mnemonic = ({ words = REDACTED, onRevealWords }: MnemonicProps) => {
   const [revealWords, setRevealWords] = useState(false);
   const [copied, setCopied] = useState(false);

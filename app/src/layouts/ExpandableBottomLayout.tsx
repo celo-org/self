@@ -94,7 +94,11 @@ const BottomSection: React.FC<BottomSectionProps> = ({
   const totalBottom =
     typeof incomingBottom === 'number' ? bottom + incomingBottom : bottom;
   return (
-    <View {...props} style={[styles.bottomSection, style]} paddingBottom={totalBottom}>
+    <View
+      {...props}
+      style={[styles.bottomSection, style]}
+      paddingBottom={totalBottom}
+    >
       {children}
     </View>
   );
