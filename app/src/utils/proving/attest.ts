@@ -166,8 +166,6 @@ export const verifyAttestation = async (attestation: Array<number>) => {
   );
 
   const cert = derToPem(attestationDoc.certificate);
-  const imageHash = getImageHash(attestation);
-  console.log('imageHash', imageHash);
   const isPCR0Set = await checkPCR0Mapping(attestation);
   console.log('isPCR0Set', isPCR0Set);
   if (!isPCR0Set) {
@@ -381,8 +379,8 @@ export async function checkPCR0Mapping(
   attestation: Array<number>,
 ): Promise<boolean> {
   // Obtain the PCR0 image hash from the attestation
-  const imageHashHex = "002991b83537ca49d9cfcd3375d9148151121470eef8e84cac087d789af9d200bcc6582fb53e0e273aeddc83943c4def";//getImageHash(attestation);
-
+  const imageHashHex = getImageHash(attestation);
+  console.log('imageHash', imageHashHex);
   // The getImageHash function returns a hex string (without the "0x" prefix)
   // For a SHA384 hash, we expect 96 hex characters (48 bytes)
   if (imageHashHex.length !== 96) {

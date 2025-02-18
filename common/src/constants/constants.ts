@@ -1,15 +1,13 @@
-export const RELAYER_URL = 'https://0pw5u65m3a.execute-api.eu-north-1.amazonaws.com/api-stage/mint';
 export const TREE_TRACKER_URL = 'https://tree.self.xyz';
 export const CSCA_TREE_DEPTH = 12;
 export const DSC_TREE_DEPTH = 21;
 export const COMMITMENT_TREE_DEPTH = 33;
 export const DEFAULT_USER_ID_TYPE = 'uuid';
 
-export const MODAL_SERVER_ADDRESS = 'https://zk-passport--dsc-prover-generate-dsc-proof.modal.run';
-export const REDIRECT_URL = 'https://redirect.openpassport.app';
-export const WS_RPC_URL_REGISTER = "ws://register.proving.openpassport.app:8888/";
-export const WS_RPC_URL_DSC = "ws://dsc.proving.openpassport.app:8888/";
-export const WS_RPC_URL_VC_AND_DISCLOSE = "ws://disclose.proving.openpassport.app:8888/";
+export const REDIRECT_URL = 'https://redirect.self.xyz';
+export const WS_RPC_URL_REGISTER = "ws://register.proving.self.xyz:8888/";
+export const WS_RPC_URL_DSC = "ws://dsc.proving.self.xyz:8888/";
+export const WS_RPC_URL_VC_AND_DISCLOSE = "ws://disclose.proving.self.xyz:8888/";
 export const WS_DB_RELAYER = 'wss://websocket.self.xyz';
 
 export const API_URL = 'https://api.self.xyz';
