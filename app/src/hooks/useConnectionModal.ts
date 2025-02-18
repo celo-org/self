@@ -22,7 +22,7 @@ const connectionModalParams = {
 } as const;
 
 export default function useConnectionModal() {
-  const { isConnected } = useNetInfo();
+  const { isInternetReachable } = useNetInfo();
   const { showModal, dismissModal, visible } = useModal(connectionModalParams);
 
   useEffect(() => {
@@ -30,12 +30,12 @@ export default function useConnectionModal() {
       return;
     }
 
-    if (!isConnected && !visible) {
+    if (isInternetReachable === false && !visible) {
       showModal();
-    } else if (visible && isConnected) {
+    } else if (visible && isInternetReachable !== false) {
       dismissModal();
     }
-  }, [isConnected, dismissModal, visible, navigationRef.isReady()]);
+  }, [isInternetReachable, dismissModal, visible, navigationRef.isReady()]);
 
   return {
     visible,
