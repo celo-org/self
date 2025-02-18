@@ -135,7 +135,12 @@ function Info({
       </Description>
     );
   } else {
-    return <Description><BodyText style={typography.strong}>{appName}{' '}</BodyText>will only know what you disclose</Description>;
+    return (
+      <Description>
+        <BodyText style={typography.strong}>{appName} </BodyText>will only know
+        what you disclose
+      </Description>
+    );
   }
 }
 
