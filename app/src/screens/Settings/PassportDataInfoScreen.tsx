@@ -1,12 +1,10 @@
-import React, { useCallback, useState } from 'react';
-
-import { useFocusEffect } from '@react-navigation/native';
-import { ScrollView, Separator, XStack, YStack } from 'tamagui';
-
 import { PassportMetadata } from '../../../../common/src/utils/passports/passport_parsing/parsePassportData';
 import { Caption } from '../../components/typography/Caption';
 import { usePassport } from '../../stores/passportDataProvider';
 import { black, slate200, white } from '../../utils/colors';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, Separator, XStack, YStack } from 'tamagui';
 
 // TODO clarify if we need more/less keys to be displayed
 const dataKeysToLabels: Record<
@@ -85,10 +83,10 @@ const PassportDataInfoScreen: React.FC<PassportDataInfoScreenProps> = ({}) => {
               !metadata
                 ? ''
                 : key === 'cscaFound'
-                ? metadata?.cscaFound === true
+                ? metadata.cscaFound === true
                   ? 'Yes'
                   : 'No'
-                : (metadata?.[key as keyof PassportMetadata] as
+                : (metadata[key as keyof PassportMetadata] as
                     | string
                     | number) || 'None'
             }

@@ -1,15 +1,13 @@
+import { PassportData } from '../../../common/src/utils/types';
+import { loadSecretOrCreateIt, useAuth } from '../stores/authProvider';
 import React, {
-  PropsWithChildren,
   createContext,
+  PropsWithChildren,
   useCallback,
   useContext,
   useMemo,
 } from 'react';
 import Keychain from 'react-native-keychain';
-
-import { PassportData } from '../../../common/src/utils/types';
-import { loadSecretOrCreateIt } from '../stores/authProvider';
-import { useAuth } from './authProvider';
 
 export async function loadPassportData() {
   const passportDataCreds = await Keychain.getGenericPassword({

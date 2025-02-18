@@ -1,8 +1,3 @@
-import React, { useEffect } from 'react';
-import { StatusBar, StyleSheet, View } from 'react-native';
-
-import LottieView from 'lottie-react-native';
-
 import loadingAnimation from '../../assets/animations/loading/misc.json';
 import failAnimation from '../../assets/animations/proof_failed.json';
 import succesAnimation from '../../assets/animations/proof_success.json';
@@ -16,6 +11,9 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import { black, white } from '../../utils/colors';
 import { notificationError, notificationSuccess } from '../../utils/haptic';
+import LottieView from 'lottie-react-native';
+import React, { useEffect } from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
 
 const SuccessScreen: React.FC = () => {
   const { selectedApp, proofVerificationResult, disclosureStatus } =

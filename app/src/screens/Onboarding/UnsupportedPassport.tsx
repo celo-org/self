@@ -1,7 +1,3 @@
-import React, { useEffect } from 'react';
-
-import LottieView from 'lottie-react-native';
-
 import warnAnimation from '../../assets/animations/warning.json';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import { Caption } from '../../components/typography/Caption';
@@ -12,6 +8,8 @@ import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { black, white } from '../../utils/colors';
 import { notificationError } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
+import LottieView from 'lottie-react-native';
+import React, { useEffect } from 'react';
 
 const UnsupportedPassportScreen: React.FC = () => {
   const onPress = useHapticNavigation('Launch');

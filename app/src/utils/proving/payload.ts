@@ -1,7 +1,3 @@
-import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
-import { SMT } from '@openpassport/zk-kit-smt';
-import { poseidon2 } from 'poseidon-lite';
-
 import nameAndDobSMTData from '../../../../common/ofacdata/outputs/nameAndDobSMT.json';
 import nameAndYobSMTData from '../../../../common/ofacdata/outputs/nameAndYobSMT.json';
 import passportNoAndNationalitySMTData from '../../../../common/ofacdata/outputs/passportNoAndNationalitySMT.json';
@@ -14,7 +10,6 @@ import {
   WS_RPC_URL_DSC,
   WS_RPC_URL_REGISTER,
   WS_RPC_URL_VC_AND_DISCLOSE,
-  attributeToPosition,
 } from '../../../../common/src/constants/constants';
 import { SelfApp } from '../../../../common/src/utils/appType';
 import { getCircuitNameFromPassportData } from '../../../../common/src/utils/circuits/circuitsName';
@@ -28,14 +23,17 @@ import {
   generateNullifier,
 } from '../../../../common/src/utils/passports/passport';
 import {
-  getCSCATree,
   getCommitmentTree,
+  getCSCATree,
   getDSCTree,
   getLeafDscTree,
 } from '../../../../common/src/utils/trees';
 import { PassportData } from '../../../../common/src/utils/types';
 import { ProofStatusEnum } from '../../stores/proofProvider';
 import { sendPayload } from './tee';
+import { LeanIMT } from '@openpassport/zk-kit-lean-imt';
+import { SMT } from '@openpassport/zk-kit-smt';
+import { poseidon2 } from 'poseidon-lite';
 
 async function generateTeeInputsRegister(
   secret: string,

@@ -1,11 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
+import { Bug } from '@tamagui/lucide-icons';
 import React, { PropsWithChildren, useCallback } from 'react';
 import { Linking, Platform, Share } from 'react-native';
 import { getCountry, getLocales, getTimeZone } from 'react-native-localize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgProps } from 'react-native-svg';
-
-import { useNavigation } from '@react-navigation/native';
-import { Bug } from '@tamagui/lucide-icons';
 import { Button, ScrollView, View, XStack, YStack } from 'tamagui';
 
 import { version } from '../../package.json';
@@ -28,6 +27,7 @@ import ShareIcon from '../images/icons/share.svg';
 import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
+import { RootStackParamList } from '../Navigation';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
 

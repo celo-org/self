@@ -1,3 +1,6 @@
+import { IMAGE_HASH } from '../../../../common/src/constants/constants';
+import { AWS_ROOT_PEM } from './awsRootPem';
+import cose from './cose';
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
 import { fromBER } from 'asn1js';
@@ -108,7 +111,7 @@ export const verifyAttestation = async (attestation: Array<number>) => {
   const attestationDoc = (await decode(payload)) as AttestationDoc;
 
   for (const field of requiredFields) {
-    //@ts-ignore
+    //@ts-expect-error
     if (!attestationDoc[field]) {
       throw new Error(`Missing required field: ${field}`);
     }

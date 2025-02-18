@@ -1,10 +1,8 @@
-import React from 'react';
-import { StyleSheet, ViewStyle } from 'react-native';
-
-import { Button, Text, ViewProps } from 'tamagui';
-
 import { dinot } from '../../utils/fonts';
 import { pressedStyle } from './pressedStyle';
+import React from 'react';
+import { StyleSheet, ViewStyle } from 'react-native';
+import { Button, Text, ViewProps } from 'tamagui';
 
 export interface ButtonProps extends ViewProps {
   children: React.ReactNode;

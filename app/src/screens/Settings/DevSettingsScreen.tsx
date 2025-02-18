@@ -1,12 +1,10 @@
-import React from 'react';
-
-import { useNavigation } from '@react-navigation/native';
-import { Check, ChevronDown, Eraser, IterationCw } from '@tamagui/lucide-icons';
-import { Adapt, Button, Fieldset, Label, Select, Sheet, YStack } from 'tamagui';
-
 import { RootStackParamList } from '../../Navigation';
 import { usePassport } from '../../stores/passportDataProvider';
 import { borderColor, textBlack } from '../../utils/colors';
+import { useNavigation } from '@react-navigation/native';
+import { Check, ChevronDown, Eraser, IterationCw } from '@tamagui/lucide-icons';
+import React from 'react';
+import { Adapt, Button, Fieldset, Label, Select, Sheet, YStack } from 'tamagui';
 
 interface DevSettingsScreenProps {}
 

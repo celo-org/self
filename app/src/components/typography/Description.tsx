@@ -1,10 +1,8 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-
-import { Text, TextProps } from 'tamagui';
-
 import { slate500 } from '../../utils/colors';
 import { dinot } from '../../utils/fonts';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Text, TextProps } from 'tamagui';
 
 interface DescriptionProps extends TextProps {}
 

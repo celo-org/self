@@ -1,6 +1,5 @@
-import { Text, styled } from 'tamagui';
-
 import { dinot } from '../../utils/fonts';
+import { styled, Text } from 'tamagui';
 
 export const SubHeader = styled(Text, {
   fontFamily: dinot,

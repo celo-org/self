@@ -1,8 +1,3 @@
-import React, { useCallback, useMemo, useState } from 'react';
-
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import { YStack } from 'tamagui';
-
 import { RootStackParamList } from '../../Navigation';
 import BackupDocumentationLink from '../../components/BackupDocumentationLink';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
@@ -17,6 +12,9 @@ import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { black, white } from '../../utils/colors';
+import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { YStack } from 'tamagui';
 
 interface CloudBackupScreenProps
   extends StaticScreenProps<
