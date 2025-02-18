@@ -11,7 +11,6 @@ const connectionModalParams = {
   bodyText: 'In order to use SELF, you must have access to internet.',
   buttonText: 'Open settings',
   onButtonPress: async () => {
-    console.log('hehy');
     return Platform.OS === 'ios'
       ? Linking.openURL('prefs://MOBILE_DATA_SETTINGS_ID')
       : Linking.sendIntent('android.settings.WIRELESS_SETTINGS');

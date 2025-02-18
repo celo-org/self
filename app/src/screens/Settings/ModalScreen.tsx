@@ -51,7 +51,6 @@ const ModalScreen: React.FC<ModalScreenProps> = ({ route: { params } }) => {
     params?.onModalDismiss();
   }, [params]);
 
-  console.log(onButtonPressed, pending);
   return (
     <ModalBackDrop>
       <View backgroundColor={white} padding={20} borderRadius={10} mx={8}>
