@@ -9,6 +9,27 @@ function derToPem(derBuffer: Buffer): string {
   return pem;
 }
 
+export const findSequenceMatches = (haystack: number[], needle: number[]): {count: number, indexes: number[]} => {
+  const matches: number[] = [];
+  for (let i = 0; i < haystack.length - needle.length + 1; i++) {
+    let found = true;
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) {
+        found = false;
+        break;
+      }
+    }
+    if (found) {
+      matches.push(i);
+    }
+  }
+  return {
+    count: matches.length,
+    indexes: matches
+  };
+};
+
+
 export async function extractMasterlistCsca() {
   const csca_path = path.join(__dirname, '..', '..', 'outputs', 'csca');
   const uniqueCertsDir = path.join(csca_path, 'pem_masterlist');
@@ -26,7 +47,7 @@ export async function extractMasterlistCsca() {
 
   console.log(`Read ${certArray.length} certificates.`);
 
-  const sequenceMatchCounts = [0, 0, 0]; // Initialize counters for each sequence
+  const overallSequenceMatchCounts = [0, 0, 0]; // Initialize counters for each sequence
   const multipleMatches = [];
 
   for (let i = 0; i < certArray.length; i++) {
@@ -52,14 +73,13 @@ export async function extractMasterlistCsca() {
       ];
       
       sequences.forEach((sequence, index) => {
-        const sequenceString = sequence.join(',');
-        const tbsString = tbsBytesArray.join(',');
-        const currentMatchCount = (tbsString.match(new RegExp(sequenceString, 'g')) || []).length;
+        const {count: currentMatchCount, indexes} = findSequenceMatches(tbsBytesArray, sequence);
+        
         if (currentMatchCount > 0) {
           matchCount += currentMatchCount;
-          sequenceMatchCounts[index] += currentMatchCount;
+          overallSequenceMatchCounts[index] += currentMatchCount;
           if (currentMatchCount > 1) {
-            multipleMatches.push(i, currentMatchCount, sequenceString);
+            multipleMatches.push(i, currentMatchCount, sequence.join(','));
           }
         }
       });
@@ -81,9 +101,9 @@ export async function extractMasterlistCsca() {
 
   // Log the number of matches for each sequence
   console.log(`Sequence match counts:`);
-  console.log(`[2, 130, 1, 1, 0]: ${sequenceMatchCounts[0]}`);
-  console.log(`[2, 130, 2, 1, 0]: ${sequenceMatchCounts[1]}`);
-  console.log(`[2, 130, 1, 129, 0]: ${sequenceMatchCounts[2]}`);
+  console.log(`[2, 130, 1, 1, 0]: ${overallSequenceMatchCounts[0]}`);
+  console.log(`[2, 130, 2, 1, 0]: ${overallSequenceMatchCounts[1]}`);
+  console.log(`[2, 130, 1, 129, 0]: ${overallSequenceMatchCounts[2]}`);
 
   console.log(`Certificate with multiple sequence matches: ${multipleMatches}`);
 }

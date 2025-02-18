@@ -2,6 +2,26 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { parseCertificateSimple } from '../../../common/src/utils/certificate_parsing/parseCertificateSimple';
 
+const findSequenceMatches = (haystack: number[], needle: number[]): {count: number, indexes: number[]} => {
+  const matches: number[] = [];
+  for (let i = 0; i < haystack.length - needle.length + 1; i++) {
+    let found = true;
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) {
+        found = false;
+        break;
+      }
+    }
+    if (found) {
+      matches.push(i);
+    }
+  }
+  return {
+    count: matches.length,
+    indexes: matches
+  };
+};
+
 export async function extractMasterlistDsc() {
   // Read pem certificates from the output directory
   const pem_path = path.join(__dirname, '..', '..', 'outputs', 'dsc', 'pem_masterlist');
@@ -48,14 +68,13 @@ export async function extractMasterlistDsc() {
       let matchCount = 0;
 
       sequences.forEach((sequence, index) => {
-        const sequenceString = sequence.join(',');
-        const tbsString = tbsBytesArray.join(',');
-        const currentMatchCount = (tbsString.match(new RegExp(sequenceString, 'g')) || []).length;
+        const {count: currentMatchCount, indexes} = findSequenceMatches(tbsBytesArray, sequence);
+        
         if (currentMatchCount > 0) {
           matchCount += currentMatchCount;
           overallSequenceMatchCounts[index] += currentMatchCount;
           if (currentMatchCount > 1) {
-            multipleMatches.push(i, currentMatchCount, sequenceString);
+            multipleMatches.push(i, currentMatchCount, sequence.join(','));
           }
         }
       });
@@ -81,6 +100,7 @@ export async function extractMasterlistDsc() {
   console.log(`[2, 130, 2, 1, 0]: ${overallSequenceMatchCounts[1]}`);
   console.log(`[2, 130, 1, 129, 0]: ${overallSequenceMatchCounts[2]}`);
 
+  console.log(`Certificate with multiple sequence matches length: ${multipleMatches.length}`);
   console.log(`Certificate with multiple sequence matches: ${multipleMatches}`);
 }
 
