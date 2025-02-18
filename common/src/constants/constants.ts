@@ -15,10 +15,6 @@ export const CSCA_TREE_URL = 'https://tree.self.xyz/csca';
 export const DSC_TREE_URL = 'https://tree.self.xyz/dsc';
 export const IDENTITY_TREE_URL = 'https://tree.self.xyz/identity';
 
-export const IMAGE_HASH = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-
-export const PASSPORT_ATTESTATION_NAME = 'E-PASSPORT';
-// poseidon1([BigInt(Buffer.from(PASSPORT_ATTESTATION_NAME).readUIntBE(0, 6))]).toString();
 export const PASSPORT_ATTESTATION_ID = '1'; //"8518753152044246090169372947057357973469996808638122125210848696986717482788"
 
 export const CHAIN_NAME = 'celo';
