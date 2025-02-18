@@ -29,9 +29,9 @@ const WordPill = ({ index, word }: WordPill) => {
       backgroundColor={white}
       borderWidth="$0.5"
       borderRadius="$2"
-      py="$1"
-      px="$2"
-      gap="$2"
+      padding={4}
+      minWidth={26}
+      gap={4}
     >
       <Text color={slate300} fontSize={14} fontWeight={500}>
         {index}
@@ -41,8 +41,9 @@ const WordPill = ({ index, word }: WordPill) => {
       </Text>
     </XStack>
   );
+
 };
-const REDACTED = new Array(24).fill(' '.repeat(4));
+const REDACTED = new Array(24).fill('').map((_) => '*'.repeat(Math.max(4, Math.floor((Math.random() * 10)))));
 const Mnemonic = ({ words = REDACTED, onRevealWords }: MnemonicProps) => {
   const [revealWords, setRevealWords] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -65,8 +66,9 @@ const Mnemonic = ({ words = REDACTED, onRevealWords }: MnemonicProps) => {
         borderBottomWidth={0}
         borderTopLeftRadius="$5"
         borderTopRightRadius="$5"
-        gap="$2.5"
-        p="$4"
+        gap={12}
+        paddingHorizontal={26}
+        paddingVertical={28}
         flexWrap="wrap"
       >
         {(revealWords ? words : REDACTED).map((word, i) => (
