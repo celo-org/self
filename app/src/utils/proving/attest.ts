@@ -7,9 +7,12 @@ import { ethers } from 'ethers';
 import { sha384 } from 'js-sha512';
 import { Certificate } from 'pkijs';
 
+import {
+  PCR0_MANAGER_ADDRESS,
+  RPC_URL,
+} from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
-import { PCR0_MANAGER_ADDRESS, RPC_URL } from '../../../../common/src/constants/constants';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
@@ -367,7 +370,6 @@ function getTBSHash(pem: string): string {
 const PCR0ManagerABI = [
   'function isPCR0Set(bytes calldata pcr0) external view returns (bool)',
 ];
-
 
 /**
  * @notice Queries the PCR0Manager contract to verify that the PCR0 value extracted from the attestation
