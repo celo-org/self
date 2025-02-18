@@ -10,7 +10,8 @@ import {
 import { EndpointType } from '../../../../common/src/utils/appType';
 import {
   ProofStatusEnum,
-  updateGlobalProofStatus,
+  globalSetRegistrationStatus,
+  globalSetDisclosureStatus,
 } from '../../stores/proofProvider';
 import { getPublicKey, verifyAttestation } from './attest';
 
@@ -63,7 +64,8 @@ export async function sendPayload(
   options?: {
     updateGlobalOnSuccess?: boolean;
     updateGlobalOnFailure?: boolean;
-  },
+    flow?: 'registration' | 'disclosure';
+  }
 ): Promise<ProofStatusEnum> {
   const opts = {
     updateGlobalOnSuccess: true,
@@ -80,7 +82,11 @@ export async function sendPayload(
           (status === ProofStatusEnum.SUCCESS && opts.updateGlobalOnSuccess) ||
           (status !== ProofStatusEnum.SUCCESS && opts.updateGlobalOnFailure)
         ) {
-          updateGlobalProofStatus(status);
+          if (options?.flow === 'disclosure') {
+            globalSetDisclosureStatus && globalSetDisclosureStatus(status);
+          } else {
+            globalSetRegistrationStatus && globalSetRegistrationStatus(status);
+          }
         }
         resolve(status);
       }

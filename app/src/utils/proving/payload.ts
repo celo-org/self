@@ -100,6 +100,8 @@ export async function sendRegisterPayload(
     'https',
     'https://self.xyz',
     WS_RPC_URL_REGISTER,
+    undefined,
+    { updateGlobalOnSuccess: true, updateGlobalOnFailure: true, flow: 'registration' }
   );
 }
 
@@ -265,6 +267,8 @@ export async function sendVcAndDisclosePayload(
     selfApp.endpointType,
     selfApp.endpoint,
     WS_RPC_URL_VC_AND_DISCLOSE,
+    undefined,
+    { updateGlobalOnSuccess: true, updateGlobalOnFailure: true, flow: 'disclosure' }
   );
 }
 

@@ -38,10 +38,9 @@ const HomeScreen: React.FC = () => {
     }
   });
 
-  const onCaptionPress = useHapticNavigation('ConfirmBelongingScreen');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
-  usePreventRemove(true, () => {});
+  usePreventRemove(true, () => { });
   const { bottom } = useSafeAreaInsets();
   return (
     <YStack
@@ -58,7 +57,6 @@ const HomeScreen: React.FC = () => {
           color={amber500}
           opacity={0.3}
           textTransform="uppercase"
-          onPress={onCaptionPress}
         >
           Only visible to you
         </Caption>
