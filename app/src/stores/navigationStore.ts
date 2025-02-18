@@ -22,9 +22,9 @@ const useNavigationStore = create<NavigationState>(() => ({
       return segmentClient.track(eventName);
     }
 
-    for (const key of Object.keys(properties)) {
-      if (typeof properties[key] === 'function') {
-        delete properties[key];
+    for (const key of Object.keys(properties.params)) {
+      if (typeof properties.params[key] === 'function') {
+        delete properties.params[key];
       }
     }
 
