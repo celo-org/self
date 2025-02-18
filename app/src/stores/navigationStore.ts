@@ -14,7 +14,7 @@ const useNavigationStore = create<NavigationState>(() => ({
   toast: null as unknown as ReturnType<typeof useToastController>,
 
   trackEvent: (eventName: string, properties?: Record<string, any>) => {
-    if (!segmentClient) {
+    if (!segmentClient || !properties) {
       return segmentClient?.track(eventName);
     }
 
