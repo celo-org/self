@@ -50,6 +50,7 @@ const Mnemonic = ({ words = REDACTED, onRevealWords }: MnemonicProps) => {
   const [copied, setCopied] = useState(false);
   const copyToClipboardOrReveal = useCallback(async () => {
     if (!revealWords) {
+      // TODO: container jumps when words are revealed on android
       await onRevealWords?.();
       return setRevealWords(previous => !previous);
     }
