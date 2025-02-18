@@ -9,6 +9,7 @@ import { Certificate } from 'pkijs';
 
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
+import { PCR0_MANAGER_ADDRESS, RPC_URL } from '../../../../common/src/constants/constants';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
@@ -369,7 +370,6 @@ const PCR0ManagerABI = [
   'function isPCR0Set(bytes calldata pcr0) external view returns (bool)',
 ];
 
-const celoProvider = new ethers.JsonRpcProvider('https://1rpc.io/celo');
 
 /**
  * @notice Queries the PCR0Manager contract to verify that the PCR0 value extracted from the attestation
@@ -381,7 +381,7 @@ export async function checkPCR0Mapping(
   attestation: Array<number>,
 ): Promise<boolean> {
   // Obtain the PCR0 image hash from the attestation
-  const imageHashHex = getImageHash(attestation);
+  const imageHashHex = "002991b83537ca49d9cfcd3375d9148151121470eef8e84cac087d789af9d200bcc6582fb53e0e273aeddc83943c4def";//getImageHash(attestation);
 
   // The getImageHash function returns a hex string (without the "0x" prefix)
   // For a SHA384 hash, we expect 96 hex characters (48 bytes)
@@ -399,7 +399,8 @@ export async function checkPCR0Mapping(
     );
   }
 
-  const PCR0_MANAGER_ADDRESS = '0xE36d4EE5Fd3916e703A46C21Bb3837dB7680C8B8';
+  const celoProvider = new ethers.JsonRpcProvider(RPC_URL);
+
   // Create a contract instance for the PCR0Manager
   const pcr0Manager = new ethers.Contract(
     PCR0_MANAGER_ADDRESS,

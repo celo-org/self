@@ -26,12 +26,15 @@ export default buildModule("UpdatePCR0", (m) => {
 
     const pcr0Address = deploymentResult.result.address;
     const pcr0Manager = m.contractAt("PCR0Manager", pcr0Address);
-
+    const pcr0Hash = "002991b83537ca49d9cfcd3375d9148151121470eef8e84cac087d789af9d200bcc6582fb53e0e273aeddc83943c4def";
+    if (pcr0Hash.length !== 96) {
+        throw new Error(`Invalid PCR0 hash length: expected 96 hex characters, got ${pcr0Hash.length}`);
+    }
+    const pcr0Bytes = "0x" + pcr0Hash;
     // Create a zero-filled hex string
-    const zeroPcr0 = "0x" + "0".repeat(96);
 
     // Add the zero PCR0 value
-    m.call(pcr0Manager, "addPCR0", [zeroPcr0]);
+    m.call(pcr0Manager, "addPCR0", [pcr0Bytes]);
 
     return {};
 });

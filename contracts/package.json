@@ -65,7 +65,7 @@
     "update:hub:celo": "npx hardhat ignition deploy ignition/modules/scripts/updateRegistryHub.ts --network celo",
     "update:ofacroot:celo": "npx hardhat ignition deploy ignition/modules/scripts/updateRegistryOfacRoot.ts --network celo",
     "deploy:pcr0:celo": "npx hardhat ignition deploy ignition/modules/deployPCR0.ts --network celo --verify",
-    "update:pcr0:celo": "PCR0_ACTION=add PCR0_KEY=123 npx hardhat ignition deploy ignition/modules/scripts/updatePCR0.ts --network celo"
+    "update:pcr0:celo": "PCR0_ACTION=add PCR0_KEY=123 npx hardhat ignition deploy ignition/modules/scripts/updatePCR0.ts --network celo --reset"
   },
   "dependencies": {
     "@ashpect/smt": "https://github.com/ashpect/smt#main",
