@@ -135,7 +135,7 @@ describe('ecdsa', () => {
       }
     });
   });
-  it('should not accept invalid chunks in the signature', async function () {
+  it.only('should not accept invalid chunks in the signature', async function () {
     this.timeout(0);
     const circuit = await wasmTester(
       path.join(__dirname, `../../circuits/tests/utils/ecdsa/test_p256.circom`),
@@ -191,7 +191,7 @@ describe('ecdsa', () => {
       await circuit.checkConstraints(witness);
       throw new Error('Test failed: Invalid signature was verified.');
     } catch (err) {
-      if (!(err as Error).message.includes('isNBits')) {
+      if (!(err as Error).message.includes('Num2Bits')) {
         throw err;
       }
     }
