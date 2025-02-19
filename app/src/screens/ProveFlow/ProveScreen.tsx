@@ -189,15 +189,13 @@ const ProveScreen: React.FC = () => {
         </YStack>
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection
-        flexGrow={1}
-        justifyContent="space-between"
         paddingBottom={20}
         backgroundColor={white}
         maxHeight={'55%'}
       >
         <ScrollView>
           <Disclosures disclosures={disclosureOptions} />
-          <View>
+          <View marginTop={20}>
             <Caption
               textAlign="center"
               size="small"

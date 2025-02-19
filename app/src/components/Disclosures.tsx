@@ -110,7 +110,9 @@ const DisclosureItem: React.FC<DisclosureItemProps> = ({
       paddingHorizontal={10}
     >
       <CheckMark width={22} />
-      <BodyText color={slate500}>{text}</BodyText>
+      <BodyText textBreakStrategy="balanced" color={slate500}>
+        {text}
+      </BodyText>
     </XStack>
   );
 };
