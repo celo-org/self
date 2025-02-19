@@ -109,12 +109,12 @@ const SocialButton: React.FC<SocialButtonProps> = ({ Icon, href }) => {
 const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
   const navigation = useNavigation();
   const [screenRoutes, setScreenRoutes] = useState(routes);
-  function addDebugMenu() {
+  const addDebugMenu = () => {
     setScreenRoutes([
       ...routes,
       [Bug as React.FC<SvgProps>, 'Debug menu', 'DevSettings'],
     ]);
-  }
+  };
   const threeFingerTap = Gesture.Tap()
     .minPointers(3)
     .numberOfTaps(7)
