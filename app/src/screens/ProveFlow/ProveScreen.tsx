@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Image, Text, View, YStack } from 'tamagui';
+import { Image, ScrollView, Text, View, YStack } from 'tamagui';
 
 import { SelfAppDisclosureConfig } from '../../../../common/src/utils/appType';
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
@@ -193,26 +193,29 @@ const ProveScreen: React.FC = () => {
         justifyContent="space-between"
         paddingBottom={20}
         backgroundColor={white}
+        maxHeight={'55%'}
       >
-        <Disclosures disclosures={disclosureOptions} />
-        <View>
-          <Caption
-            textAlign="center"
-            size="small"
-            marginBottom={20}
-            marginTop={10}
-            borderRadius={4}
-          >
-            Self will confirm that these details are accurate and none of your
-            confidential info will be revealed to {selectedApp.appName}
-          </Caption>
-          <HeldPrimaryButton
-            onPress={onVerify}
-            disabled={!selectedApp.sessionId}
-          >
-            Hold To Verify
-          </HeldPrimaryButton>
-        </View>
+        <ScrollView>
+          <Disclosures disclosures={disclosureOptions} />
+          <View>
+            <Caption
+              textAlign="center"
+              size="small"
+              marginBottom={20}
+              marginTop={10}
+              borderRadius={4}
+            >
+              Self will confirm that these details are accurate and none of your
+              confidential info will be revealed to {selectedApp.appName}
+            </Caption>
+            <HeldPrimaryButton
+              onPress={onVerify}
+              disabled={!selectedApp.sessionId}
+            >
+              Hold To Verify
+            </HeldPrimaryButton>
+          </View>
+        </ScrollView>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
