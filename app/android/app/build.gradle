@@ -82,7 +82,7 @@ android {
 
     namespace "com.proofofpassportapp"
     defaultConfig {
-        applicationId "xyz.self"
+        applicationId "com.proofofpassportapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 26
