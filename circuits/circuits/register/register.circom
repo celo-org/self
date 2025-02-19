@@ -106,7 +106,7 @@ template REGISTER(
     signal computed_merkle_root <== BinaryMerkleRoot(nLevels)(dsc_tree_leaf, leaf_depth, path, siblings);
     merkle_root === computed_merkle_root;
 
-    var prefixLength = 31;
+    var prefixLength = 33;
     var suffixLength = kLengthFactor == 1 ? getSuffixLength(signatureAlgorithm) : 0;
 
     // get DSC public key from the certificate, along with its prefix and suffix
@@ -119,26 +119,15 @@ template REGISTER(
         prefixLength + dsc_pubKey_actual_size + suffixLength
     );
 
-    // If using RSA or RSAPSS, check that the extracted prefix matches one of the allowed RSA prefixes
-    if (kLengthFactor == 1) {
-        CheckPubkeyPosition(
-            prefixLength,
-            MAX_DSC_PUBKEY_LENGTH,
-            suffixLength,
-            signatureAlgorithm
-        )(
-            pubkey_with_prefix_and_suffix,
-            dsc_pubKey_actual_size
-        );
-    // If using ECDSA, check dsc_pubKey_actual_size is the key length
-    } else {
-        var minKeyLength = getMinKeyLength(signatureAlgorithm);
-        signal isCorrectLength <== IsEqual()([
-            dsc_pubKey_actual_size,
-            minKeyLength * kLengthFactor / 8
-        ]);
-        isCorrectLength === 1;
-    }
+    CheckPubkeyPosition(
+        prefixLength,
+        MAX_DSC_PUBKEY_LENGTH,
+        suffixLength,
+        signatureAlgorithm
+    )(
+        pubkey_with_prefix_and_suffix,
+        dsc_pubKey_actual_size
+    );
 
     // remove the prefix from the DSC public key
     signal extracted_dsc_pubKey[MAX_DSC_PUBKEY_LENGTH];

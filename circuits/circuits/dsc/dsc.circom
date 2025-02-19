@@ -105,7 +105,7 @@ template DSC(
     signal computed_merkle_root <== BinaryMerkleRoot(nLevels)(csca_tree_leaf, nLevels, path, siblings);
     merkle_root === computed_merkle_root;
 
-    var prefixLength = 31;
+    var prefixLength = 33;
     var suffixLength = kLengthFactor == 1 ? getSuffixLength(signatureAlgorithm) : 0;
     
     // get CSCA public key from the certificate
@@ -119,26 +119,15 @@ template DSC(
         prefixLength + csca_pubKey_actual_size + suffixLength
     );
 
-    // If using RSA or RSAPSS, check that the extracted prefix matches one of the allowed RSA prefixes
-    if (kLengthFactor == 1) {
-        CheckPubkeyPosition(
-            prefixLength,
-            MAX_CSCA_PUBKEY_LENGTH,
-            suffixLength,
-            signatureAlgorithm
-        )(
-            csca_pubKey_with_prefix_and_suffix,
-            csca_pubKey_actual_size
-        );
-    // If using ECDSA, check csca_pubKey_actual_size is the key length
-    } else {
-        var minKeyLength = getMinKeyLength(signatureAlgorithm);
-        signal isCorrectLength <== IsEqual()([
-            csca_pubKey_actual_size,
-            minKeyLength * kLengthFactor / 8
-        ]);
-        isCorrectLength === 1;
-    }
+    CheckPubkeyPosition(
+        prefixLength,
+        MAX_CSCA_PUBKEY_LENGTH,
+        suffixLength,
+        signatureAlgorithm
+    )(
+        csca_pubKey_with_prefix_and_suffix,
+        csca_pubKey_actual_size
+    );
 
     // remove the prefix from the CSCA public key
     signal extracted_csca_pubKey[MAX_CSCA_PUBKEY_LENGTH];
