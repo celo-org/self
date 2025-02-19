@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import { getLeafDscTree } from '../../../common/src/utils/trees';
 import { DEVELOPMENT_MODE } from '../../../common/src/constants/constants';
-import { IMT } from '@openpassport/zk-kit-imt';
 import { poseidon2 } from 'poseidon-lite';
 import { writeFile } from 'fs/promises';
 import * as path from 'path';
@@ -102,7 +101,7 @@ function processCertificate(pemContent: string, filePath: string) {
 
         // Final Poseidon Hash
         const finalPoseidonHash = getLeafDscTree(certificate, dscMetaData.cscaParsed);
-        console.log('Leaf Value: \x1b[34m' + finalPoseidonHash + '\x1b[0m');
+        // console.log('Leaf Value: \x1b[34m' + finalPoseidonHash + '\x1b[0m');
 
         return finalPoseidonHash.toString();
     } catch (error) {
