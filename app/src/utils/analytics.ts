@@ -28,14 +28,14 @@ const analytics = () => {
       type === 'screen' ? segmentClient.screen : segmentClient.track;
 
     if (!properties) {
-      return trackMethod(eventName);
+      return trackMethod(eventName).catch(() => {});
     }
 
     if (properties.params) {
       const newParams = cleanParams(properties.params);
       properties.params = newParams;
     }
-    trackMethod(eventName, properties);
+    trackMethod(eventName, properties).catch(() => {});
   }
 
   return {
