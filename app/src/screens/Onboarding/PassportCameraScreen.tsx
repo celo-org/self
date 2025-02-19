@@ -18,8 +18,8 @@ import useHapticNavigation from '../../hooks/useHapticNavigation';
 import Bulb from '../../images/icons/passport_camera_bulb.svg';
 import Scan from '../../images/icons/passport_camera_scan.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import analytics from '../../utils/analytics';
 import useUserStore from '../../stores/userStore';
+import analytics from '../../utils/analytics';
 import { black, slate800, white } from '../../utils/colors';
 import { checkScannedInfo, formatDateToYYMMDD } from '../../utils/utils';
 

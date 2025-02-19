@@ -3,7 +3,6 @@ import { createSegmentClient } from '../Segment';
 const segmentClient = createSegmentClient();
 
 const analytics = () => ({
-
   trackEvent: (eventName: string, properties?: Record<string, any>) => {
     // log what we are tracking in development
     // this can help us to identitfy if we are tracking the right events or to many properties

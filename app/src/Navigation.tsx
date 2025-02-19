@@ -318,7 +318,6 @@ const { trackEvent } = analytics();
 
 const Navigation = createStaticNavigation(AppNavigation);
 const NavigationWithTracking = () => {
-
   const trackScreenView = () => {
     const currentRoute = navigationRef.getCurrentRoute();
     if (currentRoute) {

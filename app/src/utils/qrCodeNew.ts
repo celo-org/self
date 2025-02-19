@@ -52,7 +52,6 @@ const handleUniversalLink = (url: string, setApp: (app: SelfApp) => void) => {
     handleQRCodeScan(encodedData, setApp);
   } else {
     console.error('No data found in the Universal Link');
-
   }
 };
 
