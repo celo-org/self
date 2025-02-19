@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ScrollView, XStack, YStack } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
 
 import {
   Country3LetterCode,
