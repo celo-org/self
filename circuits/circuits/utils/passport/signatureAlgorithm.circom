@@ -383,6 +383,7 @@ function getSuffixLength(signatureAlgorithm) {
     } else if (exponentBits == 2) {
         return 3;
     } else {
+        assert(1==0);
         return 0;
     }
 }
@@ -402,7 +403,7 @@ function getSuffix(signatureAlgorithm) {
 
 
 function getValidRSAPrefixes() {
-    var prefixes[12][31];
+    var prefixes[13][31];
 
     // Prefixes include the whole sequence, including the OID and the der encoding before the key
     // We remove their first two bytes so they have fixed length of 31,
@@ -438,18 +439,15 @@ function getValidRSAPrefixes() {
     // 4096 bits, e=3
     prefixes[11] = [0x30, 0x82, 0x02, 0x1E, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x0A, 0x03, 0x82, 0x02, 0x0D, 0x00, 0x30, 0x82, 0x02, 0x08, 0x02, 0x82, 0x02, 0x01, 0x00];
 
-    // 4096 bits, e=65537, Estonia, missing null bytes but not rsaPSS OID
-    // prefixes[6] = [0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x03, 0x82, 0x02, 0x0F, 0x00, 0x30, 0x82, 0x02, 0x0A, 0x02, 0x82, 0x02, 0x01, 0x00];
+    // ---- Estonia, missing two null bytes, but not using rsaPSS OID ----
 
-    // two variants to manage: missing two null bytes, or rsassaPSS OID in key OID field
+    // 4096 bits, e=65537
+    prefixes[12] = [0x30, 0x82, 0x02, 0x20, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x03, 0x82, 0x02, 0x0F, 0x00, 0x30, 0x82, 0x02, 0x0A, 0x02, 0x82, 0x02, 0x01, 0x00];
 
     return prefixes;
 }
 
 function prefixIndexToRSAKeyLength() {
-    var keyLengths[12] = [2048, 2048, 3072, 3072, 4096, 4096, 2048, 2048, 3072, 3072, 4096, 4096];
+    var keyLengths[13] = [2048, 2048, 3072, 3072, 4096, 4096, 2048, 2048, 3072, 3072, 4096, 4096, 4096];
     return keyLengths;
-}
-
-    return prefixes;
 }

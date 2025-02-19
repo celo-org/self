@@ -106,8 +106,8 @@ template DSC(
     merkle_root === computed_merkle_root;
 
     var prefixLength = 31;
-    var suffixLength = getSuffixLength(signatureAlgorithm);
-
+    var suffixLength = kLengthFactor == 1 ? getSuffixLength(signatureAlgorithm) : 0;
+    
     // get CSCA public key from the certificate
     // we also grab the prefix (previous `prefixLength` bytes)
     signal csca_pubKey_with_prefix_and_suffix[prefixLength + MAX_CSCA_PUBKEY_LENGTH + suffixLength] <== SelectSubArray(

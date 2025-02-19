@@ -15,7 +15,7 @@ template CheckPubkeyPosition(prefixLength, maxPubkeyLength, suffixLength, signat
     signal input pubkey_with_prefix_and_suffix[prefixLength + maxPubkeyLength + suffixLength];
     signal input pubkey_actual_length;
 
-    var NUM_VALID_PREFIXES = 12;
+    var NUM_VALID_PREFIXES = 13;
 
     // Grab the prefix
     signal prefix_bytes[prefixLength];

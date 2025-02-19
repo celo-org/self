@@ -140,7 +140,6 @@ template REGISTER(
         isCorrectLength === 1;
     }
 
-
     // remove the prefix from the DSC public key
     signal extracted_dsc_pubKey[MAX_DSC_PUBKEY_LENGTH];
     for (var i = 0; i < MAX_DSC_PUBKEY_LENGTH; i++) {
