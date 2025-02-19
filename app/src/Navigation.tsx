@@ -314,22 +314,22 @@ declare global {
 // Create a ref that we can use to access the navigation state
 export const navigationRef = createNavigationContainerRef();
 
-const { trackEvent } = analytics();
+const { trackScreenView } = analytics();
 
 const Navigation = createStaticNavigation(AppNavigation);
 const NavigationWithTracking = () => {
-  const trackScreenView = () => {
+  const trackScreen = () => {
     const currentRoute = navigationRef.getCurrentRoute();
     if (currentRoute) {
       console.log(`Screen View: ${currentRoute.name}`);
-      trackEvent(`Screen View: ${currentRoute.name}`, {
+      trackScreenView(`${currentRoute.name}`, {
         screenName: currentRoute.name,
         params: currentRoute.params,
       });
     }
   };
 
-  return <Navigation ref={navigationRef} onStateChange={trackScreenView} />;
+  return <Navigation ref={navigationRef} onStateChange={trackScreen} />;
 };
 
 export default NavigationWithTracking;
