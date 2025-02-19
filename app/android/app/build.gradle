@@ -85,8 +85,8 @@ android {
         applicationId "xyz.self"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "2.2.6"
+        versionCode 25
+        versionName "2.2.7"
         externalNativeBuild {
             cmake {
                 cppFlags += "-fexceptions -frtti -std=c++11"
