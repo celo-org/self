@@ -35,7 +35,8 @@ local.properties
 *.keystore
 !debug.keystore
 # debug bundled builds
-android/app/src/main/
+android/app/src/main/assets/
+android/app/src/main/res/
 
 # node.js
 #
