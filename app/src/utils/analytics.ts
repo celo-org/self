@@ -1,16 +1,13 @@
-import { create } from 'zustand';
-
 import { createSegmentClient } from '../Segment';
-
-interface NavigationState {
-  trackEvent: (eventName: string, properties?: Record<string, any>) => void;
-}
 
 const segmentClient = createSegmentClient();
 
-const useNavigationStore = create<NavigationState>(() => ({
+const analytics = () => ({
 
   trackEvent: (eventName: string, properties?: Record<string, any>) => {
+    // log what we are tracking in development
+    // this can help us to identitfy if we are tracking the right events or to many properties
+    __DEV__ && console.log('Analytics event:', eventName, properties);
     if (!segmentClient) {
       return;
     }
@@ -31,6 +28,6 @@ const useNavigationStore = create<NavigationState>(() => ({
 
     segmentClient.track(eventName, properties);
   },
-}));
+});
 
-export default useNavigationStore;
+export default analytics;
