@@ -28,7 +28,7 @@ const analytics = () => {
       type === 'screen' ? segmentClient.screen : segmentClient.track;
 
     if (!properties) {
-      // fyi: may need to remove the catch when debugging
+      // you may need to remove the catch when debugging
       return trackMethod(eventName).catch(() => {});
     }
 
@@ -36,7 +36,7 @@ const analytics = () => {
       const newParams = cleanParams(properties.params);
       properties.params = newParams;
     }
-    // fyi: may need to remove the catch when debugging
+    // you may need to remove the catch when debugging
     trackMethod(eventName, properties).catch(() => {});
   }
 
