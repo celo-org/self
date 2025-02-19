@@ -64,7 +64,7 @@ const routes = [
 ] as [React.FC<SvgProps>, string, RouteOption][];
 
 // temporarily always show so we can release builds for testing
-if (__DEV__ || true) {
+if (__DEV__) {
   // @ts-expect-error
   routes.push([Bug, 'Debug menu', 'DevSettings']);
 }
