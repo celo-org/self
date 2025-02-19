@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -15,7 +15,11 @@ import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useApp } from '../../stores/appProvider';
 import { usePassport } from '../../stores/passportDataProvider';
-import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
+import {
+  ProofStatusEnum,
+  globalSetDisclosureStatus,
+  useProofInfo,
+} from '../../stores/proofProvider';
 import { black, slate300, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import {
@@ -26,13 +30,16 @@ import {
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { getPassportDataAndSecret } = usePassport();
-  const { selectedApp, setStatus } = useProofInfo();
+  const { selectedApp, resetProof } = useProofInfo();
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
   const isProcessingRef = useRef(false);
   useEffect(() => {
-    if (!selectedApp || selectedAppRef.current?.sessionId === selectedApp.sessionId) {
+    if (
+      !selectedApp ||
+      selectedAppRef.current?.sessionId === selectedApp.sessionId
+    ) {
       return; // Avoid unnecessary updates
     }
     selectedAppRef.current = selectedApp;
@@ -67,45 +74,46 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(
     async function () {
+      resetProof();
       buttonTap();
-      if (isProcessingRef.current) return;
+      if (isProcessingRef.current) {
+        return;
+      }
       isProcessingRef.current = true;
 
       const currentApp = selectedAppRef.current;
       try {
-        // getData first because that triggers biometric authentication and feels nicer to do before navigating
-        // then wait a second and navigate to the status screen. use finally so that any errors thrown here dont prevent the navigate
-        // importantly we are NOT awaiting the navigate call because
-        // we Do NOT want to delay the callsendVcAndDisclosePayload
-        const passportDataAndSecret = await getPassportDataAndSecret().finally(
-          () => {
-            setTimeout(() => {
-              navigate('ProofRequestStatusScreen');
-            }, 1000);
+        let timeToNavigateToStatusScreen: NodeJS.Timeout;
+        const passportDataAndSecret = await getPassportDataAndSecret().catch(
+          (e: Error) => {
+            console.error('Error getPassportDataAndSecret', e);
+            globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
           },
         );
+
+        timeToNavigateToStatusScreen = setTimeout(() => {
+          navigate('ProofRequestStatusScreen');
+        }, 1000);
+
         if (!passportDataAndSecret) {
-          setStatus(ProofStatusEnum.ERROR);
+          console.log('No passport data or secret');
+          globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
           return;
         }
-        const { passportData, secret } = passportDataAndSecret.data;
 
-        // passport must be supported, because it was stored in the first place
-        // check if commitment has been registered.
-        // if not, either:
-        // - registration is ongoing => show a loading screen. TODO detect this?
-        // - registration failed => send to ConfirmBelongingScreen to register again
+        const { passportData, secret } = passportDataAndSecret.data;
         const isRegistered = await isUserRegistered(passportData, secret);
         console.log('isRegistered', isRegistered);
         if (!isRegistered) {
+          clearTimeout(timeToNavigateToStatusScreen);
           console.log(
             'User is not registered, sending to ConfirmBelongingScreen',
           );
           navigate('ConfirmBelongingScreen');
           return;
         }
-        console.log('currentApp', currentApp);
 
+        console.log('currentApp', currentApp);
         const status = await sendVcAndDisclosePayload(
           secret,
           passportData,
@@ -117,18 +125,12 @@ const ProveScreen: React.FC = () => {
         );
       } catch (e) {
         console.log('Error sending VC and disclose payload', e);
-        setStatus(ProofStatusEnum.ERROR);
+        globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
       } finally {
         isProcessingRef.current = false;
       }
     },
-    [
-      navigate,
-      getPassportDataAndSecret,
-      sendVcAndDisclosePayload,
-      setStatus,
-      buttonTap,
-    ],
+    [navigate, getPassportDataAndSecret, handleProofVerified, resetProof],
   );
 
   async function sendMockPayload() {

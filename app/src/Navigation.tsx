@@ -1,15 +1,17 @@
 import React from 'react';
+import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   StaticParamList,
+  createNavigationContainerRef,
   createStaticNavigation,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DefaultNavBar from './components/DefaultNavBar';
 import HomeNavBar from './components/HomeNavBar';
+import AppLayout from './layouts/AppLayout';
 import AccountRecoveryChoiceScreen from './screens/AccountFlow/AccountRecoveryChoiceScreen';
 import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
 import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
@@ -37,7 +39,7 @@ import PassportDataInfoScreen from './screens/Settings/PassportDataInfoScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
-import StartScreen from './screens/StartScreen';
+import useNavigationStore from './stores/navigationStore';
 import { black, slate300, white } from './utils/colors';
 
 const AppNavigation = createNativeStackNavigator({
@@ -47,7 +49,7 @@ const AppNavigation = createNativeStackNavigator({
     header: DefaultNavBar,
     navigationBarColor: white,
   },
-  layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
+  layout: AppLayout,
   screens: {
     /**
      * STATIC SCREENS
@@ -55,17 +57,14 @@ const AppNavigation = createNativeStackNavigator({
     Splash: {
       screen: SplashScreen,
       options: {
-        headerShown: false,
+        header: () => (
+          <StatusBar barStyle="light-content" backgroundColor={black} />
+        ),
+        navigationBarColor: black,
       },
     },
     Launch: {
       screen: LaunchScreen,
-      options: {
-        headerShown: false,
-      },
-    },
-    Start: {
-      screen: StartScreen,
       options: {
         headerShown: false,
       },
@@ -140,12 +139,13 @@ const AppNavigation = createNativeStackNavigator({
       screen: LoadingScreen,
       options: {
         headerShown: false,
+        navigationBarColor: black,
       },
     },
     CreateMock: {
       screen: MockDataScreen,
       options: {
-        if: () => true, // TODO: dev only
+        if: () => __DEV__,
         title: 'Mock Passport',
       },
     },
@@ -311,4 +311,25 @@ declare global {
   }
 }
 
-export default createStaticNavigation(AppNavigation);
+// Create a ref that we can use to access the navigation state
+export const navigationRef = createNavigationContainerRef();
+
+const Navigation = createStaticNavigation(AppNavigation);
+const NavigationWithTracking = () => {
+  const { trackEvent } = useNavigationStore();
+
+  const trackScreenView = () => {
+    const currentRoute = navigationRef.getCurrentRoute();
+    if (currentRoute) {
+      console.log(`Screen View: ${currentRoute.name}`);
+      trackEvent(`Screen View: ${currentRoute.name}`, {
+        screenName: currentRoute.name,
+        params: currentRoute.params,
+      });
+    }
+  };
+
+  return <Navigation ref={navigationRef} onStateChange={trackScreenView} />;
+};
+
+export default NavigationWithTracking;
