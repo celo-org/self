@@ -137,7 +137,7 @@ const ProveScreen: React.FC = () => {
     if (!__DEV__) {
       return;
     }
-    
+
     console.log('sendMockPayload, start by generating mockPassport data');
     const passportData = genMockPassportData(
       'sha1',
