@@ -10,7 +10,7 @@ include "../utils/crypto/bitify/splitWordsToBytes.circom";
 include "../utils/crypto/bitify/bytes.circom";
 include "@zk-kit/binary-merkle-root.circom/src/binary-merkle-root.circom";
 include "../utils/passport/checkPubkeysEqual.circom";
-include "../utils/passport/checkRSAPrefix.circom";
+include "../utils/passport/checkPubkeyPosition.circom";
 
 /// @title REGISTER
 /// @notice Main circuit — verifies the integrity of the passport data, the signature, and generates commitment and nullifier
@@ -59,7 +59,6 @@ template REGISTER(
     // This means the attestation is a passport
     var attestation_id = 1;
 
-    var minKeyLength = getMinKeyLength(signatureAlgorithm);
     var kLengthFactor = getKLengthFactor(signatureAlgorithm);
     var kScaled = k * kLengthFactor;
 
@@ -68,8 +67,6 @@ template REGISTER(
     var ECONTENT_HASH_ALGO_BYTES = ECONTENT_HASH_ALGO / 8;
 
     var MAX_DSC_PUBKEY_LENGTH = n * kScaled / 8;
-
-    var prefixLength = 5;
 
     signal input raw_dsc[MAX_DSC_LENGTH];
     signal input raw_dsc_actual_length;
@@ -95,13 +92,6 @@ template REGISTER(
     
     signal input secret;
 
-    // check dsc_pubKey_actual_size is at least the minimum key length
-    signal dsc_pubKey_actual_size_in_range <== GreaterEqThan(12)([
-        dsc_pubKey_actual_size,
-        minKeyLength * kLengthFactor / 8
-    ]);
-    dsc_pubKey_actual_size_in_range === 1;
-
     // check offsets refer to valid ranges
     signal dsc_pubKey_offset_in_range <== LessEqThan(12)([
         dsc_pubKey_offset + dsc_pubKey_actual_size,
@@ -116,31 +106,44 @@ template REGISTER(
     signal computed_merkle_root <== BinaryMerkleRoot(nLevels)(dsc_tree_leaf, leaf_depth, path, siblings);
     merkle_root === computed_merkle_root;
 
-    // get DSC public key from the certificate
-    // we also grab the prefix (previous `prefixLength` bytes)
-    signal extracted_dsc_pubKey_with_prefix[MAX_DSC_PUBKEY_LENGTH + prefixLength] <== SelectSubArray(
+    var prefixLength = 31;
+    var suffixLength = kLengthFactor == 1 ? getSuffixLength(signatureAlgorithm) : 0;
+
+    // get DSC public key from the certificate, along with its prefix and suffix
+    signal pubkey_with_prefix_and_suffix[prefixLength + MAX_DSC_PUBKEY_LENGTH + suffixLength] <== SelectSubArray(
         MAX_DSC_LENGTH,
-        MAX_DSC_PUBKEY_LENGTH + prefixLength
+        prefixLength + MAX_DSC_PUBKEY_LENGTH + suffixLength
     )(
         raw_dsc,
         dsc_pubKey_offset - prefixLength,
-        dsc_pubKey_actual_size + prefixLength
+        prefixLength + dsc_pubKey_actual_size + suffixLength
     );
 
     // If using RSA or RSAPSS, check that the extracted prefix matches one of the allowed RSA prefixes
     if (kLengthFactor == 1) {
-        CheckRSAPrefix(
+        CheckPubkeyPosition(
             prefixLength,
-            MAX_DSC_PUBKEY_LENGTH + prefixLength
+            MAX_DSC_PUBKEY_LENGTH,
+            suffixLength,
+            signatureAlgorithm
         )(
-            extracted_dsc_pubKey_with_prefix
+            pubkey_with_prefix_and_suffix,
+            dsc_pubKey_actual_size
         );
+    // If using ECDSA, check dsc_pubKey_actual_size is the key length
+    } else {
+        var minKeyLength = getMinKeyLength(signatureAlgorithm);
+        signal isCorrectLength <== IsEqual()([
+            dsc_pubKey_actual_size,
+            minKeyLength * kLengthFactor / 8
+        ]);
+        isCorrectLength === 1;
     }
 
     // remove the prefix from the DSC public key
     signal extracted_dsc_pubKey[MAX_DSC_PUBKEY_LENGTH];
     for (var i = 0; i < MAX_DSC_PUBKEY_LENGTH; i++) {
-        extracted_dsc_pubKey[i] <== extracted_dsc_pubKey_with_prefix[prefixLength + i];
+        extracted_dsc_pubKey[i] <== pubkey_with_prefix_and_suffix[prefixLength + i];
     }
 
     // check if the DSC public key is the same as the one in the certificate
