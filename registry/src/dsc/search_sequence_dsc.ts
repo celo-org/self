@@ -31,7 +31,7 @@ const findSequenceMatches = (haystack: number[], needle: number[]): {count: numb
 
 export async function extractMasterlistDsc() {
   // Read pem certificates from the output directory
-  const pem_path = path.join(__dirname, '..', '..', 'outputs', 'dsc', 'mock_pem_masterlist');
+  const pem_path = path.join(__dirname, '..', '..', 'outputs', 'dsc', 'pem_masterlist');
 
   if (!fs.existsSync(pem_path)) {
     console.error(`Directory ${pem_path} does not exist.`);
@@ -53,45 +53,46 @@ export async function extractMasterlistDsc() {
   for (let i = 0; i < certificates.length; i++) {
     const pemContent = certificates[i];
     const parsed = parseCertificateSimple(pemContent);
-    if (parsed.signatureAlgorithm === 'rsa' || parsed.signatureAlgorithm === 'rsapss') {
+    // if (parsed.signatureAlgorithm === 'rsa' || parsed.signatureAlgorithm === 'rsapss') {
+    if (parsed.signatureAlgorithm === 'ecdsa') {
       continue;
     }
     let matchCount = 0;
     
     const tbsBytesArray = Array.from(parsed.tbsBytes);
     const sequences = [
-      // [2, 130, 1, 1, 0], // 2048 bits, 23963 matches
-      // [2, 130, 2, 1, 0], // 4096 bits, 200 matches
-      // [2, 130, 1, 129, 0], // 3072 bits, 528 matches
+      [2, 130, 1, 1, 0], // 2048 bits, 23963 matches
+      [2, 130, 2, 1, 0], // 4096 bits, 200 matches
+      [2, 130, 1, 129, 0], // 3072 bits, 528 matches
       // a few certs between 23502 and 23527 and around have 1024 bits
       // they have [2, 129, 129, 0, 210/186/194...]
       // we don't support them.
 
-      // ECDSA
-      [48, 60, 4, 28], // 224 bits
-      [48, 68, 4, 32], // 256 bits,
-      [48, 100, 4, 48], // 384 bits,
-      [48, 129, 132, 4], // 512 bits,
-      [48, 129, 135, 4], // 521 bits,
-      [48, 91, 4, 32], // 256 bits, 3 fields (Russia)
-      [48, 125, 4, 49], // 384 bits, 3 fields (Moldova)
-      [48, 123, 4, 48], // 384 bits, 3 fields (GB)
-      [48, 129, 136, 4], // 521 bits, 3 fields (Iceland)
-      [35, 3, 129, 134], // 576, 625 Turkey is doing something weird
-      [0, 34, 3, 98], // 633, 676, 678 Algeria and Israel
+      // // ECDSA
+      // [48, 60, 4, 28], // 224 bits
+      // [48, 68, 4, 32], // 256 bits,
+      // [48, 100, 4, 48], // 384 bits,
+      // [48, 129, 132, 4], // 512 bits,
+      // [48, 129, 135, 4], // 521 bits,
+      // [48, 91, 4, 32], // 256 bits, 3 fields (Russia)
+      // [48, 125, 4, 49], // 384 bits, 3 fields (Moldova)
+      // [48, 123, 4, 48], // 384 bits, 3 fields (GB)
+      // [48, 129, 136, 4], // 521 bits, 3 fields (Iceland)
+      // [35, 3, 129, 134], // 576, 625 Turkey is doing something weird
+      // [0, 34, 3, 98], // 633, 676, 678 Algeria and Israel
 
-      // 16762 this one is no good 
+      // // 16762 this one is no good 
 
-      [1, 5, 3, 58], // brainpool 224
-      [1, 7, 3, 66], // brainpool 256
-      [0, 33, 3, 58], // secp 224
-      [1, 11, 3, 98], // brainpool 384
-      [1, 13, 3, 129] // brainpool 521
+      // [1, 5, 3, 58], // brainpool 224
+      // [1, 7, 3, 66], // brainpool 256
+      // [0, 33, 3, 58], // secp 224
+      // [1, 11, 3, 98], // brainpool 384
+      // [1, 13, 3, 129] // brainpool 521
 
     ];
 
-    // const bitSizes = [2048, 4096, 3072];
-    const bitSizes = [224, 256, 384, 512, 521, 256, 384, 384, 521, 521, 384, 224, 256, 224, 384, 521];
+    const bitSizes = [2048, 4096, 3072];
+    // const bitSizes = [224, 256, 384, 512, 521, 256, 384, 384, 521, 521, 384, 224, 256, 224, 384, 521];
 
 
     sequences.forEach((sequence, index) => {
