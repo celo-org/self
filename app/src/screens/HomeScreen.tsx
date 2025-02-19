@@ -4,9 +4,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { Button, YStack, styled } from 'tamagui';
 
+import { pressedStyle } from '../components/buttons/pressedStyle';
 import { BodyText } from '../components/typography/BodyText';
 import { Caption } from '../components/typography/Caption';
 import { useAppUpdates } from '../hooks/useAppUpdates';
+import useConnectionModal from '../hooks/useConnectionModal';
 import useHapticNavigation from '../hooks/useHapticNavigation';
 import SelfCard from '../images/card-style-1.svg';
 import ScanIcon from '../images/icons/qr_scan.svg';
@@ -26,6 +28,7 @@ const ScanButton = styled(Button, {
 });
 
 const HomeScreen: React.FC = () => {
+  useConnectionModal();
   const [isNewVersionAvailable, showAppUpdateModal, isModalDismissed] =
     useAppUpdates();
 
@@ -35,7 +38,6 @@ const HomeScreen: React.FC = () => {
     }
   });
 
-  const onCaptionPress = useHapticNavigation('ConfirmBelongingScreen');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
   usePreventRemove(true, () => {});
@@ -51,12 +53,7 @@ const HomeScreen: React.FC = () => {
     >
       <YStack ai="center" gap={20} justifyContent="flex-start">
         <SelfCard width="100%" />
-        <Caption
-          color={amber500}
-          opacity={0.3}
-          textTransform="uppercase"
-          onPress={onCaptionPress}
-        >
+        <Caption color={amber500} opacity={0.3} textTransform="uppercase">
           Only visible to you
         </Caption>
         <PrivacyNote />
@@ -98,7 +95,7 @@ function PrivacyNote() {
   }
 
   return (
-    <Card onPressIn={onDisclaimerPress}>
+    <Card onPress={onDisclaimerPress} pressStyle={pressedStyle}>
       <WarnIcon color={white} width={24} height={33} />
       <BodyText color={white} textAlign="center" fontSize={18}>
         A note on protecting your privacy

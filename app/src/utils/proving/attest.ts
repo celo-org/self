@@ -1,21 +1,23 @@
 import { X509Certificate } from '@peculiar/x509';
 import { decode } from '@stablelib/cbor';
-//@ts-ignore
-import * as asn1 from 'asn1.js';
-import * as asn1js from 'asn1js';
+import { fromBER } from 'asn1js';
 import { Buffer } from 'buffer';
 import elliptic from 'elliptic';
+import { ethers } from 'ethers';
 import { sha384 } from 'js-sha512';
 import { Certificate } from 'pkijs';
 
-import { IMAGE_HASH } from '../../../../common/src/constants/constants';
+import {
+  PCR0_MANAGER_ADDRESS,
+  RPC_URL,
+} from '../../../../common/src/constants/constants';
 import { AWS_ROOT_PEM } from './awsRootPem';
 import cose from './cose';
 
 /**
  * @notice An array specifying the required fields for a valid attestation.
  */
-export const requiredFields = [
+const requiredFields = [
   'module_id',
   'digest',
   'timestamp',
@@ -23,32 +25,6 @@ export const requiredFields = [
   'certificate',
   'cabundle',
 ];
-
-/**
- * @notice ASN.1 context interface for use with asn1js.js.
- */
-interface ASN1Context {
-  seq(): ASN1Context;
-  obj(...args: any[]): ASN1Context;
-  key(name: string): ASN1Context;
-  objid(): ASN1Context;
-  bitstr(): ASN1Context;
-}
-
-/**
- * @notice ASN.1 definition for an Elliptic Curve Public Key.
- */
-export const ECPublicKeyASN = asn1.define(
-  'ECPublicKey',
-  function (this: ASN1Context) {
-    this.seq().obj(
-      this.key('algo')
-        .seq()
-        .obj(this.key('id').objid(), this.key('curve').objid()),
-      this.key('pubKey').bitstr(),
-    );
-  },
-);
 
 /**
  * @notice Utility function to check if a number is within (start, end] range.
@@ -193,9 +169,9 @@ export const verifyAttestation = async (attestation: Array<number>) => {
   );
 
   const cert = derToPem(attestationDoc.certificate);
-  const imageHash = getImageHash(attestation);
-  console.log('imageHash', imageHash);
-  if (imageHash !== IMAGE_HASH) {
+  const isPCR0Set = await checkPCR0Mapping(attestation);
+  console.log('isPCR0Set', isPCR0Set);
+  if (!isPCR0Set) {
     throw new Error('Invalid image hash');
   }
   console.log('TEE image hash verified');
@@ -239,7 +215,7 @@ export function getPublicKey(attestation: Array<number>) {
  * @return The PEM-formatted certificate string.
  * @throws Error if the conversion fails.
  */
-export function derToPem(der: Buffer): string {
+function derToPem(der: Buffer): string {
   try {
     const base64 = Buffer.from(der).toString('base64');
     return (
@@ -260,7 +236,7 @@ export function derToPem(der: Buffer): string {
  * @throws Error if the COSE_Sign1 format is invalid or PCR0 is missing/incorrect.
  * @see https://docs.aws.amazon.com/enclaves/latest/user/set-up-attestation.html
  */
-export function getImageHash(attestation: Array<number>) {
+function getImageHash(attestation: Array<number>) {
   const coseSign1 = decode(Buffer.from(attestation));
 
   if (!Array.isArray(coseSign1) || coseSign1.length !== 4) {
@@ -326,9 +302,9 @@ function getPublicKeyFromPem(pem: string) {
  * @param pemContent A string containing the PEM formatted certificate including header/footer markers.
  * @return A Certificate object parsed from the PEM content.
  * @dev The function strips the PEM header/footer and line breaks, decodes the base64 content into binary,
- *      creates an ArrayBuffer, and then parses the ASN.1 structure using asn1js.fromBER. Throws an error if parsing fails.
+ *      creates an ArrayBuffer, and then parses the ASN.1 structure using fromBER. Throws an error if parsing fails.
  */
-export function getCertificateFromPem(pemContent: string): Certificate {
+function getCertificateFromPem(pemContent: string): Certificate {
   const pemFormatted = pemContent.replace(
     /(-----(BEGIN|END) CERTIFICATE-----|\n|\r)/g,
     '',
@@ -340,7 +316,7 @@ export function getCertificateFromPem(pemContent: string): Certificate {
     view[i] = binary[i];
   }
 
-  const asn1Data = asn1js.fromBER(arrayBuffer);
+  const asn1Data = fromBER(arrayBuffer);
   if (asn1Data.offset === -1) {
     throw new Error(`ASN.1 parsing error: ${asn1Data.result.error}`);
   }
@@ -353,7 +329,7 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
     parent.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_csca = asn1js.fromBER(certBuffer_csca);
+  const asn1Data_csca = fromBER(certBuffer_csca);
   const cert_csca = new Certificate({ schema: asn1Data_csca.result });
   const publicKeyInfo_csca = cert_csca.subjectPublicKeyInfo;
   const publicKeyBuffer_csca =
@@ -368,19 +344,19 @@ function verifyCertificateSignature(child: string, parent: string): boolean {
     child.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_dsc = asn1js.fromBER(certBuffer_dsc);
+  const asn1Data_dsc = fromBER(certBuffer_dsc);
   const cert_dsc = new Certificate({ schema: asn1Data_dsc.result });
   const signatureValue = cert_dsc.signatureValue.valueBlock.valueHexView;
   const signature_crypto = Buffer.from(signatureValue).toString('hex');
   return key_csca.verify(tbsHash, signature_crypto);
 }
 
-export function getTBSHash(pem: string): string {
+function getTBSHash(pem: string): string {
   const certBuffer = Buffer.from(
     pem.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''),
     'base64',
   );
-  const asn1Data_cert = asn1js.fromBER(certBuffer);
+  const asn1Data_cert = fromBER(certBuffer);
   const cert = new Certificate({ schema: asn1Data_cert.result });
   const tbsAsn1 = cert.encodeTBS();
   const tbsDer = tbsAsn1.toBER(false);
@@ -388,4 +364,76 @@ export function getTBSHash(pem: string): string {
   const tbsBytesArray = Array.from(tbsBytes);
   const msgHash = sha384(tbsBytesArray);
   return msgHash as string;
+}
+
+// Minimal ABI containing only the view function we need.
+const PCR0ManagerABI = [
+  'function isPCR0Set(bytes calldata pcr0) external view returns (bool)',
+];
+
+/**
+ * @notice Queries the PCR0Manager contract to verify that the PCR0 value extracted from the attestation
+ *         is mapped to true.
+ * @param attestation An array of numbers representing the COSE_Sign1 encoded attestation document.
+ * @return A promise that resolves to true if the PCR0 value is set in the contract, or false otherwise.
+ */
+export async function checkPCR0Mapping(
+  attestation: Array<number>,
+): Promise<boolean> {
+  // Obtain the PCR0 image hash from the attestation
+  const imageHashHex = getImageHash(attestation);
+  console.log('imageHash', imageHashHex);
+  // The getImageHash function returns a hex string (without the "0x" prefix)
+  // For a SHA384 hash, we expect 96 hex characters (48 bytes)
+  if (imageHashHex.length !== 96) {
+    throw new Error(
+      `Invalid PCR0 hash length: expected 96 hex characters, got ${imageHashHex.length}`,
+    );
+  }
+
+  // Convert the PCR0 hash from hex to a byte array, ensuring proper "0x" prefix
+  const pcr0Bytes = ethers.getBytes(`0x${imageHashHex}`);
+  if (pcr0Bytes.length !== 48) {
+    throw new Error(
+      `Invalid PCR0 bytes length: expected 48, got ${pcr0Bytes.length}`,
+    );
+  }
+
+  const celoProvider = new ethers.JsonRpcProvider(RPC_URL);
+
+  // Create a contract instance for the PCR0Manager
+  const pcr0Manager = new ethers.Contract(
+    PCR0_MANAGER_ADDRESS,
+    PCR0ManagerABI,
+    celoProvider,
+  );
+
+  try {
+    // Query the contract: isPCR0Set returns true if the given PCR0 value is set
+    return await pcr0Manager.isPCR0Set(pcr0Bytes);
+  } catch (error) {
+    console.error('Error checking PCR0 mapping:', error);
+    throw error;
+  }
+}
+
+// Add a helper function to validate and format PCR0 values
+export function formatPCR0Value(pcr0: string): Uint8Array {
+  // Remove "0x" prefix if present
+  const cleanHex = pcr0.startsWith('0x') ? pcr0.slice(2) : pcr0;
+
+  // Validate hex string length (96 characters for 48 bytes)
+  if (cleanHex.length !== 96) {
+    throw new Error(
+      `Invalid PCR0 length: expected 96 hex characters, got ${cleanHex.length}`,
+    );
+  }
+
+  // Validate hex string format
+  if (!/^[0-9a-fA-F]+$/.test(cleanHex)) {
+    throw new Error('Invalid hex string: contains non-hex characters');
+  }
+
+  // Convert to bytes
+  return ethers.getBytes(`0x${cleanHex}`);
 }
