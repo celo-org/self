@@ -55,10 +55,8 @@ contract VerifyAll is Ownable {
                 assembly {
                     errorSelector := mload(add(lowLevelData, 32))
                 }
-                if (errorSelector == bytes4(keccak256("LENGTH_MISMATCH()"))) {
-                    errorCode = "LENGTH_MISMATCH";
-                } else if (errorSelector == bytes4(keccak256("NO_VERIFIER_SET()"))) {
-                    errorCode = "NO_VERIFIER_SET";
+                if (errorSelector == bytes4(keccak256("INVALID_COMMITMENT_ROOT()"))) {
+                    errorCode = "INVALID_COMMITMENT_ROOT";
                 } else if (errorSelector == bytes4(keccak256("CURRENT_DATE_NOT_IN_VALID_RANGE()"))) {
                     errorCode = "CURRENT_DATE_NOT_IN_VALID_RANGE";
                 } else if (errorSelector == bytes4(keccak256("INVALID_OLDER_THAN()"))) {
