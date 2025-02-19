@@ -39,7 +39,7 @@ testSuite.forEach(
 
       const secret = poseidon6('SECRET'.split('').map((x) => BigInt(x.charCodeAt(0)))).toString();
 
-      const inputs = generateCircuitInputsRegister(secret, passportData, serialized_dsc_tree);
+      const inputs = generateCircuitInputsRegister(secret, passportData, serialized_dsc_tree as string);
 
       before(async () => {
         circuit = await wasm_tester(
