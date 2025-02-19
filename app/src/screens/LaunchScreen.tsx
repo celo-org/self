@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import { Anchor, Text, XStack, YStack } from 'tamagui';
 
@@ -22,6 +23,15 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
   const onStartPress = useHapticNavigation('PassportOnboarding');
   const skipToHome = useHapticNavigation('Home');
   const createMock = useHapticNavigation('CreateMock');
+  const threeFingerTap = Gesture.Tap()
+    .minPointers(3)
+    .numberOfTaps(7)
+    .shouldCancelWhenOutside(true)
+    .onStart(() => {
+      createMock();
+      return false;
+    });
+
   return (
     <ExpandableBottomLayout.Layout backgroundColor={black}>
       <ExpandableBottomLayout.TopSection backgroundColor={black}>
@@ -31,11 +41,11 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
           paddingVertical="$2"
           gap="$4"
         >
-          <TouchableWithoutFeedback onPress={__DEV__ ? createMock : undefined}>
+          <GestureDetector gesture={threeFingerTap}>
             <View style={styles.cardContainer}>
               <GetStartedCard style={styles.card} />
             </View>
-          </TouchableWithoutFeedback>
+          </GestureDetector>
           <YStack flex={1} justifyContent="flex-end">
             <XStack
               marginBottom="$10"
