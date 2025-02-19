@@ -23,9 +23,9 @@ import useUserStore from '../../stores/userStore';
 import { black, slate800, white } from '../../utils/colors';
 import { checkScannedInfo, formatDateToYYMMDD } from '../../utils/utils';
 
-interface PassportNFCScanScreen {}
+interface PassportNFCScanScreen { }
 
-const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
+const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({ }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const store = useUserStore();
@@ -89,7 +89,6 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
     <ExpandableBottomLayout.Layout backgroundColor={white}>
       <ExpandableBottomLayout.TopSection roundTop backgroundColor={black}>
         <PassportCamera
-          key={isFocused ? 'active' : 'inactive'}
           onPassportRead={onPassportRead}
           isMounted={isFocused}
         />
