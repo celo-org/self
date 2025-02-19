@@ -2,8 +2,7 @@ import { expect } from "chai";
 import { deploySystemFixtures } from "../utils/deployment";
 import { DeployedActors } from "../utils/types";
 import { ethers } from "hardhat";
-import { CIRCUIT_CONSTANTS } from "../utils/constants";
-import { RegisterVerifierId, DscVerifierId } from "../../../common/src/constants/constants";
+import { RegisterVerifierId, DscVerifierId, CIRCUIT_CONSTANTS } from "../../../common/src/constants/constants";
 import { ATTESTATION_ID } from "../utils/constants";
 import { generateRegisterProof, generateDscProof, generateVcAndDiscloseProof } from "../utils/generateProof";
 import { generateRandomFieldElement } from "../utils/utils";
@@ -49,7 +48,7 @@ describe("End to End Tests", function () {
                 const previousRoot = await registry.getDscKeyCommitmentMerkleRoot();                
                 const previousSize = await registry.getDscKeyCommitmentTreeSize();
                 registerDscTx = await hub.registerDscKeyCommitment(
-                    DscVerifierId.dsc_rsa_sha256_65537_4096,
+                    DscVerifierId.dsc_sha256_rsa_65537_4096,
                     dscProof
                 );
                 const receipt = await registerDscTx.wait() as TransactionReceipt;

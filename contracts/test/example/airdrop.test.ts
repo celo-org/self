@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { deploySystemFixtures } from "../utils/deployment";
 import { DeployedActors } from "../utils/types";
 import { ethers } from "hardhat";
-import { CIRCUIT_CONSTANTS } from "../utils/constants";
+import { CIRCUIT_CONSTANTS } from "../../../common/src/constants/constants";
 import { ATTESTATION_ID } from "../utils/constants";
 import {generateVcAndDiscloseProof } from "../utils/generateProof";
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
@@ -57,7 +57,6 @@ describe("Airdrop", () => {
             forbiddenCountriesList,
             (await deployedActors.user1.getAddress()).slice(2)
         );
-
 
         const tokenFactory = await ethers.getContractFactory("AirdropToken");
         token = await tokenFactory.connect(deployedActors.owner).deploy();
@@ -369,7 +368,6 @@ describe("Airdrop", () => {
             countriesListPacked,
             [true, true, true],
         );
-        console.log()
         await newAirdrop.waitForDeployment();
 
         await newAirdrop.connect(owner).openRegistration();

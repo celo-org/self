@@ -8,6 +8,7 @@ import { pressedStyle } from '../components/buttons/pressedStyle';
 import { BodyText } from '../components/typography/BodyText';
 import { Caption } from '../components/typography/Caption';
 import { useAppUpdates } from '../hooks/useAppUpdates';
+import useConnectionModal from '../hooks/useConnectionModal';
 import useHapticNavigation from '../hooks/useHapticNavigation';
 import SelfCard from '../images/card-style-1.svg';
 import ScanIcon from '../images/icons/qr_scan.svg';
@@ -27,6 +28,7 @@ const ScanButton = styled(Button, {
 });
 
 const HomeScreen: React.FC = () => {
+  useConnectionModal();
   const [isNewVersionAvailable, showAppUpdateModal, isModalDismissed] =
     useAppUpdates();
 
@@ -36,7 +38,6 @@ const HomeScreen: React.FC = () => {
     }
   });
 
-  const onCaptionPress = useHapticNavigation('ConfirmBelongingScreen');
   const onScanButtonPress = useHapticNavigation('QRCodeViewFinder');
   // Prevents back navigation
   usePreventRemove(true, () => {});
@@ -52,12 +53,7 @@ const HomeScreen: React.FC = () => {
     >
       <YStack ai="center" gap={20} justifyContent="flex-start">
         <SelfCard width="100%" />
-        <Caption
-          color={amber500}
-          opacity={0.3}
-          textTransform="uppercase"
-          onPress={onCaptionPress}
-        >
+        <Caption color={amber500} opacity={0.3} textTransform="uppercase">
           Only visible to you
         </Caption>
         <PrivacyNote />

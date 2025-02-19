@@ -1,7 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   StaticParamList,
@@ -12,6 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DefaultNavBar from './components/DefaultNavBar';
 import HomeNavBar from './components/HomeNavBar';
+import AppLayout from './layouts/AppLayout';
 import AccountRecoveryChoiceScreen from './screens/AccountFlow/AccountRecoveryChoiceScreen';
 import AccountRecoveryScreen from './screens/AccountFlow/AccountRecoveryScreen';
 import AccountVerifiedSuccessScreen from './screens/AccountFlow/AccountVerifiedSuccessScreen';
@@ -39,8 +39,7 @@ import PassportDataInfoScreen from './screens/Settings/PassportDataInfoScreen';
 import ShowRecoveryPhraseScreen from './screens/Settings/ShowRecoveryPhraseScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SplashScreen from './screens/SplashScreen';
-import StartScreen from './screens/StartScreen';
-import useNavigationStore from './stores/navigationStore';
+import analytics from './utils/analytics';
 import { black, slate300, white } from './utils/colors';
 
 const AppNavigation = createNativeStackNavigator({
@@ -50,7 +49,7 @@ const AppNavigation = createNativeStackNavigator({
     header: DefaultNavBar,
     navigationBarColor: white,
   },
-  layout: ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>,
+  layout: AppLayout,
   screens: {
     /**
      * STATIC SCREENS
@@ -66,12 +65,6 @@ const AppNavigation = createNativeStackNavigator({
     },
     Launch: {
       screen: LaunchScreen,
-      options: {
-        headerShown: false,
-      },
-    },
-    Start: {
-      screen: StartScreen,
       options: {
         headerShown: false,
       },
@@ -321,22 +314,22 @@ declare global {
 // Create a ref that we can use to access the navigation state
 export const navigationRef = createNavigationContainerRef();
 
+const { trackScreenView } = analytics();
+
 const Navigation = createStaticNavigation(AppNavigation);
 const NavigationWithTracking = () => {
-  const { trackEvent } = useNavigationStore();
-
-  const trackScreenView = () => {
+  const trackScreen = () => {
     const currentRoute = navigationRef.getCurrentRoute();
     if (currentRoute) {
       console.log(`Screen View: ${currentRoute.name}`);
-      trackEvent(`Screen View: ${currentRoute.name}`, {
+      trackScreenView(`${currentRoute.name}`, {
         screenName: currentRoute.name,
         params: currentRoute.params,
       });
     }
   };
 
-  return <Navigation ref={navigationRef} onStateChange={trackScreenView} />;
+  return <Navigation ref={navigationRef} onStateChange={trackScreen} />;
 };
 
 export default NavigationWithTracking;

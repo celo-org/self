@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Image, Text, View, YStack } from 'tamagui';
+import { Image, ScrollView, Text, View, YStack } from 'tamagui';
 
 import { SelfAppDisclosureConfig } from '../../../../common/src/utils/appType';
 import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
@@ -15,7 +15,11 @@ import { Caption } from '../../components/typography/Caption';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useApp } from '../../stores/appProvider';
 import { usePassport } from '../../stores/passportDataProvider';
-import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
+import {
+  ProofStatusEnum,
+  globalSetDisclosureStatus,
+  useProofInfo,
+} from '../../stores/proofProvider';
 import { black, slate300, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import {
@@ -26,7 +30,7 @@ import {
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { getPassportDataAndSecret } = usePassport();
-  const { selectedApp, setStatus } = useProofInfo();
+  const { selectedApp, resetProof } = useProofInfo();
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
@@ -70,6 +74,7 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(
     async function () {
+      resetProof();
       buttonTap();
       if (isProcessingRef.current) {
         return;
@@ -79,36 +84,24 @@ const ProveScreen: React.FC = () => {
       const currentApp = selectedAppRef.current;
       try {
         let timeToNavigateToStatusScreen: NodeJS.Timeout;
-        // getData first because that triggers biometric authentication and feels nicer to do before navigating
-        // then wait a second and navigate to the status screen. use finally so that any errors thrown here don't prevent the navigate
-        // importantly we are NOT awaiting the navigate call because
-        // we Do NOT want to delay the callsendVcAndDisclosePayload
         const passportDataAndSecret = await getPassportDataAndSecret().catch(
           (e: Error) => {
-            // catch here so that the code to navigate to the status screen will still be called.
             console.error('Error getPassportDataAndSecret', e);
-            setStatus(ProofStatusEnum.ERROR);
+            globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
           },
         );
-        // navigate to the status screen after short delay so it feels more like it waited for the auth to finish
+
         timeToNavigateToStatusScreen = setTimeout(() => {
           navigate('ProofRequestStatusScreen');
-          // the calls to setStatus change what is shown on this status screen
         }, 1000);
 
         if (!passportDataAndSecret) {
-          // TODO is there another screen to navigate to here? like we do for not registered?
           console.log('No passport data or secret');
-          setStatus(ProofStatusEnum.ERROR);
+          globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
           return;
         }
-        const { passportData, secret } = passportDataAndSecret.data;
 
-        // passport must be supported, because it was stored in the first place
-        // check if commitment has been registered.
-        // if not, either:
-        // - registration is ongoing => show a loading screen. TODO detect this?
-        // - registration failed => send to ConfirmBelongingScreen to register again
+        const { passportData, secret } = passportDataAndSecret.data;
         const isRegistered = await isUserRegistered(passportData, secret);
         console.log('isRegistered', isRegistered);
         if (!isRegistered) {
@@ -116,12 +109,11 @@ const ProveScreen: React.FC = () => {
           console.log(
             'User is not registered, sending to ConfirmBelongingScreen',
           );
-
           navigate('ConfirmBelongingScreen');
           return;
         }
-        console.log('currentApp', currentApp);
 
+        console.log('currentApp', currentApp);
         const status = await sendVcAndDisclosePayload(
           secret,
           passportData,
@@ -133,21 +125,19 @@ const ProveScreen: React.FC = () => {
         );
       } catch (e) {
         console.log('Error sending VC and disclose payload', e);
-        setStatus(ProofStatusEnum.ERROR);
+        globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
       } finally {
         isProcessingRef.current = false;
       }
     },
-    [
-      navigate,
-      getPassportDataAndSecret,
-      sendVcAndDisclosePayload,
-      setStatus,
-      buttonTap,
-    ],
+    [navigate, getPassportDataAndSecret, handleProofVerified, resetProof],
   );
 
   async function sendMockPayload() {
+    if (!__DEV__) {
+      return;
+    }
+
     console.log('sendMockPayload, start by generating mockPassport data');
     const passportData = genMockPassportData(
       'sha1',
@@ -181,6 +171,8 @@ const ProveScreen: React.FC = () => {
               cacheComposition={true}
               renderMode="HARDWARE"
               style={styles.animation}
+              speed={1}
+              progress={0}
             />
           ) : (
             <YStack alignItems="center" justifyContent="center">
@@ -201,30 +193,31 @@ const ProveScreen: React.FC = () => {
         </YStack>
       </ExpandableBottomLayout.TopSection>
       <ExpandableBottomLayout.BottomSection
-        flexGrow={1}
-        justifyContent="space-between"
         paddingBottom={20}
         backgroundColor={white}
+        maxHeight={'55%'}
       >
-        <Disclosures disclosures={disclosureOptions} />
-        <View>
-          <Caption
-            textAlign="center"
-            size="small"
-            marginBottom={20}
-            marginTop={10}
-            borderRadius={4}
-          >
-            Self will confirm that these details are accurate and none of your
-            confidential info will be revealed to {selectedApp.appName}
-          </Caption>
-          <HeldPrimaryButton
-            onPress={onVerify}
-            disabled={!selectedApp.sessionId}
-          >
-            Hold To Verify
-          </HeldPrimaryButton>
-        </View>
+        <ScrollView>
+          <Disclosures disclosures={disclosureOptions} />
+          <View marginTop={20}>
+            <Caption
+              textAlign="center"
+              size="small"
+              marginBottom={20}
+              marginTop={10}
+              borderRadius={4}
+            >
+              Self will confirm that these details are accurate and none of your
+              confidential info will be revealed to {selectedApp.appName}
+            </Caption>
+            <HeldPrimaryButton
+              onPress={onVerify}
+              disabled={!selectedApp.sessionId}
+            >
+              Hold To Verify
+            </HeldPrimaryButton>
+          </View>
+        </ScrollView>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );

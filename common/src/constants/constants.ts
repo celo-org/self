@@ -1,29 +1,26 @@
-export const RELAYER_URL = 'https://0pw5u65m3a.execute-api.eu-north-1.amazonaws.com/api-stage/mint';
-export const TREE_TRACKER_URL = 'https://tree.openpassport.app';
+export const TREE_TRACKER_URL = 'https://tree.self.xyz';
 export const CSCA_TREE_DEPTH = 12;
 export const DSC_TREE_DEPTH = 21;
 export const COMMITMENT_TREE_DEPTH = 33;
 export const DEFAULT_USER_ID_TYPE = 'uuid';
 
-export const MODAL_SERVER_ADDRESS = 'https://zk-passport--dsc-prover-generate-dsc-proof.modal.run';
-export const REDIRECT_URL = 'https://redirect.openpassport.app';
-export const WS_RPC_URL_REGISTER = "ws://register.proving.openpassport.app:8888/";
-export const WS_RPC_URL_DSC = "ws://dsc.proving.openpassport.app:8888/";
-export const WS_RPC_URL_VC_AND_DISCLOSE = "ws://disclose.proving.openpassport.app:8888/";
-export const WS_DB_RELAYER = 'wss://websocket.openpassport.app';
+export const REDIRECT_URL = 'https://redirect.self.xyz';
+export const WS_RPC_URL_REGISTER = "ws://register.proving.self.xyz:8888/";
+export const WS_RPC_URL_DSC = "ws://dsc.proving.self.xyz:8888/";
+export const WS_RPC_URL_VC_AND_DISCLOSE = "ws://disclose.proving.self.xyz:8888/";
+export const WS_DB_RELAYER = 'wss://websocket.self.xyz';
 
-export const CSCA_TREE_URL = 'https://tree.openpassport.app/csca';
-export const DSC_TREE_URL = 'https://tree.openpassport.app/dsc';
-export const IDENTITY_TREE_URL = 'https://tree.openpassport.app/identity';
+export const API_URL = 'https://api.self.xyz';
+export const CSCA_TREE_URL = 'https://tree.self.xyz/csca';
+export const DSC_TREE_URL = 'https://tree.self.xyz/dsc';
+export const IDENTITY_TREE_URL = 'https://tree.self.xyz/identity';
 
-export const IMAGE_HASH = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-
-export const PASSPORT_ATTESTATION_NAME = 'E-PASSPORT';
-// poseidon1([BigInt(Buffer.from(PASSPORT_ATTESTATION_NAME).readUIntBE(0, 6))]).toString();
 export const PASSPORT_ATTESTATION_ID = '1'; //"8518753152044246090169372947057357973469996808638122125210848696986717482788"
 
-export const CHAIN_NAME = 'optimism';
-export const RPC_URL = 'https://opt-mainnet.g.alchemy.com/v2/Mjj_SdklUaCdR6EPfVKXb7m6Pj5TjzWL';
+export const CHAIN_NAME = 'celo';
+export const RPC_URL = 'https://forno.celo.org';
+export const PCR0_MANAGER_ADDRESS = '0xE36d4EE5Fd3916e703A46C21Bb3837dB7680C8B8';
+
 
 // we make it global here because passing it to generateCircuitInputsRegister caused trouble
 export const DEVELOPMENT_MODE = false;
@@ -121,32 +118,45 @@ export const circuitNameFromMode = {
 
 export enum RegisterVerifierId {
   register_sha256_sha256_sha256_rsa_65537_4096 = 0,
-  register_sha1_sha1_sha1_ecdsa_brainpoolP224r1 = 1,
-  register_sha1_sha1_sha1_ecdsa_secp256r1 = 2,
-  register_sha1_sha1_sha1_rsa_65537_2048 = 3,
-  register_sha1_sha256_sha256_rsa_65537_4096 = 4,
-  register_sha256_sha224_sha224_ecdsa_brainpoolP224r1 = 5,
-  register_sha256_sha256_sha256_ecdsa_brainpoolP224r1 = 6,
-  register_sha256_sha256_sha256_ecdsa_brainpoolP256r1 = 7,
-  register_sha256_sha256_sha256_ecdsa_secp256r1 = 8,
-  register_sha256_sha256_sha256_ecdsa_secp384r1 = 9,
-  register_sha256_sha256_sha256_rsa_3_4096 = 10,
-  register_sha256_sha256_sha256_rsa_65537_3072 = 11,
-  register_sha256_sha256_sha256_rsapss_3_4096 = 12,
-  register_sha256_sha256_sha256_rsapss_65537_4096 = 13,
-  register_sha384_sha384_sha384_ecdsa_brainpoolP256r1 = 14,
-  register_sha384_sha384_sha384_ecdsa_brainpoolP384r1 = 15,
-  register_sha384_sha384_sha384_ecdsa_secp384r1 = 16,
-  register_sha512_sha512_sha512_ecdsa_brainpoolP256r1 = 17,
-  register_sha512_sha512_sha512_ecdsa_brainpoolP384r1 = 18,
-  register_sha512_sha512_sha512_ecdsa_brainpoolP512r1 = 19,
-  register_sha512_sha512_sha512_rsa_65537_4096 = 20
+  register_sha256_sha256_sha256_ecdsa_brainpoolP384r1 = 1,
+  register_sha256_sha256_sha256_ecdsa_secp256r1 = 2,
+  register_sha256_sha256_sha256_ecdsa_secp384r1 = 3,
+  register_sha256_sha256_sha256_rsa_3_4096 = 4,
+  register_sha256_sha256_sha256_rsapss_3_32_2048 = 5,
+  register_sha256_sha256_sha256_rsapss_65537_32_2048 = 6,
+  register_sha256_sha256_sha256_rsapss_65537_32_3072 = 7,
+  register_sha384_sha384_sha384_ecdsa_brainpoolP384r1 = 8,
+  register_sha384_sha384_sha384_ecdsa_brainpoolP512r1 = 9,
+  register_sha384_sha384_sha384_ecdsa_secp384r1 = 10,
+  register_sha512_sha512_sha512_ecdsa_brainpoolP512r1 = 11,
+  register_sha512_sha512_sha512_rsa_65537_4096 = 12,
+  register_sha512_sha512_sha512_rsapss_65537_64_2048 = 13,
+  register_sha1_sha1_sha1_rsa_65537_4096 = 14,
+  register_sha1_sha256_sha256_rsa_65537_4096 = 15,
+  register_sha224_sha224_sha224_ecdsa_brainpoolP224r1 = 16,
+  register_sha256_sha224_sha224_ecdsa_secp224r1 = 17,
+  register_sha256_sha256_sha256_ecdsa_brainpoolP256r1 = 18
 };
 
 export enum DscVerifierId {
-  dsc_rsa_sha1_65537_4096 = 0,
-  dsc_rsa_sha256_65537_4096 = 1,
-  dsc_rsapss_sha256_65537_4096 = 2
+  dsc_sha1_ecdsa_brainpoolP256r1 = 0,
+  dsc_sha1_rsa_65537_4096 = 1,
+  dsc_sha256_ecdsa_brainpoolP256r1 = 2,
+  dsc_sha256_ecdsa_brainpoolP384r1 = 3,
+  dsc_sha256_ecdsa_secp256r1 = 4,
+  dsc_sha256_ecdsa_secp384r1 = 5,
+  dsc_sha256_ecdsa_secp521r1 = 6,
+  dsc_sha256_rsa_65537_4096 = 7,
+  dsc_sha256_rsapss_3_32_3072 = 8,
+  dsc_sha256_rsapss_65537_32_3072 = 9,
+  dsc_sha256_rsapss_65537_32_4096 = 10,
+  dsc_sha384_ecdsa_brainpoolP384r1 = 11,
+  dsc_sha384_ecdsa_brainpoolP512r1 = 12,
+  dsc_sha384_ecdsa_secp384r1 = 13,
+  dsc_sha512_ecdsa_brainpoolP512r1 = 14,
+  dsc_sha512_ecdsa_secp521r1 = 15,
+  dsc_sha512_rsa_65537_4096 = 16,
+  dsc_sha512_rsapss_65537_64_4096 = 17
 };
 
 export enum SignatureAlgorithmIndex {
@@ -338,6 +348,7 @@ export const countryCodes = {
   GMB: 'Gambia',
   GEO: 'Georgia',
   DEU: 'Germany',
+  "D<<": 'Germany', // Bundesrepublik Deutschland uses this in passports instead of DEU
   GHA: 'Ghana',
   GIB: 'Gibraltar',
   GRC: 'Greece',
@@ -504,11 +515,15 @@ export const countryCodes = {
   ZMB: 'Zambia',
   ZWE: 'Zimbabwe',
 };
+// not using a library for this as the entry countries use can be differnt than the ISO 3166-1 alpha-3 standard
+export type Country3LetterCode = keyof typeof countryCodes;
+
 export function getCountryCode(countryName: string): string | string {
   const entries = Object.entries(countryCodes);
   const found = entries.find(([_, name]) => name.toLowerCase() === countryName.toLowerCase());
   return found ? found[0] : 'undefined';
 }
+
 export const countryNames = [
   'Any',
   'Afghanistan',

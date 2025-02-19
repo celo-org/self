@@ -1,7 +1,11 @@
 import React from 'react';
 
-import { ScrollView, XStack, YStack } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
 
+import {
+  Country3LetterCode,
+  countryCodes,
+} from '../../../common/src/constants/constants';
 import { SelfAppDisclosureConfig } from '../../../common/src/utils/appType';
 import { BodyText } from '../components/typography/BodyText';
 import CheckMark from '../images/icons/checkmark.svg';
@@ -15,9 +19,9 @@ function listToString(list: string[]): string {
   if (list.length === 1) {
     return list[0];
   } else if (list.length === 2) {
-    return list.join(' or ');
+    return list.join(' nor ');
   }
-  return `${list.slice(0, -1).join(', ')} or ${list.at(-1)}`;
+  return `${list.slice(0, -1).join(', ')} nor ${list.at(-1)}`;
 }
 
 export default function Disclosures({ disclosures }: DisclosureProps) {
@@ -36,56 +40,58 @@ export default function Disclosures({ disclosures }: DisclosureProps) {
   ] as const;
 
   return (
-    <ScrollView>
-      <YStack>
-        {ORDERED_KEYS.map(key => {
-          const isEnabled = disclosures[key];
-          if (!isEnabled) {
-            return null;
-          }
+    <YStack>
+      {ORDERED_KEYS.map(key => {
+        const isEnabled = disclosures[key];
+        if (!isEnabled) {
+          return null;
+        }
 
-          let text = '';
-          switch (key) {
-            case 'ofac':
-              text = 'I am not on the OFAC list';
-              break;
-            case 'excludedCountries':
-              text = `I am not a resident of any of the following countries: ${listToString(
-                disclosures.excludedCountries || [],
-              )}`;
-              break;
-            case 'minimumAge':
-              text = `Age [over ${disclosures.minimumAge}]`;
-              break;
-            case 'name':
-              text = 'Name';
-              break;
-            case 'passport_number':
-              text = 'Passport Number';
-              break;
-            case 'date_of_birth':
-              text = 'Date of Birth';
-              break;
-            case 'gender':
-              text = 'Gender';
-              break;
-            case 'expiry_date':
-              text = 'Passport Expiry Date';
-              break;
-            case 'issuing_state':
-              text = 'Issuing State';
-              break;
-            case 'nationality':
-              text = 'Nationality';
-              break;
-            default:
-              return null;
-          }
-          return <DisclosureItem key={key} text={text} />;
-        })}
-      </YStack>
-    </ScrollView>
+        let text = '';
+        switch (key) {
+          case 'ofac':
+            text = 'I am not on the OFAC sanction list';
+            break;
+          case 'excludedCountries':
+            text = `I am not a citizen of the following countries: ${countriesToSentence(
+              disclosures.excludedCountries || [],
+            )}`;
+            break;
+          case 'minimumAge':
+            text = `Age is over ${disclosures.minimumAge}`;
+            break;
+          case 'name':
+            text = 'Name';
+            break;
+          case 'passport_number':
+            text = 'Passport Number';
+            break;
+          case 'date_of_birth':
+            text = 'Date of Birth';
+            break;
+          case 'gender':
+            text = 'Gender';
+            break;
+          case 'expiry_date':
+            text = 'Passport Expiry Date';
+            break;
+          case 'issuing_state':
+            text = 'Issuing State';
+            break;
+          case 'nationality':
+            text = 'Nationality';
+            break;
+          default:
+            return null;
+        }
+        return <DisclosureItem key={key} text={text} />;
+      })}
+    </YStack>
   );
+}
+
+function countriesToSentence(countries: Array<Country3LetterCode>): string {
+  return listToString(countries.map(country => countryCodes[country]));
 }
 
 interface DisclosureItemProps {
@@ -104,7 +110,9 @@ const DisclosureItem: React.FC<DisclosureItemProps> = ({
       paddingHorizontal={10}
     >
       <CheckMark width={22} />
-      <BodyText color={slate500}>{text}</BodyText>
+      <BodyText textBreakStrategy="balanced" color={slate500}>
+        {text}
+      </BodyText>
     </XStack>
   );
 };
