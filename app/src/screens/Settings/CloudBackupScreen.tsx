@@ -163,7 +163,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
             ) : (
               <SecondaryButton
                 onPress={() => {
-                  confirmTap();
+                  buttonTap();
                   navigation.goBack();
                 }}
               >
