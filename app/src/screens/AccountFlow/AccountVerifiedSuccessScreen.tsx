@@ -11,7 +11,7 @@ import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { black, white } from '../../utils/colors';
-import { impactLight } from '../../utils/haptic';
+import { buttonTap } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
 type AccountVerifiedSuccessScreenProps = StaticScreenProps<{
@@ -54,7 +54,7 @@ const AccountVerifiedSuccessScreen: React.FC<
         </YStack>
         <PrimaryButton
           onPress={() => {
-            impactLight();
+            buttonTap();
             navigation.navigate(nextScreen ?? 'SaveRecoveryPhrase');
           }}
         >

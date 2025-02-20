@@ -5,7 +5,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { TextStyle, ViewStyle } from 'tamagui';
 
 import { white } from '../utils/colors';
-import { impactLight } from '../utils/haptic';
+import { buttonTap } from '../utils/haptic';
 import { NavBar } from './NavBar';
 
 const DefaultNavBar = (props: NativeStackHeaderProps) => {
@@ -32,7 +32,7 @@ const DefaultNavBar = (props: NativeStackHeaderProps) => {
           options.headerBackTitle || (canGoBack() ? 'back' : undefined)
         }
         onPress={() => {
-          impactLight();
+          buttonTap();
           goBack();
         }}
         {...(options.headerTitleStyle as ViewStyle)}

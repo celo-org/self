@@ -14,16 +14,16 @@ import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
 type ConfirmBelongingScreenProps = StaticScreenProps<{
-  isMockFlow?: boolean;
+  mockPassportFlow?: boolean;
 }>;
 
 const ConfirmBelongingScreen: React.FC<ConfirmBelongingScreenProps> = ({
   route,
 }) => {
-  const { isMockFlow } = route.params;
+  const { mockPassportFlow } = route.params;
   const onOkPress = useHapticNavigation('LoadingScreen', {
     params: {
-      isMockFlow,
+      mockPassportFlow,
     },
   });
   useEffect(() => {

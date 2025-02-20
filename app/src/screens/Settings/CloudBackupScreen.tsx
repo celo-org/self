@@ -17,7 +17,7 @@ import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { black, white } from '../../utils/colors';
-import { confirmTap, impactLight } from '../../utils/haptic';
+import { buttonTap, confirmTap } from '../../utils/haptic';
 
 interface CloudBackupScreenProps
   extends StaticScreenProps<
@@ -62,7 +62,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   );
 
   const enableCloudBackups = useCallback(async () => {
-    impactLight();
+    buttonTap();
     if (cloudBackupEnabled) {
       return;
     }

@@ -48,7 +48,7 @@ const SaveRecoveryPhraseScreen: React.FC<
   }, []);
 
   const onCloudBackupPress = useHapticNavigation('CloudBackupSettings', {
-    params: { nextScreen: 'AccountVerifiedSuccess' },
+    params: { nextScreen: 'SaveRecoveryPhrase' },
   });
   const onSkipPress = useHapticNavigation('AccountVerifiedSuccess', {
     params: { nextScreen: 'Home' },
