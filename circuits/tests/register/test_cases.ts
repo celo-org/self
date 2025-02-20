@@ -1,9 +1,9 @@
 export const sigAlgs = [
   {
-    dgHashAlgo: 'sha256',
-    eContentHashAlgo: 'sha256',
-    hashFunction: 'sha256',
-    sigAlg: 'rsa',
+    dgHashAlgo: 'sha384',
+    eContentHashAlgo: 'sha384',
+    hashFunction: 'sha384',
+    sigAlg: 'rsapss',
     domainParameter: '65537',
     keyLength: '2048',
   },
@@ -75,6 +75,14 @@ export const fullSigAlgs = [
     sigAlg: 'rsapss',
     domainParameter: '65537',
     keyLength: '3072',
+  },
+  {
+    dgHashAlgo: 'sha384',
+    eContentHashAlgo: 'sha384',
+    hashFunction: 'sha384',
+    sigAlg: 'rsapss',
+    domainParameter: '65537',
+    keyLength: '2048',
   },
   {
     dgHashAlgo: 'sha512',
