@@ -5,11 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import splashAnimation from '../assets/animations/splash.json';
-import { loadSecret, useAuth } from '../stores/authProvider';
+import { loadSecret, loadSecretOrCreateIt, useAuth } from '../stores/authProvider';
 import { loadPassportData } from '../stores/passportDataProvider';
 import { useSettingStore } from '../stores/settingStore';
 import { black } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
+import { isUserRegistered } from '../utils/proving/payload';
 
 const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
@@ -30,14 +31,31 @@ const SplashScreen: React.FC = ({}) => {
   const handleAnimationFinish = useCallback(() => {
     setTimeout(async () => {
       impactLight();
-      const secret = await loadSecret();
-      const passportData = await loadPassportData();
-
-      if (secret && passportData) {
-        navigation.navigate('Home');
-      } else {
+      const secret = await loadSecretOrCreateIt();
+      const passportDataString = await loadPassportData();
+      if (!secret || !passportDataString) {
         navigation.navigate('Launch');
+        return
       }
+
+      const passportData = JSON.parse(passportDataString);
+      const isRegistered = await isUserRegistered(passportData, secret);
+      console.log('User is registered:', isRegistered);
+      if (isRegistered) {
+        console.log(
+          'Passport is registered already. Skipping to HomeScreen',
+        );
+        navigation.navigate('Home');
+        return;
+      }
+      // Currently, we dont check isPassportNullified(passportData);
+      // This could lead to AccountRecoveryChoice just like in LoadingScreen
+      // But it looks better right now to keep the LaunchScreen flow
+      // In case user wants to try with another passport.
+      // Long term, we could also show a modal instead that prompts the user to recover or scan a new passport.
+      
+      // Rest of the time, keep the LaunchScreen flow
+      navigation.navigate('Launch');
     }, 1000);
   }, [loadSecret, loadPassportData, navigation]);
 
