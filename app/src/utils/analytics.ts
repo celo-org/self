@@ -29,7 +29,7 @@ const analytics = () => {
 
     if (!properties) {
       // you may need to remove the catch when debugging
-      return trackMethod(eventName).catch(console.error);
+      return trackMethod(eventName).catch(console.info);
     }
 
     if (properties.params) {
@@ -37,7 +37,7 @@ const analytics = () => {
       properties.params = newParams;
     }
     // you may need to remove the catch when debugging
-    trackMethod(eventName, properties).catch(console.error);
+    trackMethod(eventName, properties).catch(console.info);
   }
 
   return {
