@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useMemo } from 'react';
 import { Linking, Platform, Share } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { getCountry, getLocales, getTimeZone } from 'react-native-localize';
@@ -63,7 +63,17 @@ const routes = [
   [Cloud, 'Cloud backup', 'CloudBackupSettings'],
   [Feedback, 'Send feeback', 'email_feedback'],
   [ShareIcon, 'Share Self app', 'share'],
-] as [React.FC<SvgProps>, string, RouteOption][];
+] satisfies [React.FC<SvgProps>, string, RouteOption][];
+
+// get the actual type of the routes so we can use in the onMenuPress function so it
+// doesnt worry about us linking to screens with required props which we dont want to go to anyway
+type RouteLinks = (typeof routes)[number][2];
+
+const DEBUG_MENU: [React.FC<SvgProps>, string, RouteOption] = [
+  Bug as React.FC<SvgProps>,
+  'Debug menu',
+  'DevSettings',
+];
 
 const social = [
   [Github, gitHubUrl],
@@ -108,33 +118,23 @@ const SocialButton: React.FC<SocialButtonProps> = ({ Icon, href }) => {
 };
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
-  const { toggleDevMode, setToggleDevMode } = useSettingStore();
+  const { isDevMode, setDevModeOn } = useSettingStore();
   useSettingStore();
   const navigation = useNavigation();
-  const [screenRoutes, setScreenRoutes] = useState(routes);
 
-  const addDebugMenu = () => {
-    setScreenRoutes([
-      ...routes,
-      [Bug as React.FC<SvgProps>, 'Debug menu', 'DevSettings'],
-    ]);
-  };
+  const screenRoutes = useMemo(() => {
+    return isDevMode ? [...routes, DEBUG_MENU] : routes;
+  }, [isDevMode]);
 
   const twoFingerTap = Gesture.Tap()
     .minPointers(2)
     .numberOfTaps(5)
     .onStart(() => {
-      setToggleDevMode(true);
+      setDevModeOn();
     });
 
-  React.useEffect(() => {
-    if (toggleDevMode === true) {
-      addDebugMenu();
-    }
-  }, [toggleDevMode]);
-
   const onMenuPress = useCallback(
-    (menuRoute: RouteOption) => {
+    (menuRoute: RouteLinks) => {
       return async () => {
         impactLight();
         switch (menuRoute) {
