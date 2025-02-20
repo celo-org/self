@@ -55,19 +55,18 @@ export class SelfBackendVerifier {
     );
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
     const packedValue =
-      forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked[0] : '0';
-    const solidityProof = parseSolidityCalldata(
-      await groth16.exportSolidityCallData(proof, publicSignals),
-      {} as VcAndDiscloseProof
-    );
+      forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked : ['0','0','0','0'];
 
+    console.log("120: ", publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]);
     const isValidScope =
       this.scope ===
       castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
+    console.log("isValidScope: ", isValidScope);
 
     const isValidAttestationId =
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
+    console.log("isValidAttestationId: ", isValidAttestationId);
 
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
@@ -76,12 +75,13 @@ export class SelfBackendVerifier {
       forbiddenCountriesListPacked: packedValue,
       ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-        a: solidityProof.a,
-        b: [solidityProof.b[0], solidityProof.b[1]],
-        c: solidityProof.c,
-        pubSignals: solidityProof.pubSignals,
+        a: proof.pi_a,
+        b: proof.pi_b,
+        c: proof.pi_c,
+        pubSignals: publicSignals,
       },
     };
+    console.log("1");
 
     const types = [
       revealedDataTypes.issuing_state,
@@ -104,6 +104,7 @@ export class SelfBackendVerifier {
       const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
       timestamp = await this.registryContract.rootTimestamps(currentRoot);
     }
+    console.log("timestamp: ", timestamp);
 
     const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
     console.log('result: ', result);
