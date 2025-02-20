@@ -332,7 +332,7 @@ const NavigationWithTracking = () => {
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView>
       <Navigation ref={navigationRef} onStateChange={trackScreen} />
     </GestureHandlerRootView>
   );
