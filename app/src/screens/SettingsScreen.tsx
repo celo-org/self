@@ -29,6 +29,7 @@ import ShareIcon from '../images/icons/share.svg';
 import Star from '../images/icons/star.svg';
 import Telegram from '../images/icons/telegram.svg';
 import Web from '../images/icons/webpage.svg';
+import { useSettingStore } from '../stores/settingStore';
 import { amber500, black, neutral700, slate800, white } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
 
@@ -107,18 +108,30 @@ const SocialButton: React.FC<SocialButtonProps> = ({ Icon, href }) => {
 };
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
+  const { toggleDevMode, setToggleDevMode } = useSettingStore();
+  useSettingStore();
   const navigation = useNavigation();
   const [screenRoutes, setScreenRoutes] = useState(routes);
+
   const addDebugMenu = () => {
     setScreenRoutes([
       ...routes,
       [Bug as React.FC<SvgProps>, 'Debug menu', 'DevSettings'],
     ]);
   };
+
   const twoFingerTap = Gesture.Tap()
     .minPointers(2)
     .numberOfTaps(5)
-    .onStart(addDebugMenu);
+    .onStart(() => {
+      setToggleDevMode(true);
+    });
+
+  React.useEffect(() => {
+    if (toggleDevMode === true) {
+      addDebugMenu();
+    }
+  }, [toggleDevMode]);
 
   const onMenuPress = useCallback(
     (menuRoute: RouteOption) => {

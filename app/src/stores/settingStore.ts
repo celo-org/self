@@ -9,6 +9,8 @@ interface SettingsState {
   setBiometricsAvailable: (biometricsAvailable: boolean) => void;
   cloudBackupEnabled: boolean;
   toggleCloudBackupEnabled: () => void;
+  toggleDevMode: boolean;
+  setToggleDevMode: (toggleDevMode: boolean) => void;
 }
 
 /*
@@ -31,6 +33,9 @@ export const useSettingStore = create<SettingsState>()(
         set(oldState => ({
           cloudBackupEnabled: !oldState.cloudBackupEnabled,
         })),
+
+      toggleDevMode: false,
+      setToggleDevMode: toggleDevMode => set({ toggleDevMode }),
     }),
     {
       name: 'setting-storage',
