@@ -1,0 +1,7 @@
+{
+    "DeployVerifiers#Verifier_dsc_sha256_rsa_65537_4096": "0xd0596f8ed2Ae2f317daE68A54BC489f2171f0262",
+    "DeployVerifiers#Verifier_register_sha1_sha256_sha256_rsa_65537_4096": "0xb634bac92742DCb264a1E5CBE55C8d4A1A01c278",
+    "DeployVerifiers#Verifier_register_sha256_sha256_sha256_ecdsa_brainpoolP256r1": "0xE9BCF83686c185e7A489143B989cFc40ADCb0903",
+    "DeployVerifiers#Verifier_register_sha256_sha256_sha256_rsa_65537_4096": "0x0F042386B406448FA71D5B2C33cdA876055F764a",
+    "DeployVerifiers#Verifier_vc_and_disclose": "0x64c778bc51828dF567Ac059B5367d50db40763D3"
+}
