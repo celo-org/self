@@ -51,6 +51,7 @@ const SaveRecoveryPhraseScreen: React.FC<
     params: { nextScreen: 'SaveRecoveryPhrase' },
   });
   const onSkipPress = useHapticNavigation('AccountVerifiedSuccess', {
+    // These screen does Not use nextscreen param internally. so wtf is this?
     params: { nextScreen: 'Home' },
     action: 'confirm',
   });

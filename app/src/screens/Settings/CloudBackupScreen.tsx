@@ -22,7 +22,7 @@ import { buttonTap, confirmTap } from '../../utils/haptic';
 interface CloudBackupScreenProps
   extends StaticScreenProps<
     | {
-        nextScreen?: Omit<'CloudBackupSettings', keyof RootStackParamList>;
+        nextScreen?: keyof Pick<RootStackParamList, 'SaveRecoveryPhrase'>;
       }
     | undefined
   > {}

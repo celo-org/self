@@ -8,10 +8,10 @@ import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
 
 type NavigationAction = 'default' | 'cancel' | 'confirm';
 
-const useHapticNavigation = <T extends keyof RootStackParamList>(
-  screen: T,
+const useHapticNavigation = <S extends keyof RootStackParamList>(
+  screen: S,
   options: {
-    params?: any;
+    params?: RootStackParamList[S];
     action?: NavigationAction;
   } = {},
 ) => {
@@ -22,7 +22,8 @@ const useHapticNavigation = <T extends keyof RootStackParamList>(
     switch (options.action) {
       case 'cancel':
         selectionChange();
-        navigation.popTo(screen, options.params);
+        // it is safe to cast options.params as any because it is correct when entering the function
+        navigation.popTo(screen, options.params as any);
         return;
 
       case 'confirm':
@@ -33,8 +34,8 @@ const useHapticNavigation = <T extends keyof RootStackParamList>(
       default:
         impactLight();
     }
-
-    navigation.navigate(screen, options.params);
+    // it is safe to cast options.params as any because it is correct when entering the function
+    navigation.navigate(screen, options.params as any);
   }, [navigation, screen, options.action]);
 };
 
