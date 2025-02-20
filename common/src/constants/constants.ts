@@ -29,7 +29,7 @@ export const DEFAULT_MAJORITY = '18';
 export const hashAlgos = ['sha512', 'sha384', 'sha256', 'sha224', 'sha1'];
 export const saltLengths = [64, 48, 32];
 
-export const MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 10;
+export const MAX_FORBIDDEN_COUNTRIES_LIST_LENGTH = 40;
 
 export const DEPLOYED_CIRCUITS_REGISTER = [
   'register_sha1_sha1_sha1_rsa_65537_4096',
