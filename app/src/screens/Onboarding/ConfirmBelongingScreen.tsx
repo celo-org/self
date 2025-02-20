@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { usePreventRemove } from '@react-navigation/native';
+import { StaticScreenProps, usePreventRemove } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import successAnimation from '../../assets/animations/loading/success.json';
@@ -13,8 +13,19 @@ import { black, white } from '../../utils/colors';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
-const ConfirmBelongingScreen: React.FC = () => {
-  const onOkPress = useHapticNavigation('LoadingScreen');
+type ConfirmBelongingScreenProps = StaticScreenProps<{
+  isMockFlow?: boolean;
+}>;
+
+const ConfirmBelongingScreen: React.FC<ConfirmBelongingScreenProps> = ({
+  route,
+}) => {
+  const { isMockFlow } = route.params;
+  const onOkPress = useHapticNavigation('LoadingScreen', {
+    params: {
+      isMockFlow,
+    },
+  });
   useEffect(() => {
     notificationSuccess();
   }, []);
