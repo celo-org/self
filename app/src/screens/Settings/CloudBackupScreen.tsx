@@ -19,10 +19,12 @@ import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { black, white } from '../../utils/colors';
 import { buttonTap, confirmTap } from '../../utils/haptic';
 
+type NextScreen = keyof Pick<RootStackParamList, 'SaveRecoveryPhrase'>;
+
 interface CloudBackupScreenProps
   extends StaticScreenProps<
     | {
-        nextScreen?: keyof Pick<RootStackParamList, 'SaveRecoveryPhrase'>;
+        nextScreen?: NextScreen;
       }
     | undefined
   > {}
@@ -30,7 +32,6 @@ interface CloudBackupScreenProps
 const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   route: { params },
 }) => {
-  const navigation = useNavigation();
   const { getOrCreatePrivateKey, loginWithBiometrics } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled, biometricsAvailable } =
     useSettingStore();
@@ -141,40 +142,60 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
                 {pending ? '…' : ''}
               </PrimaryButton>
             )}
-
-            {cloudBackupEnabled ? (
-              <PrimaryButton
-                onPress={() => {
-                  confirmTap();
-                  navigation.navigate(params.nextScreen);
-                }}
-              >
-                Continue
-              </PrimaryButton>
-            ) : params?.nextScreen ? (
-              <SecondaryButton
-                onPress={() => {
-                  confirmTap();
-                  navigation.navigate(params.nextScreen);
-                }}
-              >
-                Back up manually
-              </SecondaryButton>
-            ) : (
-              <SecondaryButton
-                onPress={() => {
-                  buttonTap();
-                  navigation.goBack();
-                }}
-              >
-                Nevermind
-              </SecondaryButton>
-            )}
+            <BottomButton
+              cloudBackupEnabled={cloudBackupEnabled}
+              nextScreen={params?.nextScreen}
+            />
           </YStack>
         </YStack>
       </ExpandableBottomLayout.BottomSection>
     </ExpandableBottomLayout.Layout>
   );
 };
+
+function BottomButton({
+  cloudBackupEnabled,
+  nextScreen,
+}: {
+  cloudBackupEnabled: boolean;
+  nextScreen?: NextScreen;
+}) {
+  const navigation = useNavigation();
+
+  const goBack = () => {
+    confirmTap();
+    navigation.goBack();
+  };
+
+  if (nextScreen && cloudBackupEnabled) {
+    return (
+      <PrimaryButton
+        onPress={() => {
+          confirmTap();
+          navigation.navigate(nextScreen);
+        }}
+      >
+        Continue
+      </PrimaryButton>
+    );
+  } else if (nextScreen && !cloudBackupEnabled) {
+    return (
+      <SecondaryButton
+        onPress={() => {
+          confirmTap();
+          navigation.navigate(nextScreen);
+        }}
+      >
+        Back up manually
+      </SecondaryButton>
+    );
+
+    // if no next screen probably came from settings. Go back to settings
+  } else if (cloudBackupEnabled) {
+    return <PrimaryButton onPress={goBack}>Nevermind</PrimaryButton>;
+  } else {
+    return <SecondaryButton onPress={goBack}>Nevermind</SecondaryButton>;
+  }
+}
 
 export default CloudBackupScreen;
