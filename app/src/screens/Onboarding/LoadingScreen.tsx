@@ -8,7 +8,11 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-import { loadPassportData, usePassport } from '../../stores/passportDataProvider';
+import { loadSecretOrCreateIt } from '../../stores/authProvider';
+import {
+  loadPassportData,
+  usePassport,
+} from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import {
   checkPassportSupported,
@@ -16,7 +20,6 @@ import {
   isUserRegistered,
   registerPassport,
 } from '../../utils/proving/payload';
-import { loadSecretOrCreateIt } from '../../stores/authProvider';
 
 type LoadingScreenProps = StaticScreenProps<{
   mockPassportFlow?: boolean;
