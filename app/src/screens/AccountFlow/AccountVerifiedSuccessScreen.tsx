@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { YStack } from 'tamagui';
 
-import { RootStackParamList } from '../../Navigation';
 import proofSuccessAnimation from '../../assets/animations/proof_success.json';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import Description from '../../components/typography/Description';
@@ -14,14 +13,7 @@ import { black, white } from '../../utils/colors';
 import { buttonTap } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
-type AccountVerifiedSuccessScreenProps = StaticScreenProps<{
-  nextScreen?: keyof RootStackParamList;
-}>;
-
-const AccountVerifiedSuccessScreen: React.FC<
-  AccountVerifiedSuccessScreenProps
-> = ({ route }) => {
-  const { nextScreen } = route.params;
+const AccountVerifiedSuccessScreen: React.FC = ({}) => {
   const navigation = useNavigation();
 
   return (
@@ -55,7 +47,7 @@ const AccountVerifiedSuccessScreen: React.FC<
         <PrimaryButton
           onPress={() => {
             buttonTap();
-            navigation.navigate(nextScreen ?? 'SaveRecoveryPhrase');
+            navigation.navigate('Home');
           }}
         >
           Continue
