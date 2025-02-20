@@ -11,7 +11,7 @@ export default function Prove() {
   const selfApp = new SelfAppBuilder({
     appName: "Mock App2",
     scope: "my-scope",
-    endpoint: "https://d17f-108-74-0-57.ngrok-free.app/api/v1/verify-vc-and-disclose-proof",
+    endpoint: "https://mock-app2.com",
     logoBase64: logo,
     userId,
     disclosures: {
@@ -20,7 +20,7 @@ export default function Prove() {
       date_of_birth: true,
       passport_number: true,
       minimumAge: 18,
-      excludedCountries: ["ITA", "ITA"],
+      excludedCountries: ["ABC", "DEF"],
       ofac: true,
     }
   }).build();
