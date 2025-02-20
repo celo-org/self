@@ -24,7 +24,6 @@ const items: (keyof RootStackParamList)[] = [
   'DevSettings',
   'Splash',
   'Launch',
-  'Start',
   'PassportOnboarding',
   'PassportCamera',
   'PassportNFCScan',
