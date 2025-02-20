@@ -23,13 +23,6 @@ export default buildModule("DeployHub", (m) => {
     const registerVerifierAddress3 = deployedAddresses["DeployVerifiers#Verifier_register_sha256_sha256_sha256_rsa_65537_4096"];
     const dscVerifierAddress = deployedAddresses["DeployVerifiers#Verifier_dsc_sha256_rsa_65537_4096"];
 
-    // const registryAddress = "";
-    // const vcAndDiscloseVerifierAddress = "0x64c778bc51828dF567Ac059B5367d50db40763D3";
-    // const registerVerifierAddress = "0xb634bac92742DCb264a1E5CBE55C8d4A1A01c278";
-    // const registerVerifierAddress2 = "0xE9BCF83686c185e7A489143B989cFc40ADCb0903";
-    // const registerVerifierAddress3 = "0x0F042386B406448FA71D5B2C33cdA876055F764a";
-    // const dscVerifierAddress = "0xd0596f8ed2Ae2f317daE68A54BC489f2171f0262";
-
     const identityVerificationHubImpl = m.contract("IdentityVerificationHubImplV1");
 
     const hubInterface = getHubInitializeData();
