@@ -8,7 +8,7 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-import { usePassport } from '../../stores/passportDataProvider';
+import { loadPassportData, usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import {
   checkPassportSupported,
@@ -16,6 +16,7 @@ import {
   isUserRegistered,
   registerPassport,
 } from '../../utils/proving/payload';
+import { loadSecretOrCreateIt } from '../../stores/authProvider';
 
 type LoadingScreenProps = StaticScreenProps<{
   mockPassportFlow?: boolean;
@@ -43,7 +44,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ route }) => {
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { registrationStatus, resetProof, setProofVerificationResult } =
     useProofInfo();
-  const { getPassportDataAndSecret, clearPassportData } = usePassport();
+  const { clearPassportData } = usePassport();
 
   useEffect(() => {
     setProofVerificationResult(null);
@@ -72,11 +73,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ route }) => {
       processPayloadCalled.current = true;
       const processPayload = async () => {
         try {
-          const passportDataAndSecret = await getPassportDataAndSecret();
-          if (!passportDataAndSecret) {
+          const secret = await loadSecretOrCreateIt();
+          const passportDataString = await loadPassportData();
+          if (!secret || !passportDataString) {
+            // Could that fail if passportData takes a lot of time to get in the keychain, on an old phone?
+            // Or should we add a short delay?
             return;
           }
-          const { passportData, secret } = passportDataAndSecret.data;
+          const passportData = JSON.parse(passportDataString);
           const isSupported = checkPassportSupported(passportData);
           if (!isSupported) {
             goToUnsupportedScreen();
