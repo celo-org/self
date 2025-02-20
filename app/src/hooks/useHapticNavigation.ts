@@ -8,13 +8,10 @@ import { impactLight, impactMedium, selectionChange } from '../utils/haptic';
 
 type NavigationAction = 'default' | 'cancel' | 'confirm';
 
-const useHapticNavigation = <
-  T extends keyof RootStackParamList,
-  P extends T extends null ? never : RootStackParamList[T],
->(
+const useHapticNavigation = <T extends keyof RootStackParamList>(
   screen: T,
   options: {
-    params?: P;
+    params?: any;
     action?: NavigationAction;
   } = {},
 ) => {
@@ -25,8 +22,6 @@ const useHapticNavigation = <
     switch (options.action) {
       case 'cancel':
         selectionChange();
-        // @ts-expect-error - This actually works from outside usage, just unsure how to
-        // make typescript understand that this is correct
         navigation.popTo(screen, options.params);
         return;
 
@@ -39,8 +34,6 @@ const useHapticNavigation = <
         impactLight();
     }
 
-    // @ts-expect-error - This actually works from outside usage, just unsure how to
-    // make typescript understand that this is correct
     navigation.navigate(screen, options.params);
   }, [navigation, screen, options.action]);
 };
