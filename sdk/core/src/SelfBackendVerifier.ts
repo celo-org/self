@@ -48,20 +48,26 @@ export class SelfBackendVerifier {
     proof: Groth16Proof,
     publicSignals: PublicSignals
   ): Promise<SelfVerificationResult> {
+    console.log("proof: ", proof);
     const excludedCountryCodes = this.excludedCountries.value.map((country) =>
       getCountryCode(country)
     );
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
+    console.log("forbiddenCountriesPacked: ", forbiddenCountriesListPacked);
     const packedValue =
       forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked : ['0','0','0','0'];
+    console.log("packedValue: ", packedValue);
 
     const isValidScope =
       this.scope ===
       castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
 
+    console.log("isValidScope: ", isValidScope);
+
     const isValidAttestationId =
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
+    console.log("isValidAttestationId: ", isValidAttestationId);
 
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
@@ -70,12 +76,13 @@ export class SelfBackendVerifier {
       forbiddenCountriesListPacked: packedValue,
       ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-        a: proof.pi_a,
-        b: proof.pi_b,
-        c: proof.pi_c,
+        a: proof.a,
+        b: proof.b,
+        c: proof.c,
         pubSignals: publicSignals,
       },
     };
+    console.log("proof gen: ", vcAndDiscloseHubProof);
 
     const types = [
       revealedDataTypes.issuing_state,
@@ -98,6 +105,7 @@ export class SelfBackendVerifier {
       const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
       timestamp = await this.registryContract.rootTimestamps(currentRoot);
     }
+    console.log("timestamp: ", timestamp);
 
     const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
     console.log('result: ', result);
