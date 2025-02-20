@@ -10,8 +10,8 @@ export default function Prove() {
 
   const selfApp = new SelfAppBuilder({
     appName: "Mock App2",
-    scope: "my-scope",
-    endpoint: "https://6885-157-131-196-195.ngrok-free.app/verify",
+    scope: "test-scope",
+    endpoint: "https://mock-app2.com",
     logoBase64: logo,
     userId,
     disclosures: {
