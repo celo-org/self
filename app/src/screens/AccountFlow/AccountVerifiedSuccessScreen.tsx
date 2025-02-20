@@ -1,18 +1,27 @@
 import React from 'react';
 
-import { useNavigation } from '@react-navigation/native';
+import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { YStack } from 'tamagui';
 
+import { RootStackParamList } from '../../Navigation';
 import proofSuccessAnimation from '../../assets/animations/proof_success.json';
 import { PrimaryButton } from '../../components/buttons/PrimaryButton';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { black, white } from '../../utils/colors';
+import { impactLight } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
-const AccountVerifiedSuccessScreen: React.FC = () => {
+type AccountVerifiedSuccessScreenProps = StaticScreenProps<{
+  nextScreen?: keyof RootStackParamList;
+}>;
+
+const AccountVerifiedSuccessScreen: React.FC<
+  AccountVerifiedSuccessScreenProps
+> = ({ route }) => {
+  const { nextScreen } = route.params;
   const navigation = useNavigation();
 
   return (
@@ -45,7 +54,8 @@ const AccountVerifiedSuccessScreen: React.FC = () => {
         </YStack>
         <PrimaryButton
           onPress={() => {
-            navigation.navigate('SaveRecoveryPhrase');
+            impactLight();
+            navigation.navigate(nextScreen ?? 'SaveRecoveryPhrase');
           }}
         >
           Continue

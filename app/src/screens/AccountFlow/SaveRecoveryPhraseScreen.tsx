@@ -50,7 +50,10 @@ const SaveRecoveryPhraseScreen: React.FC<
   const onCloudBackupPress = useHapticNavigation('CloudBackupSettings', {
     params: { nextScreen: 'AccountVerifiedSuccess' },
   });
-  const onSkipPress = useHapticNavigation('AccountVerifiedSuccess');
+  const onSkipPress = useHapticNavigation('AccountVerifiedSuccess', {
+    params: { nextScreen: 'Home' },
+    action: 'confirm',
+  });
 
   return (
     <ExpandableBottomLayout.Layout backgroundColor={black}>

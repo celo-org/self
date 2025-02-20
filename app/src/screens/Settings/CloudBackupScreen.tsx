@@ -17,6 +17,7 @@ import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
 import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
 import { black, white } from '../../utils/colors';
+import { confirmTap, impactLight } from '../../utils/haptic';
 
 interface CloudBackupScreenProps
   extends StaticScreenProps<
@@ -61,6 +62,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   );
 
   const enableCloudBackups = useCallback(async () => {
+    impactLight();
     if (cloudBackupEnabled) {
       return;
     }
@@ -83,6 +85,7 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   ]);
 
   const disableCloudBackups = useCallback(() => {
+    confirmTap();
     setPending(true);
     showModal();
   }, [showModal]);
@@ -139,14 +142,31 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
               </PrimaryButton>
             )}
 
-            {params?.nextScreen ? (
+            {cloudBackupEnabled ? (
               <PrimaryButton
-                onPress={() => navigation.navigate(params.nextScreen)}
+                onPress={() => {
+                  confirmTap();
+                  navigation.navigate(params.nextScreen);
+                }}
               >
                 Continue
               </PrimaryButton>
+            ) : params?.nextScreen ? (
+              <SecondaryButton
+                onPress={() => {
+                  confirmTap();
+                  navigation.navigate(params.nextScreen);
+                }}
+              >
+                Back up manually
+              </SecondaryButton>
             ) : (
-              <SecondaryButton onPress={() => navigation.goBack()}>
+              <SecondaryButton
+                onPress={() => {
+                  confirmTap();
+                  navigation.goBack();
+                }}
+              >
                 Nevermind
               </SecondaryButton>
             )}
