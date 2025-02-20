@@ -57,16 +57,13 @@ export class SelfBackendVerifier {
     const packedValue =
       forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked : ['0','0','0','0'];
 
-    console.log("120: ", publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]);
     const isValidScope =
       this.scope ===
       castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
-    console.log("isValidScope: ", isValidScope);
 
     const isValidAttestationId =
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
-    console.log("isValidAttestationId: ", isValidAttestationId);
 
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
@@ -81,7 +78,6 @@ export class SelfBackendVerifier {
         pubSignals: publicSignals,
       },
     };
-    console.log("1");
 
     const types = [
       revealedDataTypes.issuing_state,
@@ -104,7 +100,6 @@ export class SelfBackendVerifier {
       const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
       timestamp = await this.registryContract.rootTimestamps(currentRoot);
     }
-    console.log("timestamp: ", timestamp);
 
     const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
     console.log('result: ', result);
