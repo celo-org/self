@@ -45,7 +45,7 @@ export class SelfBackendVerifier {
   }
 
   public async verify(
-    proof: Groth16Proof,
+    proof: any,
     publicSignals: PublicSignals
   ): Promise<SelfVerificationResult> {
     const excludedCountryCodes = this.excludedCountries.value.map((country) =>
