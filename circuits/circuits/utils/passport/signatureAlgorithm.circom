@@ -377,7 +377,7 @@ function getExponentBits(signatureAlgorithm) {
     } else if (signatureAlgorithm == 43) {
         return 2;
     } else if (signatureAlgorithm == 45) {
-        return 1;
+        return 17;
     } else {
         assert(1==0);
         return 0;
