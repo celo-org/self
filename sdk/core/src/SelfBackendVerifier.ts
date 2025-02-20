@@ -55,11 +55,7 @@ export class SelfBackendVerifier {
     );
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
     const packedValue =
-      forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked[0] : '0';
-    const solidityProof = parseSolidityCalldata(
-      await groth16.exportSolidityCallData(proof, publicSignals),
-      {} as VcAndDiscloseProof
-    );
+      forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked : ['0','0','0','0'];
 
     const isValidScope =
       this.scope ===
@@ -76,10 +72,10 @@ export class SelfBackendVerifier {
       forbiddenCountriesListPacked: packedValue,
       ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-        a: solidityProof.a,
-        b: [solidityProof.b[0], solidityProof.b[1]],
-        c: solidityProof.c,
-        pubSignals: solidityProof.pubSignals,
+        a: proof.pi_a,
+        b: proof.pi_b,
+        c: proof.pi_c,
+        pubSignals: publicSignals,
       },
     };
 
