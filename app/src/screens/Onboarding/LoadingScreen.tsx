@@ -22,7 +22,7 @@ type LoadingScreenProps = StaticScreenProps<{
 }>;
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ route }) => {
-  const { mockPassportFlow } = route.params;
+  const mockPassportFlow = route.params?.mockPassportFlow;
   const goToSuccessScreen = useHapticNavigation(
     mockPassportFlow ? 'Home' : 'AccountVerifiedSuccess',
   );
