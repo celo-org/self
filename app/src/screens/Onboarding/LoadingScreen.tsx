@@ -21,15 +21,10 @@ import {
   registerPassport,
 } from '../../utils/proving/payload';
 
-type LoadingScreenProps = StaticScreenProps<{
-  mockPassportFlow?: boolean;
-}>;
+type LoadingScreenProps = StaticScreenProps<{}>;
 
-const LoadingScreen: React.FC<LoadingScreenProps> = ({ route }) => {
-  const { mockPassportFlow } = route.params;
-  const goToSuccessScreen = useHapticNavigation(
-    mockPassportFlow ? 'Home' : 'AccountVerifiedSuccess',
-  );
+const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
+  const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
   const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
   const goToUnsupportedScreen = useHapticNavigation('UnsupportedPassport');
   const navigation = useNavigation();

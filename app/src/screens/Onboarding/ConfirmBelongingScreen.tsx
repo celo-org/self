@@ -13,14 +13,17 @@ import { black, white } from '../../utils/colors';
 import { notificationSuccess } from '../../utils/haptic';
 import { styles } from '../ProveFlow/ProofRequestStatusScreen';
 
-type ConfirmBelongingScreenProps = StaticScreenProps<{
-  mockPassportFlow?: boolean;
-}>;
+type ConfirmBelongingScreenProps = StaticScreenProps<
+  | {
+      mockPassportFlow?: boolean;
+    }
+  | undefined
+>;
 
 const ConfirmBelongingScreen: React.FC<ConfirmBelongingScreenProps> = ({
   route,
 }) => {
-  const { mockPassportFlow } = route.params;
+  const mockPassportFlow = route.params?.mockPassportFlow;
   const onOkPress = useHapticNavigation('LoadingScreen', {
     params: {
       mockPassportFlow,
