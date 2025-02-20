@@ -100,7 +100,7 @@ template CheckPubkeyPosition(prefixLength, maxPubkeyLength, suffixLength, signat
             suffix_eq[i].out === 1;
         }
     } else {
-        // If using ECDSA, check dsc_pubKey_actual_size is the key length (ECDSA circuits always support only one key size)
+        // If using ECDSA, check pubkey_actual_length is the key length (ECDSA circuits always support only one key size)
         var minKeyLength = getMinKeyLength(signatureAlgorithm);
         signal isCorrectLength <== IsEqual()([
             pubkey_actual_length,
