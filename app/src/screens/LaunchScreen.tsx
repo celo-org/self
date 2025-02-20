@@ -23,13 +23,11 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
   const onStartPress = useHapticNavigation('PassportOnboarding');
   const skipToHome = useHapticNavigation('Home');
   const createMock = useHapticNavigation('CreateMock');
-  const threeFingerTap = Gesture.Tap()
-    .minPointers(3)
-    .numberOfTaps(7)
-    .shouldCancelWhenOutside(true)
+  const twoFingerTap = Gesture.Tap()
+    .minPointers(2)
+    .numberOfTaps(5)
     .onStart(() => {
       createMock();
-      return false;
     });
 
   return (
@@ -41,7 +39,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({}) => {
           paddingVertical="$2"
           gap="$4"
         >
-          <GestureDetector gesture={threeFingerTap}>
+          <GestureDetector gesture={twoFingerTap}>
             <View style={styles.cardContainer}>
               <GetStartedCard style={styles.card} />
             </View>

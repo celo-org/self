@@ -115,10 +115,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({}) => {
       [Bug as React.FC<SvgProps>, 'Debug menu', 'DevSettings'],
     ]);
   };
-  const threeFingerTap = Gesture.Tap()
-    .minPointers(3)
-    .numberOfTaps(7)
-    .shouldCancelWhenOutside(true)
+  const twoFingerTap = Gesture.Tap()
+    .minPointers(2)
+    .numberOfTaps(5)
     .onStart(addDebugMenu);
 
   const onMenuPress = useCallback(
@@ -172,7 +171,7 @@ ${deviceInfo.map(([k, v]) => `${k}=${v}`).join('; ')}
   );
   const { bottom } = useSafeAreaInsets();
   return (
-    <GestureDetector gesture={threeFingerTap}>
+    <GestureDetector gesture={twoFingerTap}>
       <View backgroundColor={white}>
         <YStack
           bg={black}
