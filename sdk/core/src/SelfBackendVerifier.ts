@@ -1,10 +1,8 @@
 import { registryAbi } from './abi/IdentityRegistryImplV1';
-import { VcAndDiscloseProof } from './types/types';
 import { verifyAllAbi } from './abi/VerifyAll';
 import { REGISTRY_ADDRESS, VERIFYALL_ADDRESS } from './constants/contractAddresses';
 import { ethers } from 'ethers';
-import { parseSolidityCalldata } from './utils/utils';
-import { groth16, Groth16Proof, PublicSignals } from 'snarkjs';
+import { Groth16Proof, PublicSignals } from 'snarkjs';
 import {
   countryCodes,
   countryNames,
@@ -65,19 +63,6 @@ export class SelfBackendVerifier {
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
 
-    console.log("proof oahdfi:", proof);
-    const intermediateProof: Groth16Proof = {
-      pi_a: proof.a,
-      pi_b: proof.b,
-      pi_c: proof.c,
-      protocol: proof.protocol,
-      curve: proof.curve,
-    };
-    const solidityProof = parseSolidityCalldata(
-      await groth16.exportSolidityCallData(intermediateProof, publicSignals),
-      {} as VcAndDiscloseProof
-    );
-
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
       olderThan: this.minimumAge.value,
@@ -85,13 +70,12 @@ export class SelfBackendVerifier {
       forbiddenCountriesListPacked: packedValue,
       ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-        a: solidityProof.a,
-        b: [solidityProof.b[0], solidityProof.b[1]],
-        c: solidityProof.c,
-        pubSignals: solidityProof.pubSignals,
+        a: proof.a,
+        b: [[proof.b[0][1], proof.b[0][0]],[proof.b[1][1], proof.b[1][0]]],
+        c: proof.c,
+        pubSignals: publicSignals,
       },
     };
-    console.log("hello: ", vcAndDiscloseHubProof.vcAndDiscloseProof);
 
     const types = [
       revealedDataTypes.issuing_state,
@@ -114,13 +98,30 @@ export class SelfBackendVerifier {
       const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
       timestamp = await this.registryContract.rootTimestamps(currentRoot);
     }
-    console.log('timestamp: ', timestamp);
 
     let result: any;
     try {
       result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
     } catch (error) {
-      return error;
+      return {
+        isValid: false,
+        isValidDetails: {
+          isValidScope: false,
+          isValidAttestationId: false,
+          isValidProof: false,
+          isValidNationality: false,
+        },
+        userId: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_USER_IDENTIFIER_INDEX],
+        application: this.scope,
+        nullifier: publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_NULLIFIER_INDEX],
+        credentialSubject: null,
+        proof: {
+          value: {
+            proof: proof,
+            publicSignals: publicSignals,
+          },
+        },
+      }
     }
 
     let isValidNationality = true;
