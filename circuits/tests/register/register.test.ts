@@ -309,7 +309,7 @@ testSuite.forEach(
           }
         });
       }
-      
+
       it('should fail if raw_dsc has a signal that is longer than a byte', async function () {
         try {
           const tamperedInputs = JSON.parse(JSON.stringify(inputs));

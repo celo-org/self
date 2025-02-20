@@ -324,7 +324,7 @@ testSuite.forEach(({ sigAlg, hashFunction, domainParameter, keyLength }) => {
         }
       });
     }
-    
+
     it('should not allow tampering of raw_dsc[raw_dsc_padded_length]', async () => {
       try {
         const tamperedInputs = JSON.parse(JSON.stringify(inputs));
@@ -342,7 +342,6 @@ testSuite.forEach(({ sigAlg, hashFunction, domainParameter, keyLength }) => {
       try {
         const tamperedInputs = JSON.parse(JSON.stringify(inputs));
         tamperedInputs.raw_csca[0] = (parseInt(tamperedInputs.raw_csca[0], 10) + 256).toString();
-        console.log(tamperedInputs.raw_csca);
         await circuit.calculateWitness(tamperedInputs);
         expect.fail('Expected an error but none was thrown.');
       } catch (error: any) {
