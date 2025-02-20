@@ -1,10 +1,8 @@
-import { VcAndDiscloseProof } from './types/types';
 import { registryAbi } from './abi/IdentityRegistryImplV1';
 import { verifyAllAbi } from './abi/VerifyAll';
-import { parseSolidityCalldata } from './utils/utils';
 import { REGISTRY_ADDRESS, VERIFYALL_ADDRESS } from './constants/contractAddresses';
 import { ethers } from 'ethers';
-import { groth16, Groth16Proof, PublicSignals } from 'snarkjs';
+import { Groth16Proof, PublicSignals } from 'snarkjs';
 import {
   countryCodes,
   countryNames,
