@@ -144,10 +144,6 @@ const ProveScreen: React.FC = () => {
   );
 
   async function sendMockPayload() {
-    if (!__DEV__) {
-      return;
-    }
-
     console.log('sendMockPayload, start by generating mockPassport data');
     const passportData = genMockPassportData(
       'sha1',
@@ -158,7 +154,7 @@ const ProveScreen: React.FC = () => {
       '300101',
     );
     const status = await sendVcAndDisclosePayload(
-      '0',
+      '0', // TODO this is thesecret when mocking... can we use the real one though?
       passportData,
       selectedApp,
     );
@@ -173,6 +169,10 @@ const ProveScreen: React.FC = () => {
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (hasScrolledToBottom) {
+        // everything is done, no need to check
+        return;
+      }
       const { layoutMeasurement, contentOffset, contentSize } =
         event.nativeEvent;
       const paddingToBottom = 10;
