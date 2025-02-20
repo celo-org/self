@@ -4,7 +4,8 @@ import { deploySystemFixtures } from "../utils/deployment";
 import { DeployedActors } from "../utils/types";
 import { generateRandomFieldElement } from "../utils/utils";
 import { generateCommitment } from "../../../common/src/utils/passports/passport";
-import { ATTESTATION_ID, CIRCUIT_CONSTANTS } from "../utils/constants";
+import { ATTESTATION_ID } from "../utils/constants";
+import { CIRCUIT_CONSTANTS } from "../../../common/src/constants/constants";
 import { LeanIMT } from "@openpassport/zk-kit-lean-imt";
 import { poseidon2 } from "poseidon-lite";
 import { generateVcAndDiscloseProof, parseSolidityCalldata } from "../utils/generateProof";
@@ -224,6 +225,70 @@ describe("VerifyAll", () => {
             await expect(
                 verifyAll.connect(deployedActors.user1).setRegistry(newRegistryAddress)
             ).to.be.revertedWithCustomError(verifyAll, "OwnableUnauthorizedAccount");
+        });
+    });
+
+    describe("VerifyAll (Custom Error Handling)", () => {
+        it("should return error code 'INVALID_VC_AND_DISCLOSE_PROOF' when vcAndDisclose proof is invalid", async () => {
+            const { registry, owner } = deployedActors;
+            await registry.connect(owner).devAddIdentityCommitment(
+                ATTESTATION_ID.E_PASSPORT,
+                nullifier,
+                commitment
+            );
+
+            vcAndDiscloseProof.a[0] = generateRandomFieldElement();
+
+            const vcAndDiscloseHubProof = {
+                olderThanEnabled: true,
+                olderThan: "20",
+                forbiddenCountriesEnabled: true,
+                forbiddenCountriesListPacked: forbiddenCountriesListPacked,
+                ofacEnabled: [true, true, true],
+                vcAndDiscloseProof: vcAndDiscloseProof
+            };
+
+            const types = ["0", "1", "2"];
+            const [readableData, success, errorCode] = await verifyAll.verifyAll(
+                0,
+                vcAndDiscloseHubProof,
+                types
+            );
+            
+            expect(success).to.be.false;
+            expect(errorCode).to.equal("INVALID_VC_AND_DISCLOSE_PROOF");
+            expect(readableData.name).to.be.empty;
+        });
+
+        it("should return error code 'CURRENT_DATE_NOT_IN_VALID_RANGE' when current date is out of range", async () => {
+            const { registry, owner } = deployedActors;
+            await registry.connect(owner).devAddIdentityCommitment(
+                ATTESTATION_ID.E_PASSPORT,
+                nullifier,
+                commitment
+            );
+
+            vcAndDiscloseProof.pubSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_CURRENT_DATE_INDEX] = 0;
+
+            const vcAndDiscloseHubProof = {
+                olderThanEnabled: true,
+                olderThan: "20",
+                forbiddenCountriesEnabled: true,
+                forbiddenCountriesListPacked: forbiddenCountriesListPacked,
+                ofacEnabled: [true, true, true],
+                vcAndDiscloseProof: vcAndDiscloseProof
+            };
+
+            const types = ["0", "1", "2"];
+            const [readableData, success, errorCode] = await verifyAll.verifyAll(
+                0,
+                vcAndDiscloseHubProof,
+                types
+            );
+
+            expect(success).to.be.false;
+            expect(errorCode).to.equal("CURRENT_DATE_NOT_IN_VALID_RANGE");
+            expect(readableData.name).to.be.empty;
         });
     });
 

@@ -68,6 +68,9 @@ template DSC(
     signal input path[nLevels];
     signal input siblings[nLevels];
 
+    // assert only bytes are used in raw_csca
+    AssertBytes(MAX_CSCA_LENGTH)(raw_csca);
+
     // first, compute raw_dsc_actual_length
     // by getting the values of the last 4 bytes of the padded length
     // cf sha padding
@@ -84,7 +87,7 @@ template DSC(
     // this should guarantee the dsc commitment is unique for each commitment
     component byte_checks[MAX_DSC_LENGTH];
     for (var i = 0; i < MAX_DSC_LENGTH; i++) {
-        byte_checks[i] = GreaterThan(12);
+        byte_checks[i] = GreaterEqThan(12);
         byte_checks[i].in[0] <== i;
         byte_checks[i].in[1] <== raw_dsc_padded_length;
         

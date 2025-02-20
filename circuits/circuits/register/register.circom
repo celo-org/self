@@ -92,6 +92,9 @@ template REGISTER(
     
     signal input secret;
 
+    // assert only bytes are used in raw_dsc
+    AssertBytes(MAX_DSC_LENGTH)(raw_dsc);
+
     // check offsets refer to valid ranges
     signal dsc_pubKey_offset_in_range <== LessEqThan(12)([
         dsc_pubKey_offset + dsc_pubKey_actual_size,

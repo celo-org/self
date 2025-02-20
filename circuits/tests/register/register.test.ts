@@ -309,6 +309,17 @@ testSuite.forEach(
           }
         });
       }
+      
+      it('should fail if raw_dsc has a signal that is longer than a byte', async function () {
+        try {
+          const tamperedInputs = JSON.parse(JSON.stringify(inputs));
+          tamperedInputs.raw_dsc[0] = (parseInt(tamperedInputs.raw_dsc[0], 10) + 256).toString();
+          await circuit.calculateWitness(tamperedInputs);
+          expect.fail('Expected an error but none was thrown.');
+        } catch (error: any) {
+          expect(error.message).to.include('Assert Failed');
+        }
+      });
     });
   }
 );
