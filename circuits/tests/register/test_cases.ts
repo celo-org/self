@@ -95,6 +95,14 @@ export const fullSigAlgs = [
   // ECDSA
   // brainpool
   {
+    dgHashAlgo: 'sha1',
+    eContentHashAlgo: 'sha1',
+    hashFunction: 'sha1',
+    sigAlg: 'ecdsa',
+    domainParameter: 'brainpoolP224r1',
+    keyLength: '224',
+  },
+  {
     dgHashAlgo: 'sha224',
     eContentHashAlgo: 'sha224',
     hashFunction: 'sha224',
