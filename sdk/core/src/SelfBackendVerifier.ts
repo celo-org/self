@@ -1,8 +1,10 @@
 import { registryAbi } from './abi/IdentityRegistryImplV1';
+import { VcAndDiscloseProof } from './types/types';
 import { verifyAllAbi } from './abi/VerifyAll';
 import { REGISTRY_ADDRESS, VERIFYALL_ADDRESS } from './constants/contractAddresses';
 import { ethers } from 'ethers';
-import { Groth16Proof, PublicSignals } from 'snarkjs';
+import { parseSolidityCalldata } from './utils/utils';
+import { groth16, Groth16Proof, PublicSignals } from 'snarkjs';
 import {
   countryCodes,
   countryNames,
@@ -48,26 +50,33 @@ export class SelfBackendVerifier {
     proof: Groth16Proof,
     publicSignals: PublicSignals
   ): Promise<SelfVerificationResult> {
-    console.log("proof: ", proof);
     const excludedCountryCodes = this.excludedCountries.value.map((country) =>
       getCountryCode(country)
     );
     const forbiddenCountriesListPacked = packForbiddenCountriesList(excludedCountryCodes);
-    console.log("forbiddenCountriesPacked: ", forbiddenCountriesListPacked);
     const packedValue =
       forbiddenCountriesListPacked.length > 0 ? forbiddenCountriesListPacked : ['0','0','0','0'];
-    console.log("packedValue: ", packedValue);
 
     const isValidScope =
       this.scope ===
       castToScope(BigInt(publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_SCOPE_INDEX]));
 
-    console.log("isValidScope: ", isValidScope);
-
     const isValidAttestationId =
       this.attestationId.toString() ===
       publicSignals[CIRCUIT_CONSTANTS.VC_AND_DISCLOSE_ATTESTATION_ID_INDEX];
-    console.log("isValidAttestationId: ", isValidAttestationId);
+
+    console.log("proof oahdfi:", proof);
+    const intermediateProof: Groth16Proof = {
+      pi_a: proof.a,
+      pi_b: proof.b,
+      pi_c: proof.c,
+      protocol: proof.protocol,
+      curve: proof.curve,
+    };
+    const solidityProof = parseSolidityCalldata(
+      await groth16.exportSolidityCallData(intermediateProof, publicSignals),
+      {} as VcAndDiscloseProof
+    );
 
     const vcAndDiscloseHubProof = {
       olderThanEnabled: this.minimumAge.enabled,
@@ -76,13 +85,13 @@ export class SelfBackendVerifier {
       forbiddenCountriesListPacked: packedValue,
       ofacEnabled: [this.passportNoOfac, this.nameAndDobOfac, this.nameAndYobOfac],
       vcAndDiscloseProof: {
-        a: proof.a,
-        b: proof.b,
-        c: proof.c,
-        pubSignals: publicSignals,
+        a: solidityProof.a,
+        b: [solidityProof.b[0], solidityProof.b[1]],
+        c: solidityProof.c,
+        pubSignals: solidityProof.pubSignals,
       },
     };
-    console.log("proof gen: ", vcAndDiscloseHubProof);
+    console.log("hello: ", vcAndDiscloseHubProof.vcAndDiscloseProof);
 
     const types = [
       revealedDataTypes.issuing_state,
@@ -105,10 +114,14 @@ export class SelfBackendVerifier {
       const currentRoot = await this.registryContract.getIdentityCommitmentMerkleRoot();
       timestamp = await this.registryContract.rootTimestamps(currentRoot);
     }
-    console.log("timestamp: ", timestamp);
+    console.log('timestamp: ', timestamp);
 
-    const result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
-    console.log('result: ', result);
+    let result: any;
+    try {
+      result = await this.verifyAllContract.verifyAll(timestamp, vcAndDiscloseHubProof, types);
+    } catch (error) {
+      return error;
+    }
 
     let isValidNationality = true;
     if (this.nationality.enabled) {
