@@ -146,7 +146,6 @@ const AppNavigation = createNativeStackNavigator({
     CreateMock: {
       screen: MockDataScreen,
       options: {
-        if: () => __DEV__,
         title: 'Mock Passport',
       },
     },
@@ -283,7 +282,6 @@ const AppNavigation = createNativeStackNavigator({
     DevSettings: {
       screen: DevSettingsScreen,
       options: {
-        if: () => __DEV__,
         title: 'Developer Settings',
         headerStyle: {
           backgroundColor: white,
