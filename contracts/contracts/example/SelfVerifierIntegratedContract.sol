@@ -48,7 +48,11 @@ contract SelfVerifierIntegratedContract is ISelfVerifierIntegration {
             ofacEnabled: verificationConfig.ofacEnabled,
             vcAndDiscloseProof: proof
         });
-        selfIdentityVerificationHub.verifyVcAndDisclose(hubProof);
+        try selfIdentityVerificationHub.verifyVcAndDisclose(hubProof) {
+            return true;
+        } catch {
+            return false;
+        }
     }
 
 }
