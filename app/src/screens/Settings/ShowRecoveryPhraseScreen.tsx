@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import Mnemonic from '../../components/Mnemonic';
 import Description from '../../components/typography/Description';
