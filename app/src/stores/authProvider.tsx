@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import Keychain from 'react-native-keychain';
-import { findBestLanguageTag } from 'react-native-localize';
 
 import { ethers } from 'ethers';
 
@@ -87,16 +86,8 @@ async function loadOrCreateMnemonic() {
     return storedMnemonic.password;
   }
 
-  const { languageTag } = findBestLanguageTag(
-    Object.keys(ethers.wordlists),
-  ) || { languageTag: 'en' };
-
   console.log('No secret found, creating one');
-  const { mnemonic } = ethers.HDNodeWallet.createRandom(
-    undefined,
-    undefined,
-    ethers.wordlists[languageTag],
-  );
+  const { mnemonic } = ethers.HDNodeWallet.createRandom();
   const data = JSON.stringify(mnemonic);
   await Keychain.setGenericPassword('secret', data, {
     service: 'secret',
@@ -220,11 +211,6 @@ export async function hasSecretStored() {
  */
 export async function unsafe_getPrivateKey() {
   const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as ethers.Mnemonic;
-  const wallet = ethers.HDNodeWallet.fromPhrase(
-    mnemonic.phrase,
-    undefined,
-    undefined,
-    mnemonic.wordlist,
-  );
+  const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
   return wallet.privateKey;
 }

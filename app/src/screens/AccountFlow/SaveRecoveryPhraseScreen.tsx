@@ -7,8 +7,8 @@ import { Caption } from '../../components/typography/Caption';
 import Description from '../../components/typography/Description';
 import { Title } from '../../components/typography/Title';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
+import useMnemonic from '../../hooks/useMnemonic';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { useAuth } from '../../stores/authProvider';
 import { STORAGE_NAME } from '../../utils/cloudBackup';
 import { black, slate400, white } from '../../utils/colors';
 
@@ -17,22 +17,12 @@ interface SaveRecoveryPhraseScreenProps {}
 const SaveRecoveryPhraseScreen: React.FC<
   SaveRecoveryPhraseScreenProps
 > = ({}) => {
-  const { getOrCreateMnemonic } = useAuth();
-  const [mnemonic, setMnemonic] = useState<string[]>();
   const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
+  const { mnemonic, loadMnemonic } = useMnemonic();
 
   const onRevealWords = useCallback(async () => {
     await loadMnemonic();
     setUserHasSeenMnemonic(true);
-  }, []);
-
-  const loadMnemonic = useCallback(async () => {
-    const storedMnemonic = await getOrCreateMnemonic();
-    if (!storedMnemonic) {
-      return;
-    }
-    const { phrase } = JSON.parse(storedMnemonic.data);
-    setMnemonic(phrase.trim().split(' '));
   }, []);
 
   const onCloudBackupPress = useHapticNavigation('CloudBackupSettings', {

@@ -21,7 +21,7 @@ interface AccountRecoveryChoiceScreenProps {}
 const AccountRecoveryChoiceScreen: React.FC<
   AccountRecoveryChoiceScreenProps
 > = ({}) => {
-  const { restoreAccountFromPrivateKey } = useAuth();
+  const { restoreAccountFromMnemonic } = useAuth();
   const [restoring, setRestoring] = useState(false);
   const { cloudBackupEnabled, toggleCloudBackupEnabled, biometricsAvailable } =
     useSettingStore();
@@ -33,8 +33,8 @@ const AccountRecoveryChoiceScreen: React.FC<
   const onRestoreFromCloudPress = useCallback(async () => {
     setRestoring(true);
     try {
-      const restoredPrivKey = await download();
-      await restoreAccountFromPrivateKey(restoredPrivKey);
+      const mnemonic = await download();
+      await restoreAccountFromMnemonic(mnemonic);
       if (!cloudBackupEnabled) {
         toggleCloudBackupEnabled();
       }
@@ -47,7 +47,7 @@ const AccountRecoveryChoiceScreen: React.FC<
   }, [
     cloudBackupEnabled,
     download,
-    restoreAccountFromPrivateKey,
+    restoreAccountFromMnemonic,
     onRestoreFromCloudNext,
   ]);
 

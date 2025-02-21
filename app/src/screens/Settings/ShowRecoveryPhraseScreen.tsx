@@ -2,28 +2,18 @@ import React, { useCallback, useState } from 'react';
 
 import Mnemonic from '../../components/Mnemonic';
 import Description from '../../components/typography/Description';
+import useMnemonic from '../../hooks/useMnemonic';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
-import { useAuth } from '../../stores/authProvider';
 
 interface ShowRecoveryPhraseScreenProps {}
 
 const ShowRecoveryPhraseScreen: React.FC<
   ShowRecoveryPhraseScreenProps
 > = ({}) => {
-  const { getOrCreateMnemonic } = useAuth();
-  const [mnemonic, setMnemonic] = useState<string[]>();
+  const { mnemonic, loadMnemonic } = useMnemonic();
 
   const onRevealWords = useCallback(async () => {
     await loadMnemonic();
-  }, []);
-
-  const loadMnemonic = useCallback(async () => {
-    const storedMnemonic = await getOrCreateMnemonic();
-    if (!storedMnemonic) {
-      return;
-    }
-    const { phrase } = JSON.parse(storedMnemonic.data);
-    setMnemonic(phrase.trim().split(' '));
   }, []);
 
   return (
