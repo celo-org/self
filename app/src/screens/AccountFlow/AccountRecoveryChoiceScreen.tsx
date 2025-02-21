@@ -77,7 +77,8 @@ const AccountRecoveryChoiceScreen: React.FC<
               onPress={onRestoreFromCloudPress}
               disabled={restoring || !biometricsAvailable}
             >
-              Restore from {STORAGE_NAME}
+              {restoring ? 'Restoring' : 'Restore'} from {STORAGE_NAME}
+              {restoring ? '…' : ''}
             </PrimaryButton>
             <XStack gap={64} ai="center" justifyContent="space-between">
               <Separator flexGrow={1} />
