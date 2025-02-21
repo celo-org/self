@@ -40,7 +40,7 @@ import {
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { getPassportDataAndSecret } = usePassport();
-  const { selectedApp, resetProof } = useProofInfo();
+  const { selectedApp } = useProofInfo();
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
@@ -139,7 +139,7 @@ const ProveScreen: React.FC = () => {
         isProcessingRef.current = false;
       }
     },
-    [navigate, getPassportDataAndSecret, handleProofVerified, resetProof],
+    [navigate, getPassportDataAndSecret, handleProofVerified],
   );
 
   async function sendMockPayload() {
