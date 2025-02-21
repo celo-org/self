@@ -11,6 +11,7 @@ import { PassportData } from '../../../common/src/utils/types';
 import { unsafe_getPrivateKey } from '../stores/authProvider';
 import { useAuth } from './authProvider';
 
+// TODO: refactor this as it shouldnt be used directly IMHO
 export async function loadPassportData() {
   const passportDataCreds = await Keychain.getGenericPassword({
     service: 'passportData',
