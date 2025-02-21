@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Platform, TextInput } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -133,7 +133,6 @@ const ScreenSelector = ({}) => {
 
 const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
   const { clearPassportData } = usePassport();
-  const textRef = useRef<typeof Label>();
   const [privateKey, setPrivateKey] = useState('Loading private key…');
 
   const nav = useNavigation();
@@ -161,7 +160,7 @@ const DevSettingsScreen: React.FC<DevSettingsScreenProps> = ({}) => {
   }
 
   useEffect(() => {
-    void unsafe_getPrivateKey().then(setPrivateKey);
+    unsafe_getPrivateKey().then(setPrivateKey);
   }, []);
 
   return (
