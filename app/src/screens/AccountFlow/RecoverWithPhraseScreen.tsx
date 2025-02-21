@@ -53,7 +53,7 @@ const RecoverWithPhraseScreen: React.FC<
       return;
     }
     setRestoring(false);
-    navigation.navigate('Home');
+    navigation.navigate('AccountVerifiedSuccess');
   }, [mnemonic, restoreAccountFromMnemonic]);
 
   return (

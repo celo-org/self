@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 
+import { ethers } from 'ethers';
+
 import { useAuth } from '../stores/authProvider';
-import { Mnemonic } from '../types/mnemonic';
 
 export default function useMnemonic() {
   const { getOrCreateMnemonic } = useAuth();
@@ -12,8 +13,8 @@ export default function useMnemonic() {
     if (!storedMnemonic) {
       return;
     }
-    const { phrase } = JSON.parse(storedMnemonic.data) as Mnemonic;
-    setMnemonic(phrase.trim().split(' '));
+    const { entropy } = storedMnemonic.data;
+    setMnemonic(ethers.Mnemonic.fromEntropy(entropy).phrase.split(' '));
   }, []);
 
   return {

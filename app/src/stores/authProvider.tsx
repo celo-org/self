@@ -95,7 +95,9 @@ async function loadOrCreateMnemonic() {
   }
 
   console.log('No secret found, creating one');
-  const { mnemonic } = ethers.HDNodeWallet.createRandom();
+  const { mnemonic } = ethers.HDNodeWallet.fromMnemonic(
+    ethers.Mnemonic.fromEntropy(ethers.randomBytes(32)),
+  );
   const data = JSON.stringify(mnemonic);
   await Keychain.setGenericPassword('secret', data, {
     service: SERVICE_NAME,
@@ -114,7 +116,7 @@ interface IAuthContext {
   isAuthenticating: boolean;
   loginWithBiometrics: () => Promise<void>;
   _getSecurely: typeof _getSecurely;
-  getOrCreateMnemonic: () => Promise<SignedPayload<string> | null>;
+  getOrCreateMnemonic: () => Promise<SignedPayload<Mnemonic> | null>;
   restoreAccountFromMnemonic: (
     mnemonic: string,
   ) => Promise<SignedPayload<boolean> | null>;
@@ -175,7 +177,7 @@ export const AuthProvider = ({
   }, [isAuthenticatingPromise]);
 
   const getOrCreateMnemonic = useCallback(
-    () => _getSecurely<string>(loadOrCreateMnemonic, str => str),
+    () => _getSecurely<Mnemonic>(loadOrCreateMnemonic, str => JSON.parse(str)),
     [],
   );
 

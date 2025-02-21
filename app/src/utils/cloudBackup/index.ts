@@ -71,8 +71,8 @@ async function addAccessTokenForGoogleDrive() {
   }
 }
 
-async function upload(mnemonic: string) {
-  if (!mnemonic) {
+async function upload(mnemonic: Mnemonic) {
+  if (!mnemonic || !mnemonic.phrase) {
     throw new Error(
       'Mnemonic not set yet. Did the user see the recovery phrase?',
     );
@@ -88,7 +88,7 @@ async function upload(mnemonic: string) {
     }
   }
   await withRetries(() =>
-    CloudStorage.writeFile(ENCRYPTED_FILE_PATH, mnemonic),
+    CloudStorage.writeFile(ENCRYPTED_FILE_PATH, JSON.stringify(mnemonic)),
   );
 }
 
