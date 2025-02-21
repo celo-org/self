@@ -1,7 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { findBestLanguageTag } from 'react-native-localize';
-
-import { ethers } from 'ethers';
 
 import Mnemonic from '../../components/Mnemonic';
 import Description from '../../components/typography/Description';
@@ -25,8 +22,8 @@ const ShowRecoveryPhraseScreen: React.FC<
     if (!storedMnemonic) {
       return;
     }
-    const mnemonic = JSON.parse(storedMnemonic.data) as ethers.Mnemonic;
-    setMnemonic(mnemonic.phrase.trim().split(' '));
+    const { phrase } = JSON.parse(storedMnemonic.data);
+    setMnemonic(phrase.trim().split(' '));
   }, []);
 
   return (
