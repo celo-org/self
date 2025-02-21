@@ -70,12 +70,12 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
 
     setPending(true);
 
-    const seed = await getOrCreateMnemonic();
-    if (!seed) {
+    const storedMnemonic = await getOrCreateMnemonic();
+    if (!storedMnemonic) {
       setPending(false);
       return;
     }
-    await upload(seed.data);
+    await upload(storedMnemonic.data);
     toggleCloudBackupEnabled();
     setPending(false);
   }, [
