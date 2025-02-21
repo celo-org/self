@@ -8,11 +8,7 @@ import failAnimation from '../../assets/animations/loading/fail.json';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
-import { loadSecretOrCreateIt } from '../../stores/authProvider';
-import {
-  loadPassportData,
-  usePassport,
-} from '../../stores/passportDataProvider';
+import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
 import {
   checkPassportSupported,
@@ -42,7 +38,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
   const { registrationStatus, resetProof, setProofVerificationResult } =
     useProofInfo();
-  const { clearPassportData } = usePassport();
+  const { getPassportDataAndSecret, clearPassportData } = usePassport();
 
   useEffect(() => {
     setProofVerificationResult(null);
@@ -71,14 +67,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
       processPayloadCalled.current = true;
       const processPayload = async () => {
         try {
-          const secret = await loadSecretOrCreateIt();
-          const passportDataString = await loadPassportData();
-          if (!secret || !passportDataString) {
-            // Could that fail if passportData takes a lot of time to get in the keychain, on an old phone?
-            // Or should we add a short delay?
+          const passportDataAndSecret = await getPassportDataAndSecret();
+          if (!passportDataAndSecret) {
             return;
           }
-          const passportData = JSON.parse(passportDataString);
+          const { passportData, secret } = passportDataAndSecret.data;
           const isSupported = checkPassportSupported(passportData);
           if (!isSupported) {
             goToUnsupportedScreen();
