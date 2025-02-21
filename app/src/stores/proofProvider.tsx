@@ -29,7 +29,19 @@ interface IProofContext {
 const defaults: IProofContext = {
   registrationStatus: ProofStatusEnum.PENDING,
   disclosureStatus: ProofStatusEnum.PENDING,
-  selectedApp: {} as SelfApp,
+  selectedApp: {
+    appName: '',
+    logoBase64: '',
+    scope: '',
+    endpointType: 'https',
+    endpoint: '',
+    header: '',
+    sessionId: '',
+    userId: '',
+    userIdType: 'uuid',
+    devMode: true,
+    disclosures: {},
+  },
   setSelectedApp: (_: SelfApp) => undefined,
   cleanSelfApp: () => undefined,
   resetProof: () => undefined,
@@ -68,20 +80,7 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
   }, []);
 
   const cleanSelfApp = useCallback(() => {
-    const emptySelfApp: SelfApp = {
-      appName: '',
-      logoBase64: '',
-      scope: '',
-      endpointType: 'https',
-      endpoint: '',
-      header: '',
-      sessionId: '',
-      userId: '',
-      userIdType: 'uuid',
-      devMode: true,
-      disclosures: {},
-    };
-    setSelectedAppInternal(emptySelfApp);
+    setSelectedAppInternal(defaults.selectedApp);
   }, []);
 
   const resetProof = useCallback(() => {
