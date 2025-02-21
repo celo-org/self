@@ -13,7 +13,7 @@ import RestoreAccountSvg from '../../images/icons/restore_account.svg';
 import { ExpandableBottomLayout } from '../../layouts/ExpandableBottomLayout';
 import { useAuth } from '../../stores/authProvider';
 import { useSettingStore } from '../../stores/settingStore';
-import { STORAGE_NAME, useBackupPrivateKey } from '../../utils/cloudBackup';
+import { STORAGE_NAME, useBackupMnemonic } from '../../utils/cloudBackup';
 import { black, slate500, slate600, white } from '../../utils/colors';
 
 interface AccountRecoveryChoiceScreenProps {}
@@ -25,7 +25,7 @@ const AccountRecoveryChoiceScreen: React.FC<
   const [restoring, setRestoring] = useState(false);
   const { cloudBackupEnabled, toggleCloudBackupEnabled, biometricsAvailable } =
     useSettingStore();
-  const { download } = useBackupPrivateKey();
+  const { download } = useBackupMnemonic();
 
   const onRestoreFromCloudNext = useHapticNavigation('AccountVerifiedSuccess');
   const onEnterRecoveryPress = useHapticNavigation('RecoverWithPhrase');
@@ -34,7 +34,7 @@ const AccountRecoveryChoiceScreen: React.FC<
     setRestoring(true);
     try {
       const mnemonic = await download();
-      await restoreAccountFromMnemonic(mnemonic);
+      await restoreAccountFromMnemonic(mnemonic.phrase);
       if (!cloudBackupEnabled) {
         toggleCloudBackupEnabled();
       }

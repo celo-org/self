@@ -11,6 +11,8 @@ import Keychain from 'react-native-keychain';
 
 import { ethers } from 'ethers';
 
+import { Mnemonic } from '../types/mnemonic';
+
 const SERVICE_NAME = 'secret';
 
 type SignedPayload<T> = { signature: string; data: T };
@@ -212,7 +214,7 @@ export async function hasSecretStored() {
  * to access both the privatekey and the passport data with the user only authenticating once
  */
 export async function unsafe_getPrivateKey() {
-  const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as ethers.Mnemonic;
+  const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as Mnemonic;
   const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
   return wallet.privateKey;
 }

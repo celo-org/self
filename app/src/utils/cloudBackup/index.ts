@@ -7,6 +7,7 @@ import {
 } from 'react-native-cloud-storage';
 
 import { name } from '../../../package.json';
+import { Mnemonic } from '../../types/mnemonic';
 import { googleSignIn } from './google';
 
 const FOLDER = `/${name}`;
@@ -44,7 +45,7 @@ async function withRetries<T>(
   );
 }
 
-export function useBackupPrivateKey() {
+export function useBackupMnemonic() {
   return useMemo(
     () => ({
       upload,
@@ -68,10 +69,10 @@ async function addAccessTokenForGoogleDrive() {
   }
 }
 
-async function upload(privateKey: string) {
-  if (!privateKey) {
+async function upload(mnemonic: string) {
+  if (!mnemonic) {
     throw new Error(
-      'Private key not set yet. Did the user see the recovery phrase?',
+      'Mnemonic not set yet. Did the user see the recovery phrase?',
     );
   }
 
@@ -85,17 +86,28 @@ async function upload(privateKey: string) {
     }
   }
   await withRetries(() =>
-    CloudStorage.writeFile(ENCRYPTED_FILE_PATH, privateKey),
+    CloudStorage.writeFile(ENCRYPTED_FILE_PATH, mnemonic),
   );
 }
 
 async function download() {
   await addAccessTokenForGoogleDrive();
   if (await CloudStorage.exists(ENCRYPTED_FILE_PATH)) {
-    const privateKey = await withRetries(() =>
+    const mnemonicString = await withRetries(() =>
       CloudStorage.readFile(ENCRYPTED_FILE_PATH),
     );
-    return privateKey;
+
+    try {
+      const mnemonic = JSON.parse(mnemonicString) as Mnemonic;
+      if (!mnemonic.phrase) {
+        throw new Error();
+      }
+      return mnemonic;
+    } catch (e) {
+      throw new Error(
+        `Malformed mnemonic, expected JSON structure, got ${mnemonicString}`,
+      );
+    }
   }
   throw new Error(
     'Couldnt find the encrypted backup, did you back it up previously?',
