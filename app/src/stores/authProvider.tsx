@@ -11,6 +11,8 @@ import Keychain from 'react-native-keychain';
 
 import { ethers } from 'ethers';
 
+const SERVICE_NAME = 'secret';
+
 type SignedPayload<T> = { signature: string; data: T };
 const _getSecurely = async function <T>(
   fn: () => Promise<string | false>,
@@ -73,14 +75,14 @@ async function restoreFromMnemonic(mnemonic: string) {
   const restoredWallet = ethers.Wallet.fromPhrase(mnemonic);
   const data = JSON.stringify(restoredWallet.mnemonic);
   await Keychain.setGenericPassword('secret', data, {
-    service: 'secret',
+    service: SERVICE_NAME,
   });
   return data;
 }
 
 async function loadOrCreateMnemonic() {
   const storedMnemonic = await Keychain.getGenericPassword({
-    service: 'secret',
+    service: SERVICE_NAME,
   });
   if (storedMnemonic) {
     return storedMnemonic.password;
@@ -90,7 +92,7 @@ async function loadOrCreateMnemonic() {
   const { mnemonic } = ethers.HDNodeWallet.createRandom();
   const data = JSON.stringify(mnemonic);
   await Keychain.setGenericPassword('secret', data, {
-    service: 'secret',
+    service: SERVICE_NAME,
   });
   return data;
 }
@@ -201,7 +203,7 @@ export const useAuth = () => {
 };
 
 export async function hasSecretStored() {
-  const seed = await Keychain.getGenericPassword({ service: 'secret' });
+  const seed = await Keychain.getGenericPassword({ service: SERVICE_NAME });
   return !!seed;
 }
 
@@ -213,4 +215,10 @@ export async function unsafe_getPrivateKey() {
   const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as ethers.Mnemonic;
   const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
   return wallet.privateKey;
+}
+
+export async function unsafe_clearSecrets() {
+  if (__DEV__) {
+    await Keychain.resetGenericPassword({ service: SERVICE_NAME });
+  }
 }
