@@ -74,6 +74,10 @@ async function createSigningKeyPair(): Promise<boolean> {
 }
 
 async function restoreFromMnemonic(mnemonic: string) {
+  if (!mnemonic || !ethers.Mnemonic.isValidMnemonic(mnemonic)) {
+    throw new Error('Invalid mnemonic');
+  }
+
   const restoredWallet = ethers.Wallet.fromPhrase(mnemonic);
   const data = JSON.stringify(restoredWallet.mnemonic);
   await Keychain.setGenericPassword('secret', data, {

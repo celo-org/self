@@ -6,6 +6,8 @@ import {
   CloudStorageScope,
 } from 'react-native-cloud-storage';
 
+import { ethers } from 'ethers';
+
 import { name } from '../../../package.json';
 import { Mnemonic } from '../../types/mnemonic';
 import { googleSignIn } from './google';
@@ -99,7 +101,10 @@ async function download() {
 
     try {
       const mnemonic = JSON.parse(mnemonicString) as Mnemonic;
-      if (!mnemonic.phrase) {
+      if (
+        !mnemonic.phrase ||
+        !ethers.Mnemonic.isValidMnemonic(mnemonic.phrase)
+      ) {
         throw new Error();
       }
       return mnemonic;
