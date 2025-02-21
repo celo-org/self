@@ -83,6 +83,8 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
     setSelectedAppInternal(defaults.selectedApp);
   }, []);
 
+  // why do we have both resetProof and cleanSelfApp?
+  // possible we can make resetProof only about registration status, and clean app about disclosures status
   const resetProof = useCallback(() => {
     setRegistrationStatus(ProofStatusEnum.PENDING);
     setDisclosureStatus(ProofStatusEnum.PENDING);

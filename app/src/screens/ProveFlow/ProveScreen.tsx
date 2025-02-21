@@ -84,7 +84,7 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(
     async function () {
-      resetProof();
+      resetProof(); // this make zero sense we are removing all reference to the app so we wont be able to get its name on the results scree
       buttonTap();
       if (isProcessingRef.current) {
         return;

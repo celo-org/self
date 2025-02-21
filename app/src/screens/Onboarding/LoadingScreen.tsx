@@ -41,6 +41,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
   const { getPassportDataAndSecret, clearPassportData } = usePassport();
 
   useEffect(() => {
+    // TODO this makes sense if reset proof was only about passport registration
     resetProof();
   }, []);
 
