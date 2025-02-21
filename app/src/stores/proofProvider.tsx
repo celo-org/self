@@ -20,22 +20,18 @@ export enum ProofStatusEnum {
 interface IProofContext {
   registrationStatus: ProofStatusEnum;
   disclosureStatus: ProofStatusEnum;
-  proofVerificationResult: unknown;
   selectedApp: SelfApp;
   setSelectedApp: (app: SelfApp) => void;
   cleanSelfApp: () => void;
-  setProofVerificationResult: (result: unknown) => void;
   resetProof: () => void;
 }
 
 const defaults: IProofContext = {
   registrationStatus: ProofStatusEnum.PENDING,
   disclosureStatus: ProofStatusEnum.PENDING,
-  proofVerificationResult: null,
   selectedApp: {} as SelfApp,
   setSelectedApp: (_: SelfApp) => undefined,
   cleanSelfApp: () => undefined,
-  setProofVerificationResult: (_: unknown) => undefined,
   resetProof: () => undefined,
 };
 
@@ -58,8 +54,7 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
   const [disclosureStatus, setDisclosureStatus] = useState<ProofStatusEnum>(
     ProofStatusEnum.PENDING,
   );
-  const [proofVerificationResult, setProofVerificationResult] =
-    useState<unknown>(defaults.proofVerificationResult);
+
   const [selectedApp, setSelectedAppInternal] = useState<SelfApp>(
     defaults.selectedApp,
   );
@@ -69,7 +64,6 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
       return;
     }
     setRegistrationStatus(ProofStatusEnum.PENDING);
-    setProofVerificationResult(null);
     setSelectedAppInternal(app);
   }, []);
 
@@ -93,7 +87,6 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
   const resetProof = useCallback(() => {
     setRegistrationStatus(ProofStatusEnum.PENDING);
     setDisclosureStatus(ProofStatusEnum.PENDING);
-    setProofVerificationResult(null);
     setSelectedAppInternal(defaults.selectedApp);
   }, []);
 
@@ -117,17 +110,14 @@ export function ProofProvider({ children }: PropsWithChildren<{}>) {
     () => ({
       registrationStatus,
       disclosureStatus,
-      proofVerificationResult,
       selectedApp,
       setSelectedApp,
       cleanSelfApp,
-      setProofVerificationResult,
       resetProof,
     }),
     [
       registrationStatus,
       disclosureStatus,
-      proofVerificationResult,
       selectedApp,
       setSelectedApp,
       cleanSelfApp,
