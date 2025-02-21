@@ -36,12 +36,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
     }, 3000);
   };
   const [animationSource, setAnimationSource] = useState<any>(miscAnimation);
-  const { registrationStatus, resetProof, setProofVerificationResult } =
+  const { registrationStatus, resetProof } =
     useProofInfo();
   const { getPassportDataAndSecret, clearPassportData } = usePassport();
 
   useEffect(() => {
-    setProofVerificationResult(null);
     resetProof();
   }, []);
 
