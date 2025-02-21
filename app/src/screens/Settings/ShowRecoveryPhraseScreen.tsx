@@ -13,7 +13,7 @@ interface ShowRecoveryPhraseScreenProps {}
 const ShowRecoveryPhraseScreen: React.FC<
   ShowRecoveryPhraseScreenProps
 > = ({}) => {
-  const { getOrCreatePrivateKey } = useAuth();
+  const { getOrCreateMnemonic } = useAuth();
   const [mnemonic, setMnemonic] = useState<string[]>();
 
   const onRevealWords = useCallback(async () => {
@@ -21,20 +21,12 @@ const ShowRecoveryPhraseScreen: React.FC<
   }, []);
 
   const loadMnemonic = useCallback(async () => {
-    const privKey = await getOrCreatePrivateKey();
-    if (!privKey) {
+    const storedMnemonic = await getOrCreateMnemonic();
+    if (!storedMnemonic) {
       return;
     }
-    const { languageTag } = findBestLanguageTag(
-      Object.keys(ethers.wordlists),
-    ) || { languageTag: 'en' };
-
-    const words = ethers.Mnemonic.entropyToPhrase(
-      privKey.data,
-      ethers.wordlists[languageTag],
-    );
-
-    setMnemonic(words.trim().split(' '));
+    const mnemonic = JSON.parse(storedMnemonic.data) as ethers.Mnemonic;
+    setMnemonic(mnemonic.phrase.trim().split(' '));
   }, []);
 
   return (

@@ -32,7 +32,7 @@ interface CloudBackupScreenProps
 const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
   route: { params },
 }) => {
-  const { getOrCreatePrivateKey, loginWithBiometrics } = useAuth();
+  const { getOrCreateMnemonic, loginWithBiometrics } = useAuth();
   const { cloudBackupEnabled, toggleCloudBackupEnabled, biometricsAvailable } =
     useSettingStore();
   const { upload, disableBackup } = useBackupPrivateKey();
@@ -70,17 +70,17 @@ const CloudBackupScreen: React.FC<CloudBackupScreenProps> = ({
 
     setPending(true);
 
-    const privKey = await getOrCreatePrivateKey();
-    if (!privKey) {
+    const seed = await getOrCreateMnemonic();
+    if (!seed) {
       setPending(false);
       return;
     }
-    await upload(privKey.data);
+    await upload(seed.data);
     toggleCloudBackupEnabled();
     setPending(false);
   }, [
     cloudBackupEnabled,
-    getOrCreatePrivateKey,
+    getOrCreateMnemonic,
     upload,
     toggleCloudBackupEnabled,
   ]);

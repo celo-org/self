@@ -8,7 +8,7 @@ import React, {
 import Keychain from 'react-native-keychain';
 
 import { PassportData } from '../../../common/src/utils/types';
-import { loadSecretOrCreateIt } from '../stores/authProvider';
+import { unsafe_getPrivateKey } from '../stores/authProvider';
 import { useAuth } from './authProvider';
 
 export async function loadPassportData() {
@@ -20,7 +20,7 @@ export async function loadPassportData() {
 
 export async function loadPassportDataAndSecret() {
   const passportData = await loadPassportData();
-  const secret = await loadSecretOrCreateIt();
+  const secret = await unsafe_getPrivateKey();
   if (!secret || !passportData) {
     return false;
   }

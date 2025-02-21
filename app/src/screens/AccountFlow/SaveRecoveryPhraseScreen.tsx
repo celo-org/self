@@ -20,7 +20,7 @@ interface SaveRecoveryPhraseScreenProps {}
 const SaveRecoveryPhraseScreen: React.FC<
   SaveRecoveryPhraseScreenProps
 > = ({}) => {
-  const { getOrCreatePrivateKey } = useAuth();
+  const { getOrCreateMnemonic } = useAuth();
   const [mnemonic, setMnemonic] = useState<string[]>();
   const [userHasSeenMnemonic, setUserHasSeenMnemonic] = useState(false);
 
@@ -30,21 +30,12 @@ const SaveRecoveryPhraseScreen: React.FC<
   }, []);
 
   const loadMnemonic = useCallback(async () => {
-    const privKey = await getOrCreatePrivateKey();
-    if (!privKey) {
+    const storedMnemonic = await getOrCreateMnemonic();
+    if (!storedMnemonic) {
       return;
     }
-
-    const { languageTag } = findBestLanguageTag(
-      Object.keys(ethers.wordlists),
-    ) || { languageTag: 'en' };
-
-    const words = ethers.Mnemonic.entropyToPhrase(
-      privKey.data,
-      ethers.wordlists[languageTag],
-    );
-
-    setMnemonic(words.trim().split(' '));
+    const mnemonic = JSON.parse(storedMnemonic.data) as ethers.Mnemonic;
+    setMnemonic(mnemonic.phrase.trim().split(' '));
   }, []);
 
   const onCloudBackupPress = useHapticNavigation('CloudBackupSettings', {
