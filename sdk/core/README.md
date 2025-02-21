@@ -18,13 +18,12 @@ const selfBackendVerifier = new SelfBackendVerifier(
 ## Setup
 You can setup which data you want to verify in this sdk
 ```typescript
-// In default, verification will be done with latest identity commitment root, but if you have some other root in your mind, you can choose with timestamp
-selfBackendVerifier.setTargetRootTimestamp(0);
 // Set minimum age verification
 selfBackendVerifier.setMinimumAge(20);
 // Set nationality verification
 selfBackendVerifier.setNationality('France')
 // Set exclude countries verification
+// At most 40
 selfBackendVerifier.excludeCountries('Country Name1', 'Country Name2', 'Coutry Name3', 'etc...');
 // Enable if you want to do passport number ofac check
 // Default false
