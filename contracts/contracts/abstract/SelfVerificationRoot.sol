@@ -6,18 +6,56 @@ import {IIdentityVerificationHubV1} from "../interfaces/IIdentityVerificationHub
 import {ISelfVerificationRoot} from "../interfaces/ISelfVerificationRoot.sol";
 import {CircuitConstants} from "../constants/CircuitConstants.sol";
 
+/**
+ * @title SelfVerificationRoot
+ * @notice Abstract base contract to be integrated with self's verification infrastructure
+ * @dev Provides base functionality for verifying and disclosing identity credentials
+ */
 abstract contract SelfVerificationRoot is ISelfVerificationRoot {
 
+    // ====================================================
+    // Storage Variables
+    // ====================================================
+
+    /// @notice The scope value that proofs must match
+    /// @dev Used to validate that submitted proofs match the expected scope
     uint256 internal _scope;
+
+    /// @notice The attestation ID that proofs must match
+    /// @dev Used to validate that submitted proofs contain the correct attestation
     uint256 internal _attestationId;
 
+    /// @notice Configuration settings for the verification process
+    /// @dev Contains settings for age verification, country restrictions, and OFAC checks
     ISelfVerificationRoot.VerificationConfig internal _verificationConfig;
 
+    /// @notice Reference to the identity verification hub contract
+    /// @dev Immutable reference used for proof verification
     IIdentityVerificationHubV1 internal immutable _identityVerificationHub;
 
+    // ====================================================
+    // Errors
+    // ====================================================
+
+    /// @notice Error thrown when the proof's scope doesn't match the expected scope
+    /// @dev Triggered in verifySelfProof when scope validation fails
     error InvalidScope();
+
+    /// @notice Error thrown when the proof's attestation ID doesn't match the expected ID
+    /// @dev Triggered in verifySelfProof when attestation ID validation fails
     error InvalidAttestationId();
 
+    /**
+     * @notice Initializes the SelfVerificationRoot contract.
+     * @param identityVerificationHub The address of the Identity Verification Hub.
+     * @param scope The expected proof scope for user registration.
+     * @param attestationId The expected attestation identifier required in proofs.
+     * @param olderThanEnabled Flag indicating if 'olderThan' verification is enabled.
+     * @param olderThan Value for 'olderThan' verification.
+     * @param forbiddenCountriesEnabled Flag indicating if forbidden countries verification is enabled.
+     * @param forbiddenCountriesListPacked Packed list of forbidden countries.
+     * @param ofacEnabled Array of flags indicating which OFAC checks are enabled. [passportNo, nameAndDob, nameAndYob]
+     */
     constructor(
         address identityVerificationHub,
         uint256 scope,
@@ -38,6 +76,11 @@ abstract contract SelfVerificationRoot is ISelfVerificationRoot {
         _verificationConfig.ofacEnabled = ofacEnabled;
     }
 
+    /**
+     * @notice Verifies a self-proof
+     * @dev Validates scope and attestation ID before performing verification through the identity hub
+     * @param proof The proof data for verification and disclosure
+     */
     function verifySelfProof(
         IVcAndDiscloseCircuitVerifier.VcAndDiscloseProof memory proof
     ) 
@@ -62,7 +105,6 @@ abstract contract SelfVerificationRoot is ISelfVerificationRoot {
                 vcAndDiscloseProof: proof
             })
         );
-        
     }
 
 }
