@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import {IVcAndDiscloseCircuitVerifier} from "./IVcAndDiscloseCircuitVerifier.sol";
 
-interface ISelfVerifierIntegration {
+interface ISelfVerificationRoot {
 
     struct VerificationConfig {
         bool olderThanEnabled;
@@ -15,6 +15,6 @@ interface ISelfVerifierIntegration {
     
     function verifySelfProof(
         IVcAndDiscloseCircuitVerifier.VcAndDiscloseProof memory proof
-    ) external returns (bool);
+    ) external;
 
 }
