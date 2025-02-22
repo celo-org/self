@@ -1,4 +1,4 @@
-name: OpenPassport CI/CD
+name: Build r1cs, wasm, cpp
 on:
   workflow_dispatch:
   push:
@@ -16,8 +16,10 @@ on:
 
 jobs:
   build:
-    runs-on: ['self-hosted', 'org', 'ubuntu-22-04']
-
+    runs-on: ["self-hosted", "org", "128-ram"]
+    concurrency:
+      group:   ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
