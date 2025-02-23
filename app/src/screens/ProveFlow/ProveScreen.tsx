@@ -9,11 +9,13 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
+  LayoutChangeEvent,
+  ScrollView,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Image, ScrollView, Text, View, YStack } from 'tamagui';
+import { Image, Text, View, YStack } from 'tamagui';
 
 import { SelfAppDisclosureConfig } from '../../../../common/src/utils/appType';
 import miscAnimation from '../../assets/animations/loading/misc.json';
@@ -43,7 +45,28 @@ const ProveScreen: React.FC = () => {
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
-  const isProcessingRef = useRef(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const [scrollViewContentHeight, setScrollViewContentHeight] = useState(0);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const isContentShorterThanScrollView = useMemo(
+    () => scrollViewContentHeight <= scrollViewHeight,
+    [scrollViewContentHeight, scrollViewHeight],
+  );
+
+  /**
+   * Whenever the relationship between content height vs. scroll view height changes,
+   * reset (or enable) the button state accordingly.
+   */
+  useEffect(() => {
+    if (isContentShorterThanScrollView) {
+      setHasScrolledToBottom(true);
+    } else {
+      setHasScrolledToBottom(false);
+    }
+  }, [isContentShorterThanScrollView]);
+
   useEffect(() => {
     if (
       !selectedApp ||
@@ -85,11 +108,6 @@ const ProveScreen: React.FC = () => {
     async function () {
       resetProof();
       buttonTap();
-      if (isProcessingRef.current) {
-        return;
-      }
-      isProcessingRef.current = true;
-
       const currentApp = selectedAppRef.current;
       try {
         let timeToNavigateToStatusScreen: NodeJS.Timeout;
@@ -135,35 +153,38 @@ const ProveScreen: React.FC = () => {
       } catch (e) {
         console.log('Error sending VC and disclose payload', e);
         globalSetDisclosureStatus?.(ProofStatusEnum.ERROR);
-      } finally {
-        isProcessingRef.current = false;
       }
     },
-    [navigate, getPassportDataAndSecret, handleProofVerified],
+    [navigate, getPassportDataAndSecret, handleProofVerified, resetProof],
   );
-
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
-  const scrollViewRef = useRef<ScrollView>(null);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (hasScrolledToBottom) {
-        // everything is done, no need to check
+      if (hasScrolledToBottom || isContentShorterThanScrollView) {
         return;
       }
-      const { layoutMeasurement, contentOffset, contentSize } =
-        event.nativeEvent;
+      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
       const paddingToBottom = 10;
       const isCloseToBottom =
         layoutMeasurement.height + contentOffset.y >=
         contentSize.height - paddingToBottom;
-
       if (isCloseToBottom && !hasScrolledToBottom) {
         setHasScrolledToBottom(true);
       }
     },
-    [hasScrolledToBottom],
+    [hasScrolledToBottom, isContentShorterThanScrollView],
   );
+
+  const handleContentSizeChange = useCallback(
+    (contentWidth: number, contentHeight: number) => {
+      setScrollViewContentHeight(contentHeight);
+    },
+    [],
+  );
+
+  const handleScrollViewLayout = useCallback((event: LayoutChangeEvent) => {
+    setScrollViewHeight(event.nativeEvent.layout.height);
+  }, []);
 
   return (
     <ExpandableBottomLayout.Layout flex={1} backgroundColor={black}>
@@ -206,6 +227,8 @@ const ProveScreen: React.FC = () => {
           ref={scrollViewRef}
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          onContentSizeChange={handleContentSizeChange}
+          onLayout={handleScrollViewLayout}
         >
           <Disclosures disclosures={disclosureOptions} />
           <View marginTop={20}>
