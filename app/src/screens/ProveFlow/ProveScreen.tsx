@@ -6,11 +6,11 @@ import React, {
   useState,
 } from 'react';
 import {
+  LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  StyleSheet,
-  LayoutChangeEvent,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -163,7 +163,8 @@ const ProveScreen: React.FC = () => {
       if (hasScrolledToBottom || isContentShorterThanScrollView) {
         return;
       }
-      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+      const { layoutMeasurement, contentOffset, contentSize } =
+        event.nativeEvent;
       const paddingToBottom = 10;
       const isCloseToBottom =
         layoutMeasurement.height + contentOffset.y >=
