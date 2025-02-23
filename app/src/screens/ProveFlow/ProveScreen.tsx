@@ -16,7 +16,6 @@ import LottieView from 'lottie-react-native';
 import { Image, ScrollView, Text, View, YStack } from 'tamagui';
 
 import { SelfAppDisclosureConfig } from '../../../../common/src/utils/appType';
-import { genMockPassportData } from '../../../../common/src/utils/passports/genMockPassportData';
 import miscAnimation from '../../assets/animations/loading/misc.json';
 import Disclosures from '../../components/Disclosures';
 import { HeldPrimaryButton } from '../../components/buttons/PrimaryButtonLongHold';
@@ -40,7 +39,7 @@ import {
 const ProveScreen: React.FC = () => {
   const { navigate } = useNavigation();
   const { getPassportDataAndSecret } = usePassport();
-  const { selectedApp } = useProofInfo();
+  const { selectedApp, resetProof } = useProofInfo();
   const { handleProofVerified } = useApp();
   const selectedAppRef = useRef(selectedApp);
 
@@ -84,6 +83,7 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(
     async function () {
+      resetProof();
       buttonTap();
       if (isProcessingRef.current) {
         return;
@@ -142,27 +142,6 @@ const ProveScreen: React.FC = () => {
     [navigate, getPassportDataAndSecret, handleProofVerified],
   );
 
-  async function sendMockPayload() {
-    console.log('sendMockPayload, start by generating mockPassport data');
-    const passportData = genMockPassportData(
-      'sha1',
-      'sha256',
-      'rsa_sha256_65537_2048',
-      'FRA',
-      '000101',
-      '300101',
-    );
-    const status = await sendVcAndDisclosePayload(
-      '0', // TODO this is thesecret when mocking... can we use the real one though?
-      passportData,
-      selectedApp,
-    );
-    handleProofVerified(
-      selectedAppRef.current.sessionId,
-      status === ProofStatusEnum.SUCCESS,
-    );
-  }
-
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -211,10 +190,8 @@ const ProveScreen: React.FC = () => {
                 {url}
               </BodyText>
               <BodyText fontSize={24} color={slate300} textAlign="center">
-                <Text color={white} onPress={sendMockPayload}>
-                  {selectedApp.appName}
-                </Text>{' '}
-                is requesting that you prove the following information:
+                <Text color={white}>{selectedApp.appName}</Text> is requesting
+                that you prove the following information:
               </BodyText>
             </YStack>
           )}
