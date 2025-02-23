@@ -77,7 +77,6 @@
     "socket.io-client": "^4.7.5",
     "tamagui": "1.110.0",
     "uuid": "^11.0.5",
-    "yarn": "^1.22.22",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
