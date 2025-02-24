@@ -12,6 +12,7 @@ import Keychain from 'react-native-keychain';
 import { ethers } from 'ethers';
 
 import { Mnemonic } from '../types/mnemonic';
+import { useNavigation } from '@react-navigation/native';
 
 const SERVICE_NAME = 'secret';
 
@@ -229,9 +230,18 @@ export async function hasSecretStored() {
  * to access both the privatekey and the passport data with the user only authenticating once
  */
 export async function unsafe_getPrivateKey() {
-  const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as Mnemonic;
-  const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
-  return wallet.privateKey;
+  try {
+    const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as Mnemonic;
+    const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
+    return wallet.privateKey;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      const navigation = useNavigation();
+      navigation.navigate('Home');
+      return;
+    }
+    throw error;
+  }
 }
 
 export async function unsafe_clearSecrets() {
