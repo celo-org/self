@@ -307,7 +307,7 @@ export type RootStackParamList = StaticParamList<typeof AppNavigation>;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }
 
@@ -324,7 +324,6 @@ const NavigationWithTracking = () => {
       console.log(`Screen View: ${currentRoute.name}`);
       trackScreenView(`${currentRoute.name}`, {
         screenName: currentRoute.name,
-        params: currentRoute.params,
       });
     }
   };
