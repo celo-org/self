@@ -6,7 +6,7 @@ import LottieView from 'lottie-react-native';
 
 import splashAnimation from '../assets/animations/splash.json';
 import { useAuth } from '../stores/authProvider';
-import { loadPassportDataAndSecret, usePassport } from '../stores/passportDataProvider';
+import { loadPassportDataAndSecret } from '../stores/passportDataProvider';
 import { useSettingStore } from '../stores/settingStore';
 import { black } from '../utils/colors';
 import { impactLight } from '../utils/haptic';
@@ -16,8 +16,6 @@ const SplashScreen: React.FC = ({}) => {
   const navigation = useNavigation();
   const { createSigningKeyPair } = useAuth();
   const { setBiometricsAvailable } = useSettingStore();
-  const { getPassportDataAndSecret } = usePassport();
-
 
   useEffect(() => {
     createSigningKeyPair()
@@ -33,7 +31,7 @@ const SplashScreen: React.FC = ({}) => {
   const handleAnimationFinish = useCallback(() => {
     setTimeout(async () => {
       impactLight();
-      const passportDataAndSecret = await loadPassportDataAndSecret()
+      const passportDataAndSecret = await loadPassportDataAndSecret();
 
       if (!passportDataAndSecret) {
         navigation.navigate('Launch');
@@ -41,7 +39,7 @@ const SplashScreen: React.FC = ({}) => {
       }
 
       const { passportData, secret } = JSON.parse(passportDataAndSecret);
-      
+
       const isRegistered = await isUserRegistered(passportData, secret);
       console.log('User is registered:', isRegistered);
       if (isRegistered) {
