@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
 import { useIsFocused, useNavigation } from '@react-navigation/native';
@@ -23,25 +23,39 @@ import analytics from '../../utils/analytics';
 import { black, slate800, white } from '../../utils/colors';
 import { checkScannedInfo, formatDateToYYMMDD } from '../../utils/utils';
 
-interface PassportNFCScanScreen {}
+interface PassportNFCScanScreen { }
 
 const { trackEvent } = analytics();
 
-const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
+const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({ }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const store = useUserStore();
 
+  // Add a ref to track when the camera screen is mounted
+  const scanStartTimeRef = useRef(Date.now());
+
   const onPassportRead = useCallback<PassportCameraProps['onPassportRead']>(
     (error, result) => {
+      // Calculate scan duration in seconds with exactly 2 decimal places
+      const scanDurationSeconds = ((Date.now() - scanStartTimeRef.current) / 1000).toFixed(2);
+
       if (error) {
         console.error(error);
+        trackEvent('Passport Camera Scan Failed', {
+          error: error.message || 'Unknown error',
+          duration_seconds: parseFloat(scanDurationSeconds)
+        });
         //TODO: Add error handling here
         return;
       }
 
       if (!result) {
         console.error('No result from passport scan');
+        trackEvent('Passport Camera Scan Failed', {
+          error: 'No result from scan',
+          duration_seconds: parseFloat(scanDurationSeconds)
+        });
         return;
       }
 
@@ -63,6 +77,7 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
           passportNumberLength: passportNumber.length,
           dateOfBirthLength: formattedDateOfBirth.length,
           dateOfExpiryLength: formattedDateOfExpiry.length,
+          duration_seconds: parseFloat(scanDurationSeconds)
         });
         navigation.navigate('PassportCameraTrouble');
         return;
@@ -78,6 +93,11 @@ const PassportCameraScreen: React.FC<PassportNFCScanScreen> = ({}) => {
         dateOfBirth: formattedDateOfBirth,
         dateOfExpiry: formattedDateOfExpiry,
       });
+
+      trackEvent('Passport Camera Scan Successful', {
+        duration_seconds: parseFloat(scanDurationSeconds)
+      });
+
       navigation.navigate('PassportNFCScan');
     },
     [store, navigation],

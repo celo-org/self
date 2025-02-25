@@ -14,12 +14,16 @@ import {
   checkPassportSupported,
   isPassportNullified,
   isUserRegistered,
+  PassportSupportStatus,
   registerPassport,
 } from '../../utils/proving/payload';
+import analytics from '../../utils/analytics';
+
+const { trackEvent } = analytics();
 
 type LoadingScreenProps = StaticScreenProps<{}>;
 
-const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
+const LoadingScreen: React.FC<LoadingScreenProps> = ({ }) => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
   const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
   const goToUnsupportedScreen = useHapticNavigation('UnsupportedPassport');
@@ -72,7 +76,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
           }
           const { passportData, secret } = passportDataAndSecret.data;
           const isSupported = checkPassportSupported(passportData);
-          if (!isSupported) {
+          if (isSupported.status !== 'passport_supported') {
+            trackEvent('Passport not supported', {
+              reason: isSupported.status,
+              details: isSupported.details,
+            });
             goToUnsupportedScreen();
             console.log('Passport not supported');
             clearPassportData();
