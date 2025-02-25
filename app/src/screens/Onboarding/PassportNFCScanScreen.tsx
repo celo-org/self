@@ -34,14 +34,14 @@ import { parseScanResponse, scan } from '../../utils/nfcScannerNew';
 
 const { trackEvent } = analytics();
 
-interface PassportNFCScanScreenProps { }
+interface PassportNFCScanScreenProps {}
 
 const emitter =
   Platform.OS === 'android'
     ? new NativeEventEmitter(NativeModules.nativeModule)
     : null;
 
-const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({ }) => {
+const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({}) => {
   const navigation = useNavigation();
   const { passportNumber, dateOfBirth, dateOfExpiry } = useUserStore();
   const [dialogMessage, setDialogMessage] = useState('');
@@ -89,10 +89,17 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({ }) => {
           dateOfExpiry,
         });
 
-        const scanDurationSeconds = ((Date.now() - scanStartTime) / 1000).toFixed(2);
-        console.log('NFC Scan Successful - Duration:', scanDurationSeconds, 'seconds');
+        const scanDurationSeconds = (
+          (Date.now() - scanStartTime) /
+          1000
+        ).toFixed(2);
+        console.log(
+          'NFC Scan Successful - Duration:',
+          scanDurationSeconds,
+          'seconds',
+        );
         trackEvent('NFC Scan Successful', {
-          duration_seconds: parseFloat(scanDurationSeconds)
+          duration_seconds: parseFloat(scanDurationSeconds),
         });
         let passportData: PassportData | null = null;
         let parsedPassportData: PassportData | null = null;
@@ -139,8 +146,7 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({ }) => {
           // Feels better somehow
           await new Promise(resolve => setTimeout(resolve, 1000));
           navigation.navigate('ConfirmBelongingScreen');
-        }
-        catch (e: any) {
+        } catch (e: any) {
           console.error('Passport Parsed Failed:', e);
           trackEvent('Passport Parsed Failed', {
             error: e.message,
@@ -148,11 +154,14 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({ }) => {
           return;
         }
       } catch (e: any) {
-        const scanDurationSeconds = ((Date.now() - scanStartTime) / 1000).toFixed(2);
+        const scanDurationSeconds = (
+          (Date.now() - scanStartTime) /
+          1000
+        ).toFixed(2);
         console.error('NFC Scan Unsuccessful:', e);
         trackEvent('NFC Scan Unsuccessful', {
           error: e.message,
-          duration_seconds: parseFloat(scanDurationSeconds)
+          duration_seconds: parseFloat(scanDurationSeconds),
         });
 
         if (e.message.includes('InvalidMRZKey')) {
@@ -168,7 +177,9 @@ const PassportNFCScanScreen: React.FC<PassportNFCScanScreenProps> = ({ }) => {
         } else if (e.message.includes('UnexpectedError')) {
           // iOS
           // Timeout reached, do nothing
-        } else if (e.message.includes('Error: Lost connection to chip on card')) {
+        } else if (
+          e.message.includes('Error: Lost connection to chip on card')
+        ) {
           // android
           navigation.navigate('PassportNFCTrouble');
         } else if (e.message.includes('Could not tranceive APDU')) {

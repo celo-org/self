@@ -54,8 +54,16 @@ async function generateTeeInputsRegister(
   return { inputs, circuitName };
 }
 
-export type PassportSupportStatus = 'passport_metadata_missing' | 'csca_not_found' | 'registration_circuit_not_supported' | 'dsc_circuit_not_supported' | 'passport_supported';
-export function checkPassportSupported(passportData: PassportData): { status: PassportSupportStatus, details: string } {
+export type PassportSupportStatus =
+  | 'passport_metadata_missing'
+  | 'csca_not_found'
+  | 'registration_circuit_not_supported'
+  | 'dsc_circuit_not_supported'
+  | 'passport_supported';
+export function checkPassportSupported(passportData: PassportData): {
+  status: PassportSupportStatus;
+  details: string;
+} {
   const passportMetadata = passportData.passportMetadata;
   if (!passportMetadata) {
     console.log('Passport metadata is null');
@@ -74,7 +82,10 @@ export function checkPassportSupported(passportData: PassportData): { status: Pa
     !circuitNameRegister ||
     !DEPLOYED_CIRCUITS_REGISTER.includes(circuitNameRegister)
   ) {
-    return { status: 'registration_circuit_not_supported', details: circuitNameRegister };
+    return {
+      status: 'registration_circuit_not_supported',
+      details: circuitNameRegister,
+    };
   }
   const circuitNameDsc = getCircuitNameFromPassportData(passportData, 'dsc');
   if (!circuitNameDsc || !DEPLOYED_CIRCUITS_DSC.includes(circuitNameDsc)) {

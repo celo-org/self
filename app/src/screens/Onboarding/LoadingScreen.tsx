@@ -10,20 +10,19 @@ import successAnimation from '../../assets/animations/loading/success.json';
 import useHapticNavigation from '../../hooks/useHapticNavigation';
 import { usePassport } from '../../stores/passportDataProvider';
 import { ProofStatusEnum, useProofInfo } from '../../stores/proofProvider';
+import analytics from '../../utils/analytics';
 import {
   checkPassportSupported,
   isPassportNullified,
   isUserRegistered,
-  PassportSupportStatus,
   registerPassport,
 } from '../../utils/proving/payload';
-import analytics from '../../utils/analytics';
 
 const { trackEvent } = analytics();
 
 type LoadingScreenProps = StaticScreenProps<{}>;
 
-const LoadingScreen: React.FC<LoadingScreenProps> = ({ }) => {
+const LoadingScreen: React.FC<LoadingScreenProps> = ({}) => {
   const goToSuccessScreen = useHapticNavigation('AccountVerifiedSuccess');
   const goToErrorScreen = useHapticNavigation('ConfirmBelongingScreen');
   const goToUnsupportedScreen = useHapticNavigation('UnsupportedPassport');
