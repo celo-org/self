@@ -12,7 +12,6 @@ import Keychain from 'react-native-keychain';
 import { ethers } from 'ethers';
 
 import { Mnemonic } from '../types/mnemonic';
-import { useNavigation } from '@react-navigation/native';
 
 const SERVICE_NAME = 'secret';
 
@@ -101,7 +100,17 @@ async function loadOrCreateMnemonic() {
     service: SERVICE_NAME,
   });
   if (storedMnemonic) {
-    return storedMnemonic.password;
+    try {
+      JSON.parse(storedMnemonic.password);
+      console.log('Stored mnemonic parsed successfully');
+      return storedMnemonic.password;
+    } catch (e) {
+      console.log(
+        'Error parsing stored mnemonic, old secret format was used',
+        e,
+      );
+      console.log('Creating a new one');
+    }
   }
 
   console.log('No secret found, creating one');
@@ -230,18 +239,9 @@ export async function hasSecretStored() {
  * to access both the privatekey and the passport data with the user only authenticating once
  */
 export async function unsafe_getPrivateKey() {
-  try {
-    const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as Mnemonic;
-    const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
-    return wallet.privateKey;
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      const navigation = useNavigation();
-      navigation.navigate('Home');
-      return;
-    }
-    throw error;
-  }
+  const mnemonic = JSON.parse(await loadOrCreateMnemonic()) as Mnemonic;
+  const wallet = ethers.HDNodeWallet.fromPhrase(mnemonic.phrase);
+  return wallet.privateKey;
 }
 
 export async function unsafe_clearSecrets() {
