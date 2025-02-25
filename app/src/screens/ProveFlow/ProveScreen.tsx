@@ -107,7 +107,9 @@ const ProveScreen: React.FC = () => {
 
   const onVerify = useCallback(
     async function () {
-      if (isProcessing.current) return;
+      if (isProcessing.current) {
+        return;
+      }
       isProcessing.current = true;
 
       resetProof();
