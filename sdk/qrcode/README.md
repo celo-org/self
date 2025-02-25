@@ -178,9 +178,9 @@ function VerificationPage() {
 export default VerificationPage;
 ```
 
-## Interactive Example
+## Example
 
-For a more comprehensive and interactive example, please refer to the [playground](https://github.com/selfxyz/playground/blob/main/app/page.tsx) demonstrates:
+For a more comprehensive and interactive example, please refer to the [playground](https://github.com/selfxyz/playground/blob/main/app/page.tsx).
 
 ## Verification Flow
 
