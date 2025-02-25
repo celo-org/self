@@ -161,6 +161,9 @@ export async function sendPayload(
           console.log('Truncated submit body:', truncatedBody);
           ws.send(JSON.stringify(submitBody));
         } else {
+          if (result.error) {
+            finalize(ProofStatusEnum.ERROR);
+          }
           const receivedUuid = result.result;
           console.log('Received UUID:', receivedUuid);
           console.log(result);
