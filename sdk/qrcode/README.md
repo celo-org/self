@@ -68,6 +68,8 @@ function MyComponent() {
 }
 ```
 
+`SelfQRcodeWrapper` wraps `SelfQRcode` to prevent server-side rendering when using nextjs. When not using nextjs, `SelfQRcode` can be used instead.
+
 ## SelfApp Configuration
 
 The `SelfAppBuilder` allows you to configure your application's verification requirements:
@@ -178,17 +180,7 @@ export default VerificationPage;
 
 ## Interactive Example
 
-For a more comprehensive and interactive example, you can refer to the Self Playground repository. The [Playground application](https://github.com/selfxyz/playground/blob/main/app/page.tsx) demonstrates:
-
-1. Creating a configurable QR code verification component
-2. Managing verification options with React state
-3. Implementing interactive controls for customizing disclosures (Optional)
-4. Setting up minimum age requirements (Optional)
-5. Configuring country exclusion lists with a searchable interface (Optional)
-6. Handling OFAC compliance checks (Optional)
-7. Saving verification configurations to a server
-
-The Playground application provides a full interface that allows users to experiment with different disclosure and verification options in real-time, making it an excellent reference for implementing advanced features with the @selfxyz/qrcode package.
+For a more comprehensive and interactive example, please refer to the [playground](https://github.com/selfxyz/playground/blob/main/app/page.tsx) demonstrates:
 
 ## Verification Flow
 
