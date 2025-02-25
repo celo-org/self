@@ -108,7 +108,9 @@ export interface SelfVerificationResult {
     gender?: string;              // Gender
     expiry_date?: string;         // Passport expiry date
     older_than?: string;          // Age verification result
-    passport_no_ofac?: boolean;   // Passport OFAC check result
+    passport_no_ofac?: boolean;   // Passport OFAC check result.
+    // Gives true if the user passed the check (is not on the list),
+    // false if the check was not requested or if the user is in the list
     name_and_dob_ofac?: boolean;  // Name and DOB OFAC check result
     name_and_yob_ofac?: boolean;  // Name and birth year OFAC check result
   };
