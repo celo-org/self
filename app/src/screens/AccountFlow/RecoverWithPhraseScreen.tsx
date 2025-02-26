@@ -18,6 +18,8 @@ import {
   slate700,
   white,
 } from '../../utils/colors';
+import { loadPassportDataAndSecret } from '../../stores/passportDataProvider';
+import { isUserRegistered } from '../../utils/proving/payload';
 
 interface RecoverWithPhraseScreenProps {}
 
@@ -48,10 +50,22 @@ const RecoverWithPhraseScreen: React.FC<
 
     if (!result) {
       console.warn('Failed to restore account');
-      // TODO SOMETHING ELSE?
+      navigation.navigate('Launch');
       setRestoring(false);
       return;
     }
+
+    const passportDataAndSecret = (await loadPassportDataAndSecret()) as string;
+    const { passportData, secret } = JSON.parse(passportDataAndSecret);
+    const isRegistered = await isUserRegistered(passportData, secret);
+    console.log('User is registered:', isRegistered);
+    if (!isRegistered) {
+      console.log('Secret provided did not match a registered passport. Please try again.');
+      navigation.navigate('Launch');
+      setRestoring(false);
+      return;
+    }
+
     setRestoring(false);
     navigation.navigate('AccountVerifiedSuccess');
   }, [mnemonic, restoreAccountFromMnemonic]);
