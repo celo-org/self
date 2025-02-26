@@ -97,7 +97,7 @@ function getAnimation(status: ProofStatusEnum) {
 function getTitle(status: ProofStatusEnum) {
   switch (status) {
     case 'success':
-      return 'Identity Verified';
+      return 'Proof Verified';
     case 'failure':
     case 'error':
       return 'Proof Failed';
