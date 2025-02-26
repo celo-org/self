@@ -43,10 +43,12 @@ export default function Disclosures({ disclosures }: DisclosureProps) {
     <YStack>
       {ORDERED_KEYS.map(key => {
         const isEnabled = disclosures[key];
-        if (!isEnabled || (Array.isArray(isEnabled) && isEnabled.length === 0)) {
+        if (
+          !isEnabled ||
+          (Array.isArray(isEnabled) && isEnabled.length === 0)
+        ) {
           return null;
         }
-        
 
         let text = '';
         switch (key) {
