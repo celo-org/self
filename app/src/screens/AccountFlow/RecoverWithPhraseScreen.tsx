@@ -10,6 +10,7 @@ import { SecondaryButton } from '../../components/buttons/SecondaryButton';
 import Description from '../../components/typography/Description';
 import Paste from '../../images/icons/paste.svg';
 import { useAuth } from '../../stores/authProvider';
+import { loadPassportDataAndSecret } from '../../stores/passportDataProvider';
 import {
   black,
   slate300,
@@ -18,7 +19,6 @@ import {
   slate700,
   white,
 } from '../../utils/colors';
-import { loadPassportDataAndSecret } from '../../stores/passportDataProvider';
 import { isUserRegistered } from '../../utils/proving/payload';
 
 interface RecoverWithPhraseScreenProps {}
@@ -60,7 +60,9 @@ const RecoverWithPhraseScreen: React.FC<
     const isRegistered = await isUserRegistered(passportData, secret);
     console.log('User is registered:', isRegistered);
     if (!isRegistered) {
-      console.log('Secret provided did not match a registered passport. Please try again.');
+      console.log(
+        'Secret provided did not match a registered passport. Please try again.',
+      );
       navigation.navigate('Launch');
       setRestoring(false);
       return;
