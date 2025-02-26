@@ -23,12 +23,13 @@ import {
 } from '../../utils/haptic';
 
 const SuccessScreen: React.FC = () => {
-  const { selectedApp, disclosureStatus } = useProofInfo();
+  const { selectedApp, disclosureStatus, cleanSelfApp } = useProofInfo();
   const appName = selectedApp?.appName;
   const goHome = useHapticNavigation('Home');
 
   function onOkPress() {
     buttonTap();
+    cleanSelfApp();
     goHome();
   }
 
