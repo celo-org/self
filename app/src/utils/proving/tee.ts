@@ -180,7 +180,14 @@ export async function sendPayload(
               const data =
                 typeof message === 'string' ? JSON.parse(message) : message;
               console.log('SocketIO message:', data);
-              if (data.status === 4) {
+              if (data.status === 3) {
+                console.log('Failed to generate proof');
+                socket?.disconnect();
+                if (ws.readyState === WebSocket.OPEN) {
+                  ws.close();
+                }
+                finalize(ProofStatusEnum.FAILURE);
+              } else if (data.status === 4) {
                 console.log('Proof verified');
                 socket?.disconnect();
                 if (ws.readyState === WebSocket.OPEN) {
