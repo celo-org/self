@@ -333,10 +333,14 @@ export async function registerPassport(
   // First get the mapping, then use it for the check
   const [circuitDNSMapping, dscTree] = await Promise.all([
     getCircuitDNSMapping(),
-    getDSCTree()
+    getDSCTree(),
   ]);
   console.log('circuitDNSMapping', circuitDNSMapping);
-  const dscOk = await checkIdPassportDscIsInTree(passportData, dscTree, circuitDNSMapping);
+  const dscOk = await checkIdPassportDscIsInTree(
+    passportData,
+    dscTree,
+    circuitDNSMapping,
+  );
   if (!dscOk) {
     return;
   }
